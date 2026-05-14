@@ -1,33 +1,65 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Quarried stone: 4-faceted, rounded vertices, asymmetric -->
+  <defs>
+    <!-- Warm limestone gradient: light upper-left, weight lower-right -->
+    <linearGradient id="stone" x1="14" y1="8" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#b4ac9f"/>
+      <stop offset="0.5" stop-color="#8a8278"/>
+      <stop offset="1" stop-color="#5a544c"/>
+    </linearGradient>
+    <!-- Sunlit rim on the top edge -->
+    <linearGradient id="rim" x1="12" y1="8" x2="42" y2="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d6cebf" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#d6cebf" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Inside-the-carve gradient (darker stone, revealed by chisel) -->
+    <linearGradient id="cut" x1="26" y1="22" x2="40" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2a2520"/>
+      <stop offset="1" stop-color="#3a342d"/>
+    </linearGradient>
+  </defs>
+
+  <!-- River-rock silhouette: irregular, asymmetric, one flatter base -->
   <path
-    d="M 14,6
-       Q 6,8 8,18
-       L 10,44
-       Q 10,54 22,56
-       L 46,58
-       Q 56,56 54,46
-       L 56,18
-       Q 54,8 44,8
+    d="M 9,30
+       Q 7,18 20,11
+       Q 30,7 40,9
+       Q 54,12 58,24
+       L 56,38
+       Q 54,50 41,53
+       L 27,54
+       Q 13,53 10,42
        Z"
-    fill="#1F1B16"
+    fill="url(#stone)"
   />
-  <!-- Chisel shadow: deep cut -->
+
+  <!-- Sunlit top-left rim -->
   <path
-    d="M27,22 L41,33 L27,43"
-    stroke="#0a0807"
-    stroke-width="5.5"
+    d="M 9,30
+       Q 7,18 20,11
+       Q 30,7 40,9"
+    stroke="url(#rim)"
+    stroke-width="1.3"
     stroke-linecap="round"
-    stroke-linejoin="round"
     fill="none"
   />
-  <!-- Chevron: light hitting the carved edge -->
+
+  <!-- Chisel cut: deep groove revealing darker stone inside -->
   <path
     d="M26,21 L40,32 L26,42"
-    stroke="#F5F1EA"
-    stroke-width="4.5"
+    stroke="url(#cut)"
+    stroke-width="6"
     stroke-linecap="round"
     stroke-linejoin="round"
     fill="none"
+  />
+
+  <!-- Highlight catching the upper inner edge of the carve -->
+  <path
+    d="M26.5,22 L39.2,32"
+    stroke="#e0d6c5"
+    stroke-width="1.4"
+    stroke-linecap="round"
+    fill="none"
+    opacity="0.7"
   />
 </svg>
