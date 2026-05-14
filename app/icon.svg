@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Quarried stone: 4-faceted, rounded vertices, asymmetric -->
+  <path
+    d="M 14,6
+       Q 6,8 8,18
+       L 10,44
+       Q 10,54 22,56
+       L 46,58
+       Q 56,56 54,46
+       L 56,18
+       Q 54,8 44,8
+       Z"
+    fill="#1F1B16"
+  />
+  <!-- Chisel shadow: deep cut -->
+  <path
+    d="M27,22 L41,33 L27,43"
+    stroke="#0a0807"
+    stroke-width="5.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+  <!-- Chevron: light hitting the carved edge -->
+  <path
+    d="M26,21 L40,32 L26,42"
+    stroke="#F5F1EA"
+    stroke-width="4.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    fill="none"
+  />
+</svg>
