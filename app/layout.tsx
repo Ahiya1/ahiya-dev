@@ -31,6 +31,14 @@ export const metadata: Metadata = {
     description:
       "Independent builder shipping practical AI tools and full-stack systems out of Israel.",
     type: "website",
+    url: "https://ahiya.dev",
+    siteName: "ahiya.dev",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ahiya Butman — AI Engineer & Independent Builder",
+    description:
+      "Independent builder shipping practical AI tools and full-stack systems out of Israel.",
   },
 };
 
