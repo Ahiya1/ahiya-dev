@@ -13,6 +13,7 @@
   --font-display: var(--font-fraunces);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains);
+  --font-hebrew: var(--font-frank-ruhl);
 }
 
 @layer base {
@@ -95,6 +96,74 @@
   opacity: 0.6;
 }
 
+/* ─── Project visualizations ─── */
+
+/* HIT: persona crossfade */
+@keyframes hitFade {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hit-fade {
+  animation: hitFade 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* SelahOS: breathing dot, ring, and compass companions */
+@keyframes selahBreath {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.32);
+    opacity: 1;
+  }
+}
+
+@keyframes selahRing {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.92);
+  }
+}
+
+@keyframes selahCompanion {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.6);
+  }
+}
+
+.selah-center {
+  animation: selahBreath var(--selah-cycle, 6s) ease-in-out infinite;
+  transform-origin: center;
+}
+
+.selah-ring {
+  animation: selahRing var(--selah-cycle, 6s) ease-in-out infinite;
+  transform-origin: center;
+}
+
+.selah-companion {
+  animation-name: selahCompanion;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  transform-origin: center;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lift {
     animation: none;
@@ -103,5 +172,15 @@
   }
   .arrow {
     transition: none;
+  }
+  .hit-fade,
+  .selah-center,
+  .selah-ring,
+  .selah-companion {
+    animation: none;
+  }
+  .selah-center {
+    transform: scale(1.15);
+    opacity: 1;
   }
 }

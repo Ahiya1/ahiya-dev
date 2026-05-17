@@ -1,4 +1,10 @@
 import Link from "next/link";
+import {
+  HITVisual,
+  SelahOSVisual,
+  StatVizVisual,
+  TwoLVisual,
+} from "./components/ProjectVisuals";
 
 type Project = {
   name: string;
@@ -8,6 +14,7 @@ type Project = {
   href?: string;
   hrefLabel?: string;
   privateTag?: boolean;
+  Visual?: React.ComponentType;
 };
 
 const projects: Project[] = [
@@ -18,12 +25,14 @@ const projects: Project[] = [
     stack: "Python · FastAPI · OpenAI / Anthropic · pandas · MongoDB",
     href: "https://stat-viz.com",
     hrefLabel: "stat-viz.com",
+    Visual: StatVizVisual,
   },
   {
     name: "HIT — AI Persona Research",
     meta: "Consulting · 2025",
     body: "A Hebrew NLP pipeline for an academic study of youth sport dropout in Israel, built at Holon Institute of Technology. Synthetic personas — each defined by demographic factors (age, ethnicity, region, sport, training schedule, dropout reason) — generate first-person Hebrew testimonials at scale, feeding a quantitative analysis of why Israeli teenagers leave organized sport. Built end-to-end: prompt engineering, generation, and output formatting for the research team's downstream pipeline.",
     stack: "Python · Hebrew NLP · LLM APIs · persona design",
+    Visual: HITVisual,
   },
   {
     name: "2L",
@@ -32,12 +41,14 @@ const projects: Project[] = [
     stack: "TypeScript · LLM APIs · multi-agent coordination",
     href: "https://github.com/Ahiya1/2L",
     hrefLabel: "github.com/Ahiya1/2L",
+    Visual: TwoLVisual,
   },
   {
     name: "SelahOS",
     meta: "Private · in development",
     body: "A ground-first regulation system. Quiet, not yet public.",
     privateTag: true,
+    Visual: SelahOSVisual,
   },
 ];
 
@@ -146,13 +157,24 @@ export default function Home() {
 
 function ProjectCard({
   project,
-  index,
 }: {
   project: Project;
   index: number;
 }) {
+  const Visual = project.Visual;
   const inner = (
     <>
+      {Visual && (
+        <div
+          className="mb-6 -ml-1"
+          onClick={(e) => {
+            // Visuals are interactive; don't navigate when interacting with them.
+            e.stopPropagation();
+          }}
+        >
+          <Visual />
+        </div>
+      )}
       <div className="flex items-baseline justify-between gap-4">
         <h3 className="font-display text-2xl font-medium tracking-tight text-[var(--color-ink)] sm:text-[26px]">
           {project.name}
