@@ -200,35 +200,143 @@ export function StatVizVisual() {
 }
 
 /* ─────────── HIT — AI Persona Research ─────────── */
-/* Real persona schema, real testimonial themes.                  */
+/* Half-human, half-bot. Each frame is an actual persona:
+   - editorial silhouette (head + shoulders, no features)
+   - synthetic ID (P-####, signaling 'one of many in the dataset')
+   - demographic meta line in mono
+   - real Hebrew testimonial
+   - dot-row pager
+   Each silhouette has small geometric variation so personas feel
+   distinct without becoming portraits.                            */
 
 type Persona = {
+  id: string;
   meta: string;
   he: string;
+  /* Silhouette geometry variations */
+  headR: number;       /* head radius */
+  headOffY: number;    /* head vertical nudge */
+  shoulderW: number;   /* shoulder width */
+  shoulderTilt: number;/* slight asymmetry, -1 to +1 */
 };
 
 const personas: Persona[] = [
   {
+    id: "P-0017",
     meta: "17 · BASKETBALL · NORTH · ULTRA-ORTHODOX",
     he: "האתגר הגדול היה השילוב בין הלימודים, המשפחה והאימונים.",
+    headR: 7.5,
+    headOffY: 0,
+    shoulderW: 22,
+    shoulderTilt: 0,
   },
   {
+    id: "P-2841",
     meta: "15 · SAILING · CENTER · ARAB-MUSLIM",
     he: "הנסיעות הארוכות לאימונים הפכו את העייפות לחלק בלתי נפרד מחיי.",
+    headR: 7,
+    headOffY: 1,
+    shoulderW: 19,
+    shoulderTilt: 0.3,
   },
   {
+    id: "P-0463",
     meta: "14 · JUDO · SOUTH · JEWISH-SECULAR",
     he: "הלחץ של ההורים שלי לזכות הפך כל אימון לדבר שקשה לי לאהוב.",
+    headR: 6.5,
+    headOffY: 0,
+    shoulderW: 17,
+    shoulderTilt: -0.2,
   },
   {
+    id: "P-3902",
     meta: "19 · TENNIS · NORTH · JEWISH-RELIGIOUS",
     he: "כשהפסדתי בטורניר הראשון, הרגשתי שאני כבר לא שייכת לכאן.",
+    headR: 7,
+    headOffY: -1,
+    shoulderW: 20,
+    shoulderTilt: 0.1,
   },
   {
+    id: "P-1198",
     meta: "16 · TRIATHLON · CENTER · ARAB-CHRISTIAN",
     he: "האימונים הפכו לחובה, ולא משהו שבחרתי לעצמי.",
+    headR: 7.2,
+    headOffY: 0,
+    shoulderW: 21,
+    shoulderTilt: -0.1,
   },
 ];
+
+function PersonaSilhouette({ p }: { p: Persona }) {
+  const w = 38;
+  const h = 50;
+  const cx = w / 2;
+  const headY = 14 + p.headOffY;
+  const neckTopY = headY + p.headR + 1;
+  const shoulderY = neckTopY + 7;
+  const tilt = p.shoulderTilt * 2;
+  return (
+    <svg width={w} height={h} className="block" aria-hidden>
+      {/* Head */}
+      <circle
+        cx={cx}
+        cy={headY}
+        r={p.headR}
+        fill="none"
+        stroke="var(--color-ink)"
+        strokeWidth={1.1}
+      />
+      {/* Neck */}
+      <line
+        x1={cx}
+        y1={neckTopY}
+        x2={cx}
+        y2={neckTopY + 4}
+        stroke="var(--color-ink)"
+        strokeWidth={1.1}
+      />
+      {/* Shoulders (slightly asymmetric per persona) */}
+      <line
+        x1={cx - p.shoulderW / 2}
+        y1={shoulderY + tilt}
+        x2={cx}
+        y2={neckTopY + 4}
+        stroke="var(--color-ink)"
+        strokeWidth={1.1}
+        strokeLinecap="round"
+      />
+      <line
+        x1={cx}
+        y1={neckTopY + 4}
+        x2={cx + p.shoulderW / 2}
+        y2={shoulderY - tilt}
+        stroke="var(--color-ink)"
+        strokeWidth={1.1}
+        strokeLinecap="round"
+      />
+      {/* Synthetic mark: small bracket near head (the 'bot' tag) */}
+      <line
+        x1={cx + p.headR + 3}
+        y1={headY - p.headR + 1}
+        x2={cx + p.headR + 5}
+        y2={headY - p.headR + 1}
+        stroke="var(--color-sky)"
+        strokeWidth={1}
+        opacity={0.85}
+      />
+      <line
+        x1={cx + p.headR + 5}
+        y1={headY - p.headR + 1}
+        x2={cx + p.headR + 5}
+        y2={headY - p.headR + 3}
+        stroke="var(--color-sky)"
+        strokeWidth={1}
+        opacity={0.85}
+      />
+    </svg>
+  );
+}
 
 export function HITVisual() {
   const [idx, setIdx] = useState(0);
@@ -238,7 +346,7 @@ export function HITVisual() {
     if (paused) return;
     const id = setInterval(
       () => setIdx((i) => (i + 1) % personas.length),
-      4200
+      4400
     );
     return () => clearInterval(id);
   }, [paused]);
@@ -247,40 +355,54 @@ export function HITVisual() {
 
   return (
     <FrameBase
-      ariaLabel={`Cycling Hebrew testimonial from synthetic persona: ${p.meta}.`}
+      ariaLabel={`Cycling synthetic persona: ${p.id} (${p.meta}).`}
     >
       <div
-        className="absolute inset-0 flex flex-col justify-between"
+        className="absolute inset-0 flex flex-col"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
-        {/* Meta chip */}
-        <div
-          key={`m-${idx}`}
-          className="font-mono text-[9px] tracking-[0.12em] text-[var(--color-muted)] hit-fade"
-          style={{ animationDelay: "0ms" }}
-        >
-          {p.meta}
-        </div>
+        {/* Top row: silhouette + meta */}
+        <div className="flex items-start gap-3 flex-1 min-h-0">
+          <div
+            key={`s-${idx}`}
+            className="hit-fade shrink-0 flex flex-col items-center"
+            style={{ animationDelay: "0ms" }}
+          >
+            <PersonaSilhouette p={p} />
+            <div className="font-mono text-[8px] tracking-[0.14em] text-[var(--color-muted)] mt-0.5">
+              {p.id}
+            </div>
+          </div>
 
-        {/* Hebrew quote — RTL, serif */}
-        <div
-          key={`q-${idx}`}
-          dir="rtl"
-          lang="he"
-          className="hit-fade text-[13.5px] leading-[1.55] text-[var(--color-ink)] px-0.5"
-          style={{
-            fontFamily: "var(--font-hebrew), 'Frank Ruhl Libre', serif",
-            animationDelay: "60ms",
-          }}
-        >
-          <span className="text-[var(--color-sky-deep)] mr-0.5">“</span>
-          {p.he}
-          <span className="text-[var(--color-sky-deep)] ml-0.5">”</span>
+          <div className="flex-1 min-w-0 flex flex-col justify-between h-full">
+            <div
+              key={`m-${idx}`}
+              className="font-mono text-[8.5px] tracking-[0.12em] text-[var(--color-muted)] leading-[1.5] hit-fade"
+              style={{ animationDelay: "40ms" }}
+            >
+              {p.meta}
+            </div>
+            {/* Hebrew quote — RTL, serif */}
+            <div
+              key={`q-${idx}`}
+              dir="rtl"
+              lang="he"
+              className="hit-fade text-[12.5px] leading-[1.45] text-[var(--color-ink)] mt-1.5"
+              style={{
+                fontFamily: "var(--font-hebrew), 'Frank Ruhl Libre', serif",
+                animationDelay: "100ms",
+              }}
+            >
+              <span className="text-[var(--color-sky-deep)] mr-0.5">“</span>
+              {p.he}
+              <span className="text-[var(--color-sky-deep)] ml-0.5">”</span>
+            </div>
+          </div>
         </div>
 
         {/* Dot row */}
-        <div className="flex items-center gap-[6px] mt-1">
+        <div className="flex items-center gap-[6px] mt-1.5">
           {personas.map((_, i) => {
             const active = i === idx;
             return (
@@ -290,8 +412,8 @@ export function HITVisual() {
                 onClick={() => setIdx(i)}
                 className="block rounded-full transition-all duration-300"
                 style={{
-                  width: active ? 16 : 5,
-                  height: 5,
+                  width: active ? 14 : 4,
+                  height: 4,
                   background: active
                     ? "var(--color-sky)"
                     : "var(--color-rule)",
@@ -303,7 +425,8 @@ export function HITVisual() {
             );
           })}
           <span className="ml-auto font-mono text-[8px] tracking-[0.16em] text-[var(--color-muted)]">
-            {(idx + 1).toString().padStart(2, "0")} / {personas.length.toString().padStart(2, "0")}
+            {(idx + 1).toString().padStart(2, "0")} /{" "}
+            {personas.length.toString().padStart(2, "0")}
           </span>
         </div>
       </div>
@@ -447,21 +570,64 @@ export function TwoLVisual() {
 }
 
 /* ─────────── SelahOS ─────────── */
-/* A sealed center. Four compass breaths.                         */
+/* Coming back to ground. The dot is displaced (a quick tug, almost
+   imperceptible), then returns to center with intentional, effortless
+   motion (cubic ease-out). Rests at center. Cycle of three returns,
+   each from a different direction. Hover stops the cycle entirely:
+   the dot is held at center for as long as attention is held.       */
+
+type SelahPhase = {
+  /* start time of the displacement (the "tug") in seconds          */
+  tugAt: number;
+  /* duration of the return motion                                  */
+  returnDur: number;
+  /* (dx, dy) of the displacement in component pixels               */
+  dx: number;
+  dy: number;
+};
+
+const selahPhases: SelahPhase[] = [
+  { tugAt: 0.0, returnDur: 1.7, dx: 18, dy: -10 },
+  { tugAt: 2.7, returnDur: 1.6, dx: -16, dy: 12 },
+  { tugAt: 5.2, returnDur: 1.5, dx: -12, dy: -14 },
+];
+const selahCycle = 7.4;
+
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
 export function SelahOSVisual() {
   const [hover, setHover] = useState(false);
+  const [t, setT] = useState(0);
 
-  /* Four cardinal companions at different periods */
-  const companions = [
-    { angle: 0, dur: 5.0 },
-    { angle: 90, dur: 6.0 },
-    { angle: 180, dur: 7.0 },
-    { angle: 270, dur: 4.0 },
-  ];
+  useEffect(() => {
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      setT(((now - start) / 1000) % selahCycle);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  /* Compute current displacement from center. */
+  let dx = 0;
+  let dy = 0;
+  if (!hover) {
+    /* Find the most recent tug at or before t. */
+    const active = [...selahPhases]
+      .reverse()
+      .find((p) => t >= p.tugAt) ?? selahPhases[selahPhases.length - 1];
+    const since = t - active.tugAt;
+    if (since >= 0 && since < active.returnDur) {
+      const k = 1 - easeOutCubic(since / active.returnDur);
+      dx = active.dx * k;
+      dy = active.dy * k;
+    }
+  }
 
   return (
-    <FrameBase ariaLabel="A sealed breathing center; four faint companions at compass points.">
+    <FrameBase ariaLabel="A dot displaced from ground, returning to center; an intentional, effortless homecoming.">
       <div
         className="absolute inset-0 flex items-center justify-center"
         onMouseEnter={() => setHover(true)}
@@ -469,55 +635,64 @@ export function SelahOSVisual() {
       >
         <div
           className="relative"
-          style={{
-            width: 100,
-            height: 100,
-            ["--selah-cycle" as never]: hover ? "8s" : "6s",
-            transition: "all 800ms ease",
-          }}
+          style={{ width: 120, height: 120 }}
         >
-          {/* Outer ring (inverts breath) */}
+          {/* The ground: a faint, fixed cross at center */}
           <span
-            className="absolute inset-0 rounded-full selah-ring"
+            className="absolute"
             style={{
-              border: "1px solid var(--color-rule)",
-              opacity: hover ? 0.7 : 0.45,
-              transition: "opacity 1.2s ease",
+              left: 60 - 4,
+              top: 60,
+              width: 8,
+              height: 1,
+              background: "var(--color-rule)",
+              opacity: 0.7,
             }}
           />
-          {/* Compass companions */}
-          {companions.map((c, i) => {
-            const rad = (c.angle * Math.PI) / 180;
-            const r = 44;
-            const x = 50 + Math.cos(rad) * r;
-            const y = 50 + Math.sin(rad) * r;
-            return (
-              <span
-                key={i}
-                className="absolute rounded-full selah-companion"
-                style={{
-                  width: 4,
-                  height: 4,
-                  left: x - 2,
-                  top: y - 2,
-                  background: "var(--color-muted)",
-                  opacity: hover ? 0.7 : 0.4,
-                  animationDuration: `${c.dur}s`,
-                  animationDelay: `-${(c.dur / 4) * i}s`,
-                  transition: "opacity 1.2s ease",
-                }}
-              />
-            );
-          })}
-          {/* Central breathing dot */}
           <span
-            className="absolute selah-center rounded-full"
+            className="absolute"
             style={{
-              width: 14,
-              height: 14,
-              left: 43,
-              top: 43,
+              left: 60,
+              top: 60 - 4,
+              width: 1,
+              height: 8,
+              background: "var(--color-rule)",
+              opacity: 0.7,
+            }}
+          />
+          {/* Faint trail from current position toward ground */}
+          {(dx !== 0 || dy !== 0) && (
+            <svg
+              className="absolute inset-0 pointer-events-none"
+              width={120}
+              height={120}
+            >
+              <line
+                x1={60}
+                y1={60}
+                x2={60 + dx}
+                y2={60 + dy}
+                stroke="var(--color-sky)"
+                strokeWidth={1}
+                opacity={0.22}
+              />
+            </svg>
+          )}
+          {/* The returning dot */}
+          <span
+            className="absolute rounded-full"
+            style={{
+              width: 10,
+              height: 10,
+              left: 60 - 5 + dx,
+              top: 60 - 5 + dy,
               background: "var(--color-sky-deep)",
+              boxShadow: hover
+                ? "0 0 0 3px color-mix(in srgb, var(--color-sky) 18%, transparent)"
+                : "none",
+              transition: hover
+                ? "left 900ms cubic-bezier(0.16,1,0.3,1), top 900ms cubic-bezier(0.16,1,0.3,1), box-shadow 600ms ease"
+                : "box-shadow 600ms ease",
             }}
           />
         </div>
