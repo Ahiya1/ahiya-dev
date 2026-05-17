@@ -165,13 +165,7 @@ function ProjectCard({
   const inner = (
     <>
       {Visual && (
-        <div
-          className="mb-6 -ml-1"
-          onClick={(e) => {
-            // Visuals are interactive; don't navigate when interacting with them.
-            e.stopPropagation();
-          }}
-        >
+        <div className="mb-6 -ml-1">
           <Visual />
         </div>
       )}
