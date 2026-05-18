@@ -269,70 +269,49 @@ const personas: Persona[] = [
 ];
 
 function PersonaSilhouette({ p }: { p: Persona }) {
-  const w = 38;
-  const h = 50;
+  const w = 40;
+  const h = 52;
   const cx = w / 2;
-  const headY = 14 + p.headOffY;
-  const neckTopY = headY + p.headR + 1;
-  const shoulderY = neckTopY + 7;
-  const tilt = p.shoulderTilt * 2;
+  const headY = 13 + p.headOffY;
+  const headBottomY = headY + p.headR;
+  const neckBottomY = headBottomY + 3.5;
+  const shoulderHalf = p.shoulderW / 2;
+  const tilt = p.shoulderTilt * 1.6;
+  const baseY = h - 3;
+
+  /* Bust outline: a small dome-with-pedestal beneath the head.
+     Curves out from the neck to each shoulder, then down to a flat
+     base. Drawn as one closed path so the silhouette reads as a
+     single form, not a stick figure.                              */
+  const bustPath = `
+    M ${cx - 2.4} ${neckBottomY}
+    Q ${cx - 4.5} ${neckBottomY + 1.5} ${cx - shoulderHalf} ${neckBottomY + 4 + tilt}
+    L ${cx - shoulderHalf} ${baseY}
+    L ${cx + shoulderHalf} ${baseY}
+    L ${cx + shoulderHalf} ${neckBottomY + 4 - tilt}
+    Q ${cx + 4.5} ${neckBottomY + 1.5} ${cx + 2.4} ${neckBottomY}
+    Z
+  `;
+
   return (
     <svg width={w} height={h} className="block" aria-hidden>
-      {/* Head */}
+      {/* Bust pedestal */}
+      <path
+        d={bustPath}
+        fill="var(--color-paper-soft)"
+        stroke="var(--color-ink-soft)"
+        strokeWidth={0.85}
+        strokeLinejoin="round"
+        opacity={0.92}
+      />
+      {/* Head sitting atop the bust */}
       <circle
         cx={cx}
         cy={headY}
         r={p.headR}
-        fill="none"
-        stroke="var(--color-ink)"
-        strokeWidth={1.1}
-      />
-      {/* Neck */}
-      <line
-        x1={cx}
-        y1={neckTopY}
-        x2={cx}
-        y2={neckTopY + 4}
-        stroke="var(--color-ink)"
-        strokeWidth={1.1}
-      />
-      {/* Shoulders (slightly asymmetric per persona) */}
-      <line
-        x1={cx - p.shoulderW / 2}
-        y1={shoulderY + tilt}
-        x2={cx}
-        y2={neckTopY + 4}
-        stroke="var(--color-ink)"
-        strokeWidth={1.1}
-        strokeLinecap="round"
-      />
-      <line
-        x1={cx}
-        y1={neckTopY + 4}
-        x2={cx + p.shoulderW / 2}
-        y2={shoulderY - tilt}
-        stroke="var(--color-ink)"
-        strokeWidth={1.1}
-        strokeLinecap="round"
-      />
-      {/* Synthetic mark: small bracket near head (the 'bot' tag) */}
-      <line
-        x1={cx + p.headR + 3}
-        y1={headY - p.headR + 1}
-        x2={cx + p.headR + 5}
-        y2={headY - p.headR + 1}
-        stroke="var(--color-sky)"
-        strokeWidth={1}
-        opacity={0.85}
-      />
-      <line
-        x1={cx + p.headR + 5}
-        y1={headY - p.headR + 1}
-        x2={cx + p.headR + 5}
-        y2={headY - p.headR + 3}
-        stroke="var(--color-sky)"
-        strokeWidth={1}
-        opacity={0.85}
+        fill="var(--color-paper-soft)"
+        stroke="var(--color-ink-soft)"
+        strokeWidth={0.85}
       />
     </svg>
   );
@@ -363,14 +342,17 @@ export function HITVisual() {
         onMouseLeave={() => setPaused(false)}
       >
         {/* Top row: silhouette + meta */}
-        <div className="flex items-start gap-3 flex-1 min-h-0">
+        <div className="flex items-start gap-3.5 flex-1 min-h-0">
           <div
             key={`s-${idx}`}
             className="hit-fade shrink-0 flex flex-col items-center"
             style={{ animationDelay: "0ms" }}
           >
             <PersonaSilhouette p={p} />
-            <div className="font-mono text-[8px] tracking-[0.14em] text-[var(--color-muted)] mt-0.5">
+            <div
+              className="font-mono text-[7.5px] tracking-[0.18em] text-[var(--color-muted)] mt-1"
+              style={{ opacity: 0.85 }}
+            >
               {p.id}
             </div>
           </div>
@@ -378,7 +360,7 @@ export function HITVisual() {
           <div className="flex-1 min-w-0 flex flex-col justify-between h-full">
             <div
               key={`m-${idx}`}
-              className="font-mono text-[8.5px] tracking-[0.12em] text-[var(--color-muted)] leading-[1.5] hit-fade"
+              className="font-mono text-[8.5px] tracking-[0.14em] text-[var(--color-muted)] leading-[1.55] hit-fade"
               style={{ animationDelay: "40ms" }}
             >
               {p.meta}
@@ -388,21 +370,21 @@ export function HITVisual() {
               key={`q-${idx}`}
               dir="rtl"
               lang="he"
-              className="hit-fade text-[12.5px] leading-[1.45] text-[var(--color-ink)] mt-1.5"
+              className="hit-fade text-[12.5px] leading-[1.5] text-[var(--color-ink)] mt-1.5"
               style={{
                 fontFamily: "var(--font-hebrew), 'Frank Ruhl Libre', serif",
                 animationDelay: "100ms",
               }}
             >
-              <span className="text-[var(--color-sky-deep)] mr-0.5">“</span>
+              <span className="text-[var(--color-rule)] mr-0.5">“</span>
               {p.he}
-              <span className="text-[var(--color-sky-deep)] ml-0.5">”</span>
+              <span className="text-[var(--color-rule)] ml-0.5">”</span>
             </div>
           </div>
         </div>
 
         {/* Dot row */}
-        <div className="flex items-center gap-[6px] mt-1.5">
+        <div className="flex items-center gap-[7px] mt-2">
           {personas.map((_, i) => {
             const active = i === idx;
             return (
@@ -410,13 +392,14 @@ export function HITVisual() {
                 key={i}
                 aria-label={`Show persona ${i + 1}`}
                 onClick={() => setIdx(i)}
-                className="block rounded-full transition-all duration-300"
+                className="block rounded-full transition-all duration-500"
                 style={{
-                  width: active ? 14 : 4,
-                  height: 4,
+                  width: active ? 12 : 3,
+                  height: 3,
                   background: active
-                    ? "var(--color-sky)"
+                    ? "var(--color-sky-deep)"
                     : "var(--color-rule)",
+                  opacity: active ? 0.85 : 0.7,
                   cursor: "pointer",
                   padding: 0,
                   border: "none",
@@ -424,7 +407,7 @@ export function HITVisual() {
               />
             );
           })}
-          <span className="ml-auto font-mono text-[8px] tracking-[0.16em] text-[var(--color-muted)]">
+          <span className="ml-auto font-mono text-[7.5px] tracking-[0.2em] text-[var(--color-muted)]">
             {(idx + 1).toString().padStart(2, "0")} /{" "}
             {personas.length.toString().padStart(2, "0")}
           </span>
