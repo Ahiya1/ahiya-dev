@@ -13,7 +13,6 @@ type Project = {
   stack?: string;
   href?: string;
   hrefLabel?: string;
-  privateTag?: boolean;
   Visual?: React.ComponentType;
 };
 
@@ -46,8 +45,7 @@ const projects: Project[] = [
   {
     name: "SelahOS",
     meta: "Private · in development",
-    body: "A ground-first regulation system. Quiet, not yet public.",
-    privateTag: true,
+    body: "A personal instrument panel for the ground layer of life — the daily rhythm of sleep, food, medication, hygiene, movement. No coaching, no streaks, no nudging. In development.",
     Visual: SelahOSVisual,
   },
 ];
@@ -176,11 +174,6 @@ function ProjectCard({
         {project.href && (
           <span className="arrow font-mono text-base text-[var(--color-sky)]">
             ↗
-          </span>
-        )}
-        {project.privateTag && (
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-sky)] border border-[var(--color-sky)] rounded-full px-2.5 py-1 whitespace-nowrap">
-            Private
           </span>
         )}
       </div>
