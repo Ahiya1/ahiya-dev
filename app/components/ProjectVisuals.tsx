@@ -418,9 +418,15 @@ export function HITVisual() {
 }
 
 /* ─────────── 2L — Multi-Agent Pipeline ─────────── */
-/* Parallel-then-sequential rhythm across 5 phase lanes.
-   Time-driven: a single clock progresses; each dot computes its
-   own position from (delay, duration, stagger).                  */
+/* The real six-agent pipeline: explore → plan → build → integrate →
+   validate → heal. Two phases fan out (explorers and builders run in
+   parallel); the rest are single. Heal is conditional — it only runs
+   when validation fails, so it surfaces on roughly every third cycle.
+   Everything resolves to a quiet "commit spine" at the right edge,
+   where a ring blooms as each validated pass lands.
+
+   Time-driven: one clock progresses; each dot computes its own
+   position from (delay, duration, stagger).                         */
 
 type Lane = {
   name: string;
@@ -428,45 +434,99 @@ type Lane = {
   duration: number;
   delay: number;
   pulse?: boolean;
+  /* Surfaces only on some cycles (heal runs when validation fails). */
+  conditional?: boolean;
 };
 
 const lanes: Lane[] = [
-  { name: "EXPLORE", count: 3, duration: 1.6, delay: 0 },
-  { name: "PLAN", count: 1, duration: 1.0, delay: 1.7 },
-  { name: "BUILD", count: 3, duration: 1.8, delay: 2.8 },
-  { name: "VALIDATE", count: 1, duration: 1.2, delay: 4.7, pulse: true },
-  { name: "COMMIT", count: 1, duration: 0.7, delay: 6.0, pulse: true },
+  { name: "EXPLORE", count: 3, duration: 1.5, delay: 0 },
+  { name: "PLAN", count: 1, duration: 1.0, delay: 1.8 },
+  { name: "BUILD", count: 3, duration: 1.7, delay: 2.9 },
+  { name: "INTEGRATE", count: 1, duration: 1.1, delay: 5.0 },
+  { name: "VALIDATE", count: 1, duration: 1.1, delay: 6.3, pulse: true },
+  { name: "HEAL", count: 1, duration: 1.0, delay: 7.5, pulse: true, conditional: true },
 ];
 
-const cycleTotal = 7.6;
+const cycleTotal = 9.4;
+
+/* Heal surfaces on 1 of every HEAL_EVERY cycles. */
+const HEAL_EVERY = 3;
 
 const LANE_LEFT = 70;   /* x where dots start (after the label) */
-const LANE_RIGHT = 250; /* x where dots end (right edge) */
+const LANE_RIGHT = 246; /* x where dots converge (the commit spine) */
 
 export function TwoLVisual() {
   const [hoverLane, setHoverLane] = useState<number | null>(null);
   const [t, setT] = useState(0);
+  const [cycle, setCycle] = useState(0);
 
   useEffect(() => {
     let raf = 0;
     const start = performance.now();
     const tick = (now: number) => {
-      setT(((now - start) / 1000) % cycleTotal);
+      const elapsed = (now - start) / 1000;
+      setT(elapsed % cycleTotal);
+      setCycle(Math.floor(elapsed / cycleTotal));
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  const healing = cycle % HEAL_EVERY === HEAL_EVERY - 1;
+
+  /* Commit glow: a pulse lane's lead dot reaching the spine blooms
+     the ring, which then decays as the dot disperses. */
+  let commitGlow = 0;
+  for (const lane of lanes) {
+    if (!lane.pulse) continue;
+    if (lane.conditional && !healing) continue;
+    if (t >= lane.delay && t <= lane.delay + lane.duration) {
+      const p = (t - lane.delay) / lane.duration;
+      if (p > 0.8) commitGlow = Math.max(commitGlow, (p - 0.8) / 0.2);
+    }
+  }
+
   return (
-    <FrameBase ariaLabel="2L pipeline: parallel exploration converging through plan, build, validate, commit.">
-      <div className="absolute inset-0 flex flex-col justify-between py-1.5">
+    <FrameBase ariaLabel="2L pipeline: parallel explorers and builders converging through plan, integrate, validate, and heal toward a single committed result.">
+      {/* Commit spine — the point of arrival at the right edge. */}
+      <div
+        className="absolute pointer-events-none"
+        style={{
+          left: LANE_RIGHT,
+          top: 14,
+          bottom: 14,
+          width: 1,
+          background: "var(--color-rule)",
+          opacity: 0.4,
+        }}
+      />
+      {/* Commit ring — blooms as each validated pass lands. */}
+      <span
+        className="absolute rounded-full pointer-events-none"
+        style={{
+          left: LANE_RIGHT - 5,
+          top: "50%",
+          width: 10,
+          height: 10,
+          marginTop: -5,
+          border: "1px solid var(--color-sky)",
+          background: `color-mix(in srgb, var(--color-sky) ${commitGlow * 30}%, transparent)`,
+          opacity: 0.3 + commitGlow * 0.7,
+          transform: `scale(${1 + commitGlow * 0.7})`,
+          boxShadow: commitGlow > 0 ? `0 0 ${commitGlow * 8}px var(--color-sky)` : "none",
+          transition: "opacity 200ms ease",
+        }}
+      />
+
+      <div className="absolute inset-0 flex flex-col justify-between py-2">
         {lanes.map((lane, i) => {
           const isHover = hoverLane === i;
+          const dimmed = lane.conditional && !healing;
           return (
             <div
               key={lane.name}
-              className="relative h-[16px] flex items-center"
+              className="relative h-[14px] flex items-center"
               onMouseEnter={() => setHoverLane(i)}
               onMouseLeave={() => setHoverLane(null)}
             >
@@ -480,20 +540,20 @@ export function TwoLVisual() {
                   background: isHover
                     ? "var(--color-sky)"
                     : "var(--color-rule)",
-                  opacity: isHover ? 0.7 : 0.45,
+                  opacity: isHover ? 0.7 : dimmed ? 0.22 : 0.45,
                   transition: "background 250ms ease, opacity 250ms ease",
                 }}
               />
               {/* Lane label */}
               <div
-                className="absolute font-mono text-[8.5px] tracking-[0.14em] pointer-events-none"
+                className="absolute font-mono text-[8px] tracking-[0.14em] pointer-events-none"
                 style={{
                   left: 0,
-                  top: 1,
+                  top: 0,
                   color: isHover
                     ? "var(--color-ink)"
                     : "var(--color-muted)",
-                  opacity: isHover ? 1 : 0.6,
+                  opacity: isHover ? 1 : dimmed ? 0.32 : 0.6,
                   transition: "all 250ms ease",
                 }}
               >
@@ -502,6 +562,7 @@ export function TwoLVisual() {
 
               {/* Dots */}
               {Array.from({ length: lane.count }).map((_, dotI) => {
+                if (lane.conditional && !healing) return null;
                 const stagger = dotI * 0.18;
                 const start = lane.delay + stagger;
                 const end = start + lane.duration;
