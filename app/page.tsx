@@ -70,9 +70,8 @@ export default function Home() {
 
         <div className="lift lift-5 mt-12 space-y-5 text-[15.5px] leading-[1.75] text-[var(--color-ink-soft)] sm:text-base">
           <p>
-            I build practical AI tools and full-stack systems, end to end. I
-            founded <span className="text-[var(--color-ink)]">StatViz</span>, an
-            AI-augmented analysis platform serving academic institutions in
+            I founded <span className="text-[var(--color-ink)]">StatViz</span>,
+            an AI-augmented analysis platform serving academic institutions in
             Israel, Herzog College among them.
           </p>
           <p>
@@ -89,8 +88,7 @@ export default function Home() {
               Python · FastAPI · React · Docker · Supabase · OpenAI and
               Anthropic APIs
             </span>
-            . Comfortable in ambiguous problem spaces, where the shape of the
-            thing isn&rsquo;t decided yet.
+            .
           </p>
           <p className="pt-4">
             Open to full-time roles and contract work: applied AI, AI tooling,
