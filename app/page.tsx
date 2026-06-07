@@ -20,16 +20,16 @@ const projects: Project[] = [
   {
     name: "StatViz",
     meta: "Founder & Lead Engineer · 2025–present",
-    body: "AI-augmented statistical analysis for academic institutions in Israel. End-to-end ownership: client intake, data processing, automated report generation, and customer-facing delivery. Real clients including Herzog College.",
+    body: "AI-augmented statistical analysis for academic institutions in Israel. End-to-end ownership: client intake, data processing, automated report generation, and customer-facing delivery. Real clients, real reports, paid work.",
     stack: "Next.js · TypeScript · PostgreSQL / Prisma · Claude agent pipeline · Python · pandas / SciPy",
     href: "https://stat-viz.com",
     hrefLabel: "stat-viz.com",
     Visual: StatVizVisual,
   },
   {
-    name: "HIT — AI Persona Research",
+    name: "HIT · AI Persona Research",
     meta: "Consulting · 2025",
-    body: "A Hebrew NLP pipeline for an academic study of youth sport dropout in Israel, built at Holon Institute of Technology. Synthetic personas — each defined by demographic factors (age, ethnicity, region, sport, training schedule, dropout reason) — generate first-person Hebrew testimonials at scale, feeding a quantitative analysis of why Israeli teenagers leave organized sport. Built end-to-end: prompt engineering, generation, and output formatting for the research team's downstream pipeline.",
+    body: "A Hebrew NLP pipeline for an academic study of youth sport dropout in Israel, built at Holon Institute of Technology. Synthetic personas, each defined by demographic factors (age, ethnicity, region, sport, training schedule, dropout reason), generate first-person Hebrew testimonials at scale, feeding a quantitative analysis of why Israeli teenagers leave organized sport. Built end to end: prompt engineering, generation, and output formatting for the research team's downstream pipeline.",
     stack: "Python · Hebrew NLP · LLM APIs · persona design",
     Visual: HITVisual,
   },
@@ -45,7 +45,7 @@ const projects: Project[] = [
   {
     name: "SelahOS",
     meta: "Private · in development",
-    body: "A personal instrument panel for the ground layer of life — the daily rhythm of sleep, food, medication, hygiene, movement. No coaching, no streaks, no nudging. In development.",
+    body: "A personal instrument panel for the ground layer of life: the daily rhythm of sleep, food, medication, hygiene, movement. No coaching, no streaks, no nudging.",
     Visual: SelahOSVisual,
   },
 ];
@@ -58,44 +58,48 @@ export default function Home() {
         <p className="lift lift-1 font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
           ahiya.dev
         </p>
-        <h1 className="lift lift-2 mt-6 font-display text-5xl font-light leading-[1.05] tracking-tight text-[var(--color-ink)] sm:text-6xl">
+        <h1 className="lift lift-2 mt-6 font-display text-5xl font-normal leading-[1.05] tracking-tight text-[var(--color-ink)] sm:text-6xl">
           Ahiya Butman
         </h1>
-        <p className="lift lift-3 mt-4 font-display text-xl italic text-[var(--color-ink-soft)] sm:text-2xl">
-          AI Engineer &amp; Independent Builder
+        <p className="lift lift-3 mt-7 font-display text-[27px] font-light italic leading-[1.3] text-[var(--color-ink)] sm:text-[31px]">
+          Clearest at the seam between the work and the people it&rsquo;s for.
+        </p>
+        <p className="lift lift-4 mt-6 font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
+          AI Engineer · Founder · Independent Builder
         </p>
 
-        <div className="lift lift-4 mt-10 space-y-5 text-[15.5px] leading-[1.75] text-[var(--color-ink-soft)] sm:text-base">
+        <div className="lift lift-5 mt-12 space-y-5 text-[15.5px] leading-[1.75] text-[var(--color-ink-soft)] sm:text-base">
           <p>
-            I&rsquo;m an independent builder shipping practical AI tools and
-            full-stack systems out of Israel.
+            I build practical AI tools and full-stack systems, end to end. I
+            founded <span className="text-[var(--color-ink)]">StatViz</span>, an
+            AI-augmented analysis platform serving academic institutions in
+            Israel, Herzog College among them.
           </p>
           <p>
-            Day-to-day:{" "}
-            <span className="font-mono text-[13.5px] text-[var(--color-ink)]">
-              Python · FastAPI · React · Docker · MongoDB · Supabase · OpenAI
-              and Anthropic APIs
-            </span>
-            . Comfortable in ambiguous problem spaces, and clear at the seam
-            between technical work and the people it&rsquo;s for.
-          </p>
-          <p>
-            Background:{" "}
+            Before StatViz,{" "}
             <span className="text-[var(--color-ink)]">
-              BSc in Computer Science
-            </span>{" "}
-            (Open University of Israel, AI focus), and{" "}
-            <span className="text-[var(--color-ink)]">Software Engineer</span>{" "}
-            in Unit 8200.
+              software engineer in Unit 8200
+            </span>
+            , and a BSc in Computer Science, AI focus, from the Open University
+            of Israel.
           </p>
           <p>
-            Currently open to part-time and contract work in applied AI, AI
-            tooling, automation, backend, or research engineering.
+            Day to day:{" "}
+            <span className="font-mono text-[13.5px] text-[var(--color-ink)]">
+              Python · FastAPI · React · Docker · Supabase · OpenAI and
+              Anthropic APIs
+            </span>
+            . Comfortable in ambiguous problem spaces, where the shape of the
+            thing isn&rsquo;t decided yet.
+          </p>
+          <p className="pt-4">
+            Open to full-time roles and contract work: applied AI, AI tooling,
+            automation, backend, or research engineering.
           </p>
         </div>
       </section>
 
-      <div className="horizon lift lift-5 my-20" />
+      <div className="horizon my-24" />
 
       {/* Selected work */}
       <section>
@@ -110,14 +114,17 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="horizon my-20" />
+      <div className="horizon my-24" />
 
       {/* Contact */}
       <section>
         <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
           Contact
         </h2>
-        <ul className="mt-6 space-y-3 text-[15.5px] text-[var(--color-ink-soft)] sm:text-base">
+        <p className="mt-6 font-display text-[19px] italic leading-[1.4] text-[var(--color-ink)] sm:text-xl">
+          If the work is unclear but important, write.
+        </p>
+        <ul className="mt-7 space-y-3 text-[15.5px] text-[var(--color-ink-soft)] sm:text-base">
           <li>
             <a className="link" href="mailto:ahiya.butman@gmail.com">
               ahiya.butman@gmail.com
@@ -155,6 +162,7 @@ export default function Home() {
 
 function ProjectCard({
   project,
+  index,
 }: {
   project: Project;
   index: number;
@@ -198,14 +206,19 @@ function ProjectCard({
     </>
   );
 
-  const className = `card group block border-l-2 border-[var(--color-rule)] pl-6 transition-colors duration-300 ${
-    project.href ? "hover:border-[var(--color-sky)]" : ""
+  const className = `card group spine block pl-6 transition-colors duration-300 ${
+    project.href ? "spine-link" : ""
   }`;
+
+  const spineDelay = {
+    "--spine-delay": `${index * 1.6}s`,
+  } as React.CSSProperties;
 
   if (project.href) {
     return (
       <Link
         className={className}
+        style={spineDelay}
         href={project.href}
         target="_blank"
         rel="noreferrer"
@@ -215,5 +228,9 @@ function ProjectCard({
     );
   }
 
-  return <div className={className}>{inner}</div>;
+  return (
+    <div className={className} style={spineDelay}>
+      {inner}
+    </div>
+  );
 }

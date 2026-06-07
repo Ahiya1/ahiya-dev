@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #f5f1ea;
-  --color-paper-soft: #efeae0;
-  --color-ink: #1f1b16;
-  --color-ink-soft: #3a332d;
-  --color-muted: #7a736b;
-  --color-rule: #d4ccc0;
-  --color-sky: #5a7a8c;
-  --color-sky-deep: #3f5a6b;
+  --color-paper: #dcdbd5;
+  --color-paper-soft: #d4d2cc;
+  --color-ink: #131210;
+  --color-ink-soft: #29251f;
+  --color-muted: #6c685f;
+  --color-rule: #c2c0ba;
+  --color-sky: #4f6f80;
+  --color-sky-deep: #3a5566;
 
   --font-display: var(--font-fraunces);
   --font-sans: var(--font-inter);
@@ -83,6 +83,40 @@
   transform: translate(2px, -2px);
 }
 
+/* Project cards breathe through their spine — the left edge inhales
+   on a slow cycle, staggered per card so they never breathe in unison. */
+.spine {
+  position: relative;
+}
+
+.spine::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-rule);
+  opacity: 0.55;
+  animation: spine-breathe 8s ease-in-out infinite;
+  animation-delay: var(--spine-delay, 0s);
+  transition: background 300ms ease;
+}
+
+.spine-link:hover::before {
+  background: var(--color-sky);
+}
+
+@keyframes spine-breathe {
+  0%,
+  100% {
+    opacity: 0.28;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
 .horizon {
   height: 1px;
   background: linear-gradient(
@@ -93,7 +127,20 @@
     var(--color-rule) 80%,
     transparent 100%
   );
-  opacity: 0.6;
+  opacity: 0.55;
+  animation: breathe 7s ease-in-out infinite;
+}
+
+/* The rest breathes: a slow, sub-perceptual drift at the seam
+   between sections, where weight and breath are the same gesture. */
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.32;
+  }
+  50% {
+    opacity: 0.62;
+  }
 }
 
 /* ─── Project visualizations ─── */
@@ -125,5 +172,13 @@
   }
   .hit-fade {
     animation: none;
+  }
+  .horizon {
+    animation: none;
+    opacity: 0.55;
+  }
+  .spine::before {
+    animation: none;
+    opacity: 0.55;
   }
 }
