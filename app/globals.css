@@ -79,8 +79,89 @@
   transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* "the seam" — a load-bearing joint, not a decoration. The word stands
+   upright while the line leans in italic: the fixed post the sentence
+   rests on. A solid beam sets beneath it — weight landing, not a dainty
+   stitch — carried by a faint foundation line a beat below. Hover presses
+   the accent through and the beam thickens, taking more load. */
+.seam {
+  position: relative;
+  display: inline-block;
+  padding: 0 0.16em;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* The beam it bears the sentence on — solid and heavy, a real member. */
+.seam::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.08em;
+  height: 4px;
+  background: var(--color-ink);
+  opacity: 1;
+  transform-origin: center bottom;
+  animation: seam-set 650ms cubic-bezier(0.16, 1, 0.3, 1) 850ms both;
+  transition: background 300ms ease, height 250ms ease;
+}
+
+/* The foundation beneath the beam — depth, a thing to bear onto. */
+.seam::before {
+  content: "";
+  position: absolute;
+  left: 0.12em;
+  right: 0.12em;
+  bottom: -0.24em;
+  height: 1px;
+  background: var(--color-rule);
+  opacity: 0.6;
+}
+
+@keyframes seam-set {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.seam:hover::after {
+  background: var(--color-sky-deep);
+  height: 5px;
+}
+
 .card:hover .arrow {
   transform: translate(2px, -2px);
+}
+
+/* Attention quiets the rest. Hovering one card recedes the others —
+   opacity eases down, a hair of blur softens them — while the focused
+   card's spine turns green and keeps breathing. The unattended cards'
+   spines also still, so the whole field comes to rest around the one
+   thing being seen. */
+/* Attention shifts the light, not the geometry — the same way the spine
+   and the horizon breathe here. The card you're on holds full presence
+   while its spine turns green and keeps pulsing; that pulse is the breath.
+   The rest simply dim and go still: spines no longer breathing, visuals
+   frozen. Nothing moves. The field quiets around the one thing seen. */
+.card {
+  transition: opacity 650ms cubic-bezier(0.16, 1, 0.3, 1), color 300ms ease;
+}
+
+.card.is-focused::before {
+  background: var(--color-sky);
+}
+
+.card.is-quiet {
+  opacity: 0.36;
+}
+
+.card.is-quiet::before {
+  animation-play-state: paused;
 }
 
 /* Project cards breathe through their spine — the left edge inhales
@@ -180,5 +261,17 @@
   .spine::before {
     animation: none;
     opacity: 0.55;
+  }
+  /* The focus cue is a calm opacity shift — a useful aid, kept as-is. */
+  .card {
+    transition: opacity 200ms ease;
+  }
+  .card.is-quiet {
+    opacity: 0.5;
+  }
+  /* The seam beam is present, just not set in. */
+  .seam::after {
+    animation: none;
+    transform: none;
   }
 }

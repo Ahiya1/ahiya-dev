@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const W = 260;
 const H = 130;
@@ -28,7 +28,7 @@ function FrameBase({
 /* Real analysis: emotional burnout by seniority (Herzog College sample).
    One-way ANOVA across three tenure groups, n=50 each.            */
 
-export function StatVizVisual() {
+export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
   const bars = useMemo(
     () => [
       { label: "0–3", mean: 2.8, sd: 0.9, n: 50 },
@@ -42,10 +42,10 @@ export function StatVizVisual() {
   const [autoIdx, setAutoIdx] = useState(0);
 
   useEffect(() => {
-    if (hoverIdx !== null) return;
+    if (hoverIdx !== null || quiet) return;
     const id = setInterval(() => setAutoIdx((i) => (i + 1) % 3), 1800);
     return () => clearInterval(id);
-  }, [hoverIdx]);
+  }, [hoverIdx, quiet]);
 
   const activeIdx = hoverIdx ?? autoIdx;
 
@@ -317,18 +317,18 @@ function PersonaSilhouette({ p }: { p: Persona }) {
   );
 }
 
-export function HITVisual() {
+export function HITVisual({ quiet = false }: { quiet?: boolean }) {
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || quiet) return;
     const id = setInterval(
       () => setIdx((i) => (i + 1) % personas.length),
       4400
     );
     return () => clearInterval(id);
-  }, [paused]);
+  }, [paused, quiet]);
 
   const p = personas[idx];
 
@@ -455,23 +455,28 @@ const HEAL_EVERY = 3;
 const LANE_LEFT = 70;   /* x where dots start (after the label) */
 const LANE_RIGHT = 246; /* x where dots converge (the commit spine) */
 
-export function TwoLVisual() {
+export function TwoLVisual({ quiet = false }: { quiet?: boolean }) {
   const [hoverLane, setHoverLane] = useState<number | null>(null);
   const [t, setT] = useState(0);
   const [cycle, setCycle] = useState(0);
+  /* Total elapsed seconds, held across pauses so the pipeline resumes
+     mid-flight rather than restarting when attention returns. */
+  const elapsedRef = useRef(0);
 
   useEffect(() => {
+    if (quiet) return; // attention elsewhere: hold the pipeline still
     let raf = 0;
-    const start = performance.now();
+    const start = performance.now() - elapsedRef.current * 1000;
     const tick = (now: number) => {
       const elapsed = (now - start) / 1000;
+      elapsedRef.current = elapsed;
       setT(elapsed % cycleTotal);
       setCycle(Math.floor(elapsed / cycleTotal));
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [quiet]);
 
   const healing = cycle % HEAL_EVERY === HEAL_EVERY - 1;
 
@@ -639,25 +644,32 @@ const selahCycle = 7.4;
 
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
-export function SelahOSVisual() {
+export function SelahOSVisual({ quiet = false }: { quiet?: boolean }) {
   const [hover, setHover] = useState(false);
   const [t, setT] = useState(0);
+  const elapsedRef = useRef(0);
 
   useEffect(() => {
+    if (quiet) return; // held off-attention: the clock rests
     let raf = 0;
-    const start = performance.now();
+    const start = performance.now() - elapsedRef.current * 1000;
     const tick = (now: number) => {
-      setT(((now - start) / 1000) % selahCycle);
+      const elapsed = (now - start) / 1000;
+      elapsedRef.current = elapsed;
+      setT(elapsed % selahCycle);
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, []);
+  }, [quiet]);
+
+  /* Hover or attention-elsewhere both bring the dot home to ground. */
+  const settled = hover || quiet;
 
   /* Compute current displacement from center. */
   let dx = 0;
   let dy = 0;
-  if (!hover) {
+  if (!settled) {
     /* Find the most recent tug at or before t. */
     const active = [...selahPhases]
       .reverse()
@@ -734,7 +746,7 @@ export function SelahOSVisual() {
               boxShadow: hover
                 ? "0 0 0 3px color-mix(in srgb, var(--color-sky) 18%, transparent)"
                 : "none",
-              transition: hover
+              transition: settled
                 ? "left 900ms cubic-bezier(0.16,1,0.3,1), top 900ms cubic-bezier(0.16,1,0.3,1), box-shadow 600ms ease"
                 : "box-shadow 600ms ease",
             }}
