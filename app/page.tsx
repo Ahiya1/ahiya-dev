@@ -77,6 +77,11 @@ export default function Home() {
             </a>
           </li>
           <li>
+            <a className="link" href="tel:+972587789019">
+              058-778-9019
+            </a>
+          </li>
+          <li>
             <a
               className="link"
               href="https://www.linkedin.com/in/ahiya-butman-59b660165/"
