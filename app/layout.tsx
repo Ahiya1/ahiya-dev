@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import {
   Fraunces,
-  Frank_Ruhl_Libre,
+  Assistant,
   Inter,
   JetBrains_Mono,
 } from "next/font/google";
@@ -26,10 +26,10 @@ const jetbrains = JetBrains_Mono({
   display: "swap",
 });
 
-const frankRuhl = Frank_Ruhl_Libre({
+const assistant = Assistant({
   subsets: ["hebrew", "latin"],
-  variable: "--font-frank-ruhl",
-  weight: ["400", "500"],
+  variable: "--font-hebrew",
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -62,7 +62,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${inter.variable} ${jetbrains.variable} ${frankRuhl.variable}`}
+      className={`${fraunces.variable} ${inter.variable} ${jetbrains.variable} ${assistant.variable}`}
     >
       <body>{children}</body>
     </html>

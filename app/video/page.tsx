@@ -31,53 +31,53 @@ type TranslationKey =
 const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
   he: {
     backLink: "← לאתר הראשי",
-    title: "סרטוני סיום מרגשים שחוגגים את הסיפור שלכם",
-    subtitle: "סטודיו עריכה המשלב רגישות אומנותית וטכנולוגיה חכמה כדי להפוך מאות קבצים מפוזרים מההורים והשטח ליצירה קולנועית סוחפת — ללא טיפת מאמץ מצדכם.",
-    badge: "ליווי אומנותי והפקה קהילתית · קיץ 2026",
-    videoTitle: "סרטון לדוגמה: הרגעים שהופכים למשפחה",
-    videoCaption: "סרטון הדגמה (22 שניות) המציג תנועה אומנותית, מעברים רכים וכתוביות קולנועיות המשתלבות ברקע ללא פגיעה בחוויית הצפייה.",
-    sliderTitle: "איך אנחנו מעלים את החומרים שלכם לרמה של קולנוע?",
-    sliderBefore: "לפני (תמונת סלולר אנכית ומסך שחור בצדדים)",
-    sliderAfter: "אחרי (חוויית מקרן רחבה ועשירה במיוחד)",
-    sliderDesc: "בכל אירוע קהילתי, רוב החומרים שמגיעים מההורים ומהשטח צולמו לאורך בטלפונים הניידים. כשהם מוקרנים על מסך רחב באולם, הם מוקפים בשוליים שחורים וריקים שפוגעים בחגיגיות. העורכים שלנו מעבדים כל תמונה אנכית בעזרת כלי טשטוש אומנותיים המבוססים על גווני המקור, ומניחים את התמונה החדה במרכז בתוך מסגרת נקייה. התוצאה: מראה קולנועי עשיר שממלא את המסך כולו באווירה אחידה ויוקרתית.",
-    capabilitiesTitle: "הערך האומנותי וההפקתי שלנו",
-    cap1Title: "1. החייאה אומנותית של כל תמונה",
-    cap1Desc: "תמונות הסטילס הסטטיות שלכם לא סתם מופיעות על המסך. אנו מעניקים להן תנועת מצלמה עדינה, זום רך ושינויי זווית הדרגתיים שיוצרים זרימה של סרט תיעודי מקצועי ומאפשרים לקהל להתרכז בפנים המצולמות.",
-    cap2Title: "2. עיצוב פסקול קולנועי ואיזון דיבור דינמי",
-    cap2Desc: "סרט טוב נשען על סאונד מעולה. אנו מעצבים את פסקול הסרט כך שמוזיקת הרקע הולכת ונחלשת באופן טבעי בכל פעם שמישהו מדבר, מברך או צוחק, ומתחזקת בעוצמה מלאה ברגעי המעבר. הקהל לא יפסיד אף מילה או ברכה מרגשת.",
-    cap3Title: "3. בניית נרטיב וסידור כרונולוגי של השנה",
-    cap3Desc: "אתם שולחים לנו את תיקיות החומרים ללא סדר, ואנחנו דואגים לכל השאר. אנו מנתחים את זמני הצילום האמיתיים ומסדרים את התמונות והסרטונים באופן שיבנה סיפור מרתק — מההתחלה המהוססת של השנה, דרך החוויות המשותפות, ועד לרגע הפרידה המרגש.",
-    contactTitle: "בואו נעצב את רגע השיא של האירוע שלכם",
-    contactSub: "רוצים שקט נפשי ודמעות של התרגשות באולם?",
-    contactDesc: "הפקת סרט סיום מצריכה שבועות של איסוף, מיון ועריכה מתישה. אנחנו לוקחים את כל האחריות הזו מכם. אנו מנהלים את איסוף המדיה, מייעצים לגבי התסריט והמוזיקה, ומעניקים לכם מוצר מוגמר ומושלם שיגרום להורים ולתלמידים להרגיש גאווה אמיתית. צרו קשר עכשיו כדי לשריין תאריך לעריכה לקראת אירועי סוף הקיץ.",
-    contactEmail: "דוא\"ל:",
-    contactPhone: "טלפון:",
-    footerText: "אהיה בוטמן · הפקת וידאו קהילתית"
+    title: "סרט סיום שחוגג את הרגעים היפים שלהם ביחד",
+    subtitle: "אנחנו הופכים מאות תמונות וסרטונים מפוזרים מההורים, מהטיולים ומקבוצות הווטסאפ ליצירה קולנועית מרגשת שמחברת את כולם — בלי כאב הראש של המיון, התיאומים והעריכה.",
+    badge: "עריכה קולנועית וליווי הפקתי אישי · קיץ 2026",
+    videoTitle: "הצצה ליצירה: הרגעים שהופכים למשפחה",
+    videoCaption: "סרטון הדגמה (22 שניות) המציג עריכה קולנועית, תנועה אומנותית עדינה וכתוביות נקיות בגובה העיניים.",
+    sliderTitle: "איך אנחנו מעניקים לכל תמונה כבוד של קולנוע?",
+    sliderBefore: "לפני (תמונת סלולר אנכית שקוטעת את הרצף)",
+    sliderAfter: "אחרי (חוויה רחבה ומלאה שמכניסה לאווירה)",
+    sliderDesc: "בכל מסיבת סיום, רוב החומרים שמגיעים מההורים ומהשטח צולמו בנייד לאורך. כשהם מוקרנים באולם, השוליים השחורים הריקים פוגעים בחגיגיות ומכווצים את המסך. העורכים שלנו מעבדים כל תמונה אנכית בנפרד, מטשטשים את הרקע ברכות על בסיס צבעי המקור, וממסגרים את התמונה החדה במרכז. על המסך הגדול זה מרגיש כמו סרט קולנוע עשיר שממלא את העין.",
+    capabilitiesTitle: "למה בתי ספר ורכזים בוחרים לעבוד איתנו?",
+    cap1Title: "1. אתם רק שולחים את החומרים, אנחנו עושים את כל השאר",
+    cap1Desc: "איסוף ומיון של מאות תמונות מ-300 הורים ומורים זה סיוט. אנחנו מנהלים עבורכם את התהליך: שולחים קישור פשוט להעלאה, ממיינים, מסננים כפילויות, ומסדרים הכל כרונולוגית כדי לבנות את סיפור השנה בקלות ובשקט נפשי.",
+    cap2Title: "2. החייאה אומנותית של רגעי סטילס",
+    cap2Desc: "תמונות הסטילס לא סתם 'קופצות' על המסך. אנו מעניקים להן תנועת מצלמה עדינה, זום עדין ושינויי זווית הדרגתיים שיוצרים תחושה של סרט דוקומנטרי מקצועי ומאפשרים לקהל להישאב לתוך הרגע.",
+    cap3Title: "3. עיצוב פסקול קולנועי שנוגע בלב",
+    cap3Desc: "הסאונד הוא חצי מהחוויה. אנו מעצבים את פסקול הסרט עם מעברים מוזיקליים מדויקים שמלווים את הרגשות באולם, ומאזנים את העוצמות באופן דינמי כך שמוזיקת הרקע נחלשת בעדינות כשמישהו מדבר, ומתגברת ברגעי המעבר.",
+    contactTitle: "בואו ניצור את רגע השיא של האירוע שלכם",
+    contactSub: "רוצים להגיע לערב הסיום בראש שקט ובידיעה שהאולם יהיה מרותק?",
+    contactDesc: "הפקת סרט סיום מצריכה שבועות של עבודה מתישה. אנחנו מורידים את כל העול הזה מכם. נלווה אתכם בבחירת המוזיקה, נבנה נרטיב מרגש, ונעניק לכם מוצר מושלם שיגרום להורים, למורים ולתלמידים להרגיש גאווה אמיתית. צרו קשר עכשיו כדי לשריין תאריך לעריכה לקראת אירועי הקיץ.",
+    contactEmail: "כתבו לנו:",
+    contactPhone: "דברו איתנו:",
+    footerText: "אהיה בוטמן · עריכה וליווי אומנותי לאירועי קהילה"
   },
   en: {
     backLink: "← Back to home",
-    title: "Cinematic Graduation Videos That Celebrate Your Story",
-    subtitle: "An editing studio combining artistic sensitivity and cutting-edge technology to turn hundreds of scattered files from parents and staff into a sweeping cinematic masterpiece—with zero effort from your team.",
-    badge: "Artistic Direction & Community Production · Summer 2026",
+    title: "A Graduation Film That Celebrates Their Beautiful Moments Together",
+    subtitle: "We turn hundreds of scattered photos and videos from parents, trips, and WhatsApp groups into a moving cinematic masterpiece that connects everyone—without the headache of sorting, coordination, and editing.",
+    badge: "Cinematic Editing & Personal Production Support · Summer 2026",
     videoTitle: "Case Study Showcase: The Moments That Make a Family",
-    videoCaption: "A 22-second demonstration showcasing natural camera motions, soft transitions, and cinematic subtitles that blend cleanly into the frame.",
-    sliderTitle: "How We Elevate Your Raw Media to a Cinematic Level",
-    sliderBefore: "Before (Vertical phone photo with black bars)",
+    videoCaption: "A 22-second demonstration showcasing cinematic editing, natural camera motions, and clean subtitles that blend cleanly into the frame.",
+    sliderTitle: "How We Give Every Photo the Dignity of Cinema",
+    sliderBefore: "Before (Vertical phone photo breaking the flow)",
     sliderAfter: "After (Rich widescreen projection experience)",
-    sliderDesc: "At any community event, most media contributed by parents and counselors is shot vertically on mobile phones. When projected on a wide screen, these photos are usually boxed in by ugly black sidebars. Our studio processes each vertical photo using artistic background-blurring techniques tailored to the original image's palette, placing the sharp photo in the center with a crisp white border. The result is a unified, premium look that fills the entire screen.",
-    capabilitiesTitle: "Our Production & Artistic Value",
-    cap1Title: "1. Reviving Every Photo with Subtle Camera Motion",
-    cap1Desc: "Static still photos don't just sit on the screen. We breathe life into them with delicate camera moves—soft zooms and gradual pans—mimicking professional documentary direction to draw the audience into each face.",
-    cap2Title: "2. Cinematic Soundscapes & Intelligent Volume Balancing",
-    cap2Desc: "A great film relies on excellent sound. We design the audio so the background music automatically ducks to a gentle level whenever a participant speaks or laughs, and fades back to full volume between greetings. Your audience won't miss a single word.",
-    cap3Title: "3. Narrative Structuring & Chronological Timeline",
-    cap3Desc: "Send us your messy media folders, and we take care of the rest. We analyze capture metadata to reconstruct the year's chronological timeline, building a meaningful story arc—from the quiet first day of the cohort to the emotional graduation ceremony.",
+    sliderDesc: "At any graduation ceremony, most media contributed by parents and counselors is shot vertically on mobile phones. When projected on a wide screen, these photos are usually boxed in by ugly black sidebars, shrinking the screen. Our editors process each vertical photo individually, blurring the background softly based on the original image's palette, and framing the sharp photo in the center. On the big screen, it feels like a rich, unified film experience.",
+    capabilitiesTitle: "Why Schools and Coordinators Choose Us",
+    cap1Title: "1. You Just Send the Files, We Do Everything Else",
+    cap1Desc: "Gathering and sorting hundreds of photos from 300 parents and teachers is a nightmare. We manage the process for you: sending a simple upload link, sorting, filtering duplicates, and organizing everything chronologically to build the year's story with ease and peace of mind.",
+    cap2Title: "2. Reviving Static Still Photos with Delicate Motion",
+    cap2Desc: "Still photos don't just 'pop' onto the screen. We give them subtle camera movement—soft zooms and gradual angle changes—creating a professional documentary feel that draws the audience into the moment.",
+    cap3Title: "3. Cinematic Sound Design That Touches the Heart",
+    cap3Desc: "Sound is half the experience. We design the film soundtrack with precise musical transitions that match the room's emotions, and balance volumes dynamically so background music ducks when someone speaks and swells during transitions.",
     contactTitle: "Let's Design the Climax of Your Event",
-    contactSub: "Seeking peace of mind and tears of joy in the crowd?",
-    contactDesc: "Creating a ceremony video takes weeks of chaotic gathering, sorting, and editing. We take that entire burden off your shoulders. We manage media collection, consult on story structure, and deliver a polished film that instills deep community pride. Reach out today to secure your production slot for late summer.",
-    contactEmail: "Email:",
-    contactPhone: "Phone:",
-    footerText: "Ahiya Butman · Community Video Production"
+    contactSub: "Want to arrive at the graduation evening with peace of mind, knowing the room will be captivated?",
+    contactDesc: "Creating a graduation video takes weeks of exhausting work. We take that entire burden off your shoulders. We will guide you in choosing music, build an emotional narrative, and deliver a polished film that instills pride in parents, teachers, and students alike. Reach out today to secure your editing slot for the summer.",
+    contactEmail: "Write to us:",
+    contactPhone: "Call us:",
+    footerText: "Ahiya Butman · Editing & Artistic Support for Community Events"
   }
 };
 
@@ -158,7 +158,7 @@ export default function VideoPortfolio() {
           {/* BEFORE: Raw vertical photo on black */}
           <div className="absolute inset-0 bg-[#0d0c0a] flex items-center justify-center">
             <img 
-              src="https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=800" 
+              src="/showcase_p7.jpg" 
               alt="Raw vertical photo" 
               className="h-[90%] w-auto object-contain"
             />
@@ -175,12 +175,12 @@ export default function VideoPortfolio() {
             {/* Blurred scaled background */}
             <div 
               className="absolute inset-0 bg-cover bg-center filter blur-xl scale-110 opacity-75"
-              style={{ backgroundImage: `url('https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=800')` }}
+              style={{ backgroundImage: "url('/showcase_p7.jpg')" }}
             />
             {/* Clean foreground photo with border */}
             <div className="absolute inset-0 flex items-center justify-center">
               <img 
-                src="https://images.unsplash.com/photo-1544717305-2782549b5136?q=80&w=800" 
+                src="/showcase_p7.jpg" 
                 alt="Widescreen layout" 
                 className="h-[90%] w-auto object-contain border-4 border-white shadow-xl"
               />
@@ -224,7 +224,7 @@ export default function VideoPortfolio() {
           {t.capabilitiesTitle}
         </h2>
         
-        <div className="mt-8 space-y-8 text-[15px] leading-[1.7] text-[var(--color-ink-soft)]">
+        <div className="mt-8 space-y-8 text-[15px] leading-[1.7] text-[var(--color-ink-soft)] font-sans">
           <div>
             <h3 className="font-display text-lg font-medium text-[var(--color-ink)]">
               {t.cap1Title}
@@ -285,4 +285,3 @@ export default function VideoPortfolio() {
     </main>
   );
 }
-
