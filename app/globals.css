@@ -174,7 +174,6 @@
 .spine::before {
   content: "";
   position: absolute;
-  left: 0;
   top: 0;
   bottom: 0;
   width: 2px;
@@ -183,6 +182,16 @@
   animation: spine-breathe 8s ease-in-out infinite;
   animation-delay: var(--spine-delay, 0s);
   transition: background 300ms ease;
+}
+
+[dir="rtl"] .spine::before {
+  right: 0;
+  left: auto;
+}
+
+[dir="ltr"] .spine::before {
+  left: 0;
+  right: auto;
 }
 
 .spine-link:hover::before {

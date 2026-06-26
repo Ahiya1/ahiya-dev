@@ -9,7 +9,10 @@ type TranslationKey =
   | "subtitle"
   | "badge"
   | "videoTitle"
+  | "tabCeremony"
+  | "tabReels"
   | "videoCaption"
+  | "reelsCaption"
   | "sliderTitle"
   | "sliderBefore"
   | "sliderAfter"
@@ -34,8 +37,11 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     title: "סרט סיום שחוגג את הרגעים היפים שלהם ביחד",
     subtitle: "אנחנו הופכים מאות תמונות וסרטונים מפוזרים מההורים, מהטיולים ומקבוצות הווטסאפ ליצירה קולנועית מרגשת שמחברת את כולם — בלי כאב הראש של המיון, התיאומים והעריכה.",
     badge: "עריכה קולנועית וליווי הפקתי אישי · קיץ 2026",
-    videoTitle: "הצצה ליצירה: הרגעים שהופכים למשפחה",
-    videoCaption: "סרטון הדגמה (22 שניות) המציג עריכה קולנועית, תנועה אומנותית עדינה וכתוביות נקיות בגובה העיניים.",
+    videoTitle: "הדגמות וידאו קהילתיות",
+    tabCeremony: "סרטון טקס קלאסי (16:9)",
+    tabReels: "קליפ שטח קצבי (9:16)",
+    videoCaption: "סרטון הדגמה (22 שניות) המציג עריכה קולנועית, תנועה אומנותית עדינה וכתוביות בגובה העיניים התואמות את הרגעים בתמונה.",
+    reelsCaption: "קליפ שטח אנכי (12 שניות) המציג מעברים קצביים, מוזיקה סוחפת וכתוביות בסגנון Reels.",
     sliderTitle: "איך אנחנו מעניקים לכל תמונה כבוד של קולנוע?",
     sliderBefore: "לפני (תמונת סלולר אנכית שקוטעת את הרצף)",
     sliderAfter: "אחרי (חוויה רחבה ומלאה שמכניסה לאווירה)",
@@ -52,15 +58,18 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     contactDesc: "הפקת סרט סיום מצריכה שבועות של עבודה מתישה. אנחנו מורידים את כל העול הזה מכם. נלווה אתכם בבחירת המוזיקה, נבנה נרטיב מרגש, ונעניק לכם מוצר מושלם שיגרום להורים, למורים ולתלמידים להרגיש גאווה אמיתית. צרו קשר עכשיו כדי לשריין תאריך לעריכה לקראת אירועי הקיץ.",
     contactEmail: "כתבו לנו:",
     contactPhone: "דברו איתנו:",
-    footerText: "אהיה בוטמן · עריכה וליווי אומנותי לאירועי קהילה"
+    footerText: "אחיה בוטמן · עריכה וליווי אומנותי לאירועי קהילה"
   },
   en: {
     backLink: "← Back to home",
     title: "A Graduation Film That Celebrates Their Beautiful Moments Together",
     subtitle: "We turn hundreds of scattered photos and videos from parents, trips, and WhatsApp groups into a moving cinematic masterpiece that connects everyone—without the headache of sorting, coordination, and editing.",
     badge: "Cinematic Editing & Personal Production Support · Summer 2026",
-    videoTitle: "Case Study Showcase: The Moments That Make a Family",
-    videoCaption: "A 22-second demonstration showcasing cinematic editing, natural camera motions, and clean subtitles that blend cleanly into the frame.",
+    videoTitle: "Community Video Demonstrations",
+    tabCeremony: "Classic Ceremony Film (16:9)",
+    tabReels: "Dynamic Reels Clip (9:16)",
+    videoCaption: "A 22-second demonstration showcasing cinematic editing, natural camera motions, and clean subtitles that match the moments in the photos.",
+    reelsCaption: "A 12-second vertical reels clip showcasing dynamic cuts, upbeat climax, and centered caption styling.",
     sliderTitle: "How We Give Every Photo the Dignity of Cinema",
     sliderBefore: "Before (Vertical phone photo breaking the flow)",
     sliderAfter: "After (Rich widescreen projection experience)",
@@ -84,6 +93,7 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
 export default function VideoPortfolio() {
   const [lang, setLang] = useState<"he" | "en">("he");
   const [sliderPos, setSliderPos] = useState(50);
+  const [activeDemo, setActiveDemo] = useState<"ceremony" | "reels">("ceremony");
 
   const t = translations[lang];
   const isHebrew = lang === "he";
@@ -134,15 +144,49 @@ export default function VideoPortfolio() {
         <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-muted)] mb-4">
           {t.videoTitle}
         </h2>
-        <div className="relative w-full aspect-video overflow-hidden rounded-lg border border-[var(--color-rule)] bg-[var(--color-paper-soft)] shadow-sm">
-          <video
-            src="/showcase_ceremony.mp4"
-            controls
-            className="w-full h-full object-cover"
-          />
+        
+        {/* Interactive Tabs */}
+        <div className="flex gap-2 mb-6 border-b border-[var(--color-rule)] pb-px font-mono text-xs tracking-wider select-none">
+          <button
+            onClick={() => setActiveDemo("ceremony")}
+            className={`pb-2 px-1 cursor-pointer transition-all duration-300 border-b-2 -mb-px ${
+              activeDemo === "ceremony" 
+                ? "border-[var(--color-sky-deep)] text-[var(--color-ink)] font-medium" 
+                : "border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)]"
+            }`}
+          >
+            {t.tabCeremony}
+          </button>
+          <button
+            onClick={() => setActiveDemo("reels")}
+            className={`pb-2 px-1 cursor-pointer transition-all duration-300 border-b-2 -mb-px ${
+              activeDemo === "reels" 
+                ? "border-[var(--color-sky-deep)] text-[var(--color-ink)] font-medium" 
+                : "border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)]"
+            }`}
+          >
+            {t.tabReels}
+          </button>
         </div>
-        <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.1em] text-center text-[var(--color-muted)]">
-          {t.videoCaption}
+
+        {/* Video Frame */}
+        <div className="transition-all duration-500 ease-in-out">
+          <div className={`relative overflow-hidden rounded-lg border border-[var(--color-rule)] bg-[var(--color-paper-soft)] shadow-sm transition-all duration-500 ease-in-out ${
+            activeDemo === "ceremony" 
+              ? "w-full aspect-video" 
+              : "w-full max-w-[290px] aspect-[9/16] mx-auto"
+          }`}>
+            <video
+              key={activeDemo} // Force video element recreate on source change
+              src={activeDemo === "ceremony" ? "/showcase_ceremony.mp4" : "/showcase_reels.mp4"}
+              controls
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+        
+        <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.1em] text-center text-[var(--color-muted)]">
+          {activeDemo === "ceremony" ? t.videoCaption : t.reelsCaption}
         </p>
       </section>
 
