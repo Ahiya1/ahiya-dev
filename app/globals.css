@@ -10,9 +10,9 @@
   --color-sky: #357a42;
   --color-sky-deep: #1f5630;
 
-  --font-display: var(--font-fraunces);
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-jetbrains);
+  --font-display: var(--font-fraunces), var(--font-hebrew), var(--font-sans), sans-serif;
+  --font-sans: var(--font-inter), var(--font-hebrew), sans-serif;
+  --font-mono: var(--font-jetbrains), var(--font-hebrew), monospace;
   --font-hebrew: var(--font-hebrew);
 }
 

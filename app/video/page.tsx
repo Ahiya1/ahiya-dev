@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 type TranslationKey = 
@@ -14,9 +14,20 @@ type TranslationKey =
   | "videoCaption"
   | "reelsCaption"
   | "sliderTitle"
+  | "sliderTab1"
+  | "sliderTab2"
   | "sliderBefore"
   | "sliderAfter"
   | "sliderDesc"
+  | "audioTitle"
+  | "audioDesc"
+  | "audioPlay"
+  | "audioPause"
+  | "audioModeStandard"
+  | "audioModeCinematic"
+  | "audioStatusMusicOnly"
+  | "audioStatusVoiceDrowned"
+  | "audioStatusVoiceClear"
   | "capabilitiesTitle"
   | "cap1Title"
   | "cap1Desc"
@@ -42,10 +53,21 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     tabReels: "קליפ שטח קצבי (9:16)",
     videoCaption: "סרטון הדגמה (22 שניות) המציג עריכה קולנועית, תנועה אומנותית עדינה וכתוביות בגובה העיניים התואמות את הרגעים בתמונה.",
     reelsCaption: "קליפ שטח אנכי (12 שניות) המציג מעברים קצביים, מוזיקה סוחפת וכתוביות בסגנון Reels.",
-    sliderTitle: "איך אנחנו מעניקים לכל תמונה כבוד של קולנוע?",
-    sliderBefore: "לפני (תמונת סלולר אנכית שקוטעת את הרצף)",
-    sliderAfter: "אחרי (חוויה רחבה ומלאה שמכניסה לאווירה)",
-    sliderDesc: "בכל מסיבת סיום, רוב החומרים שמגיעים מההורים ומהשטח צולמו בנייד לאורך. כשהם מוקרנים באולם, השוליים השחורים הריקים פוגעים בחגיגיות ומכווצים את המסך. העורכים שלנו מעבדים כל תמונה אנכית בנפרד, מטשטשים את הרקע ברכות על בסיס צבעי המקור, וממסגרים את התמונה החדה במרכז. על המסך הגדול זה מרגיש כמו סרט קולנוע עשיר שממלא את העין.",
+    sliderTitle: "איך אנחנו משדרגים את חומרי הגלם?",
+    sliderTab1: "טשטוש רקע (תמונות לגובה)",
+    sliderTab2: "תיקון צבעים ותאורה (צילום סלולר)",
+    sliderBefore: "לפני (תמונה גולמית מההורים)",
+    sliderAfter: "אחרי (העיבוד הקולנועי שלנו)",
+    sliderDesc: "בכל מסיבת סיום, רוב החומרים שמגיעים מהשטח צולמו בנייד. תמונות לאורך יוצרות שוליים שחורים ריקים על המקרן באולם, ותמונות כיתה רבות צולמו בתאורה חלשה או צהובה. אנו מטפלים בכל פריים בנפרד: מטשטשים רקע לתמונות אנכיות ברכות על בסיס צבעי המקור, ומבצעים תיקון צבעים ואיזון תאורה (Color Grading) כדי להעניק לתמונות הפשוטות חמימות קולנועית עשירה.",
+    audioTitle: "סימולציה: הדמיית עריכת סאונד קולנועית",
+    audioDesc: "בסרטון ללא עריכה מקצועית, מוזיקת הרקע נשארת בעוצמה גבוהה ומקשה לשמוע את קולות הילדים המברכים. בעיצוב הפסקול שלנו, אנו מבצעים הנמכה דינמית עדינה (Audio Ducking) של המוזיקה בכל פעם שמישהו מדבר, ומחזירים אותה לעוצמה מלאה ברגעי המעבר. הפעילו את הסימולציה והשוו:",
+    audioPlay: "הפעל סימולציה",
+    audioPause: "השהה סימולציה",
+    audioModeStandard: "סאונד גולמי (ללא הנמכת מוזיקה)",
+    audioModeCinematic: "סאונד קולנועי (הנמכה דינמית)",
+    audioStatusMusicOnly: "רק מוזיקה מתנגנת בעוצמה מלאה...",
+    audioStatusVoiceDrowned: "הילד מדבר – אך קולו נבלע בגלל מוזיקה רועשת!",
+    audioStatusVoiceClear: "הילד מדבר – המוזיקה נחלשת אוטומטית והדיבור נשמע צלול לחלוטין.",
     capabilitiesTitle: "למה בתי ספר ורכזים בוחרים לעבוד איתנו?",
     cap1Title: "1. אתם רק שולחים את החומרים, אנחנו עושים את כל השאר",
     cap1Desc: "איסוף ומיון של מאות תמונות מ-300 הורים ומורים זה סיוט. אנחנו מנהלים עבורכם את התהליך: שולחים קישור פשוט להעלאה, ממיינים, מסננים כפילויות, ומסדרים הכל כרונולוגית כדי לבנות את סיפור השנה בקלות ובשקט נפשי.",
@@ -70,10 +92,21 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     tabReels: "Dynamic Reels Clip (9:16)",
     videoCaption: "A 22-second demonstration showcasing cinematic editing, natural camera motions, and clean subtitles that match the moments in the photos.",
     reelsCaption: "A 12-second vertical reels clip showcasing dynamic cuts, upbeat climax, and centered caption styling.",
-    sliderTitle: "How We Give Every Photo the Dignity of Cinema",
-    sliderBefore: "Before (Vertical phone photo breaking the flow)",
-    sliderAfter: "After (Rich widescreen projection experience)",
-    sliderDesc: "At any graduation ceremony, most media contributed by parents and counselors is shot vertically on mobile phones. When projected on a wide screen, these photos are usually boxed in by ugly black sidebars, shrinking the screen. Our editors process each vertical photo individually, blurring the background softly based on the original image's palette, and framing the sharp photo in the center. On the big screen, it feels like a rich, unified film experience.",
+    sliderTitle: "How We Upgrade Raw Media?",
+    sliderTab1: "Widescreen Blur (Vertical Photos)",
+    sliderTab2: "Color Grading & Lighting (Mobile Photos)",
+    sliderBefore: "Before (Raw photo from parents)",
+    sliderAfter: "After (Our cinematic editing)",
+    sliderDesc: "At any ceremony, most media is shot on mobile phones. Vertical photos create empty black sidebars on the projector, and classroom photos are often low-light or yellow-tinted. We process each frame individually: dynamically blurring backgrounds for vertical photos using the image's original palette, and applying color grading to inject warmth and a cinematic texture.",
+    audioTitle: "Simulation: Cinematic Sound Design",
+    audioDesc: "In an unedited video, background music plays at full volume, making it hard to hear students speak. In our sound design, we dynamically duck the music whenever a voice begins, and restore it to full volume during transitions. Start the simulation and compare:",
+    audioPlay: "Start Simulation",
+    audioPause: "Pause",
+    audioModeStandard: "Raw Audio (No Ducking)",
+    audioModeCinematic: "Cinematic Audio (Dynamic Ducking)",
+    audioStatusMusicOnly: "Background music playing at full volume...",
+    audioStatusVoiceDrowned: "Student speaking – but drowned out by loud music!",
+    audioStatusVoiceClear: "Student speaking – music ducks automatically, speech is crystal clear.",
     capabilitiesTitle: "Why Schools and Coordinators Choose Us",
     cap1Title: "1. You Just Send the Files, We Do Everything Else",
     cap1Desc: "Gathering and sorting hundreds of photos from 300 parents and teachers is a nightmare. We manage the process for you: sending a simple upload link, sorting, filtering duplicates, and organizing everything chronologically to build the year's story with ease and peace of mind.",
@@ -93,13 +126,70 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
 export default function VideoPortfolio() {
   const [lang, setLang] = useState<"he" | "en">("he");
   const [sliderPos, setSliderPos] = useState(50);
+  const [sliderFeature, setSliderFeature] = useState<"blur" | "color">("blur");
   const [activeDemo, setActiveDemo] = useState<"ceremony" | "reels">("ceremony");
+
+  // Audio simulation state
+  const [audioPlaying, setAudioPlaying] = useState(false);
+  const [audioDucking, setAudioDucking] = useState(true);
+  const [audioTime, setAudioTime] = useState(0);
 
   const t = translations[lang];
   const isHebrew = lang === "he";
 
+  // Simulate audio playback timeline (0s to 6s loop)
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (audioPlaying) {
+      interval = setInterval(() => {
+        setAudioTime((prevTime) => (prevTime >= 5.9 ? 0 : Number((prevTime + 0.1).toFixed(1))));
+      }, 100);
+    } else {
+      setAudioTime(0);
+    }
+    return () => clearInterval(interval);
+  }, [audioPlaying]);
+
   const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSliderPos(Number(e.target.value));
+  };
+
+  // Determine current audio phase based on simulated time
+  // 0s - 1.8s: Music Only
+  // 1.8s - 4.2s: Voice Speaking
+  // 4.2s - 6s: Music Only
+  const isVoiceSpeaking = audioTime >= 1.8 && audioTime <= 4.2;
+
+  // Waveform heights calculation (pure CSS animation drivers)
+  const getMusicBarHeight = (baseIndex: number) => {
+    if (!audioPlaying) return "12px";
+    
+    // Base wave motion
+    const timeFactor = Math.sin(audioTime * 4 + baseIndex) * 15 + 30;
+    
+    if (isVoiceSpeaking) {
+      if (audioDucking) {
+        // Ducked state: small amplitude
+        return `${Math.max(4, Math.sin(audioTime * 10 + baseIndex) * 3 + 8)}px`;
+      } else {
+        // Unducked state: music stays loud
+        return `${timeFactor}px`;
+      }
+    }
+    return `${timeFactor}px`;
+  };
+
+  const getVoiceBarHeight = (baseIndex: number) => {
+    if (!audioPlaying || !isVoiceSpeaking) return "3px";
+    // Animated active voice waveform
+    return `${Math.sin(audioTime * 12 + baseIndex) * 20 + 35}px`;
+  };
+
+  // Get status message based on current audio simulation state
+  const getAudioStatusText = () => {
+    if (!audioPlaying) return "";
+    if (!isVoiceSpeaking) return t.audioStatusMusicOnly;
+    return audioDucking ? t.audioStatusVoiceClear : t.audioStatusVoiceDrowned;
   };
 
   return (
@@ -145,7 +235,7 @@ export default function VideoPortfolio() {
           {t.videoTitle}
         </h2>
         
-        {/* Interactive Tabs */}
+        {/* Interactive Video Tabs */}
         <div className="flex gap-2 mb-6 border-b border-[var(--color-rule)] pb-px font-mono text-xs tracking-wider select-none">
           <button
             onClick={() => setActiveDemo("ceremony")}
@@ -177,7 +267,7 @@ export default function VideoPortfolio() {
               : "w-full max-w-[290px] aspect-[9/16] mx-auto"
           }`}>
             <video
-              key={activeDemo} // Force video element recreate on source change
+              key={activeDemo}
               src={activeDemo === "ceremony" ? "/showcase_ceremony.mp4" : "/showcase_reels.mp4"}
               controls
               className="w-full h-full object-cover"
@@ -194,45 +284,107 @@ export default function VideoPortfolio() {
 
       {/* Interactive Before & After Slider */}
       <section className="lift lift-6">
-        <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-muted)] mb-6">
+        <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-muted)] mb-4">
           {t.sliderTitle}
         </h2>
+
+        {/* Feature Tabs for Slider */}
+        <div className="flex gap-2 mb-6 border-b border-[var(--color-rule)] pb-px font-mono text-[11px] tracking-wider select-none">
+          <button
+            onClick={() => setSliderFeature("blur")}
+            className={`pb-2 px-1 cursor-pointer transition-all duration-300 border-b-2 -mb-px ${
+              sliderFeature === "blur" 
+                ? "border-[var(--color-sky-deep)] text-[var(--color-ink)] font-medium" 
+                : "border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)]"
+            }`}
+          >
+            {t.sliderTab1}
+          </button>
+          <button
+            onClick={() => setSliderFeature("color")}
+            className={`pb-2 px-1 cursor-pointer transition-all duration-300 border-b-2 -mb-px ${
+              sliderFeature === "color" 
+                ? "border-[var(--color-sky-deep)] text-[var(--color-ink)] font-medium" 
+                : "border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)]"
+            }`}
+          >
+            {t.sliderTab2}
+          </button>
+        </div>
         
         <div className="relative w-full aspect-video overflow-hidden rounded-lg border border-[var(--color-rule)] select-none">
-          {/* BEFORE: Raw vertical photo on black */}
-          <div className="absolute inset-0 bg-[#0d0c0a] flex items-center justify-center">
-            <img 
-              src="/showcase_p7.jpg" 
-              alt="Raw vertical photo" 
-              className="h-[90%] w-auto object-contain"
-            />
-            <div className={`absolute top-4 ${isHebrew ? "right-4" : "left-4"} bg-black/70 text-white font-mono text-[9px] tracking-[0.1em] px-2 py-0.5 rounded`}>
-              {t.sliderBefore}
-            </div>
-          </div>
-          
-          {/* AFTER: Processed widescreen with blurred background (clipped) */}
-          <div 
-            className="absolute inset-0 overflow-hidden"
-            style={{ clipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)` }}
-          >
-            {/* Blurred scaled background */}
-            <div 
-              className="absolute inset-0 bg-cover bg-center filter blur-xl scale-110 opacity-75"
-              style={{ backgroundImage: "url('/showcase_p7.jpg')" }}
-            />
-            {/* Clean foreground photo with border */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <img 
-                src="/showcase_p7.jpg" 
-                alt="Widescreen layout" 
-                className="h-[90%] w-auto object-contain border-4 border-white shadow-xl"
-              />
-            </div>
-            <div className={`absolute top-4 ${isHebrew ? "left-4" : "right-4"} bg-[var(--color-sky-deep)] text-white font-mono text-[9px] tracking-[0.1em] px-2 py-0.5 rounded`}>
-              {t.sliderAfter}
-            </div>
-          </div>
+          {/* FEATURE 1: BLUR PREVIEW */}
+          {sliderFeature === "blur" && (
+            <>
+              {/* BEFORE: Raw vertical photo on black */}
+              <div className="absolute inset-0 bg-[#0d0c0a] flex items-center justify-center">
+                <img 
+                  src="/showcase_p7.jpg" 
+                  alt="Raw vertical photo" 
+                  className="h-[90%] w-auto object-contain"
+                />
+                <div className={`absolute top-4 ${isHebrew ? "right-4" : "left-4"} bg-black/70 text-white font-mono text-[9px] tracking-[0.1em] px-2 py-0.5 rounded`}>
+                  {t.sliderBefore}
+                </div>
+              </div>
+              
+              {/* AFTER: Processed widescreen with blurred background (clipped) */}
+              <div 
+                className="absolute inset-0 overflow-hidden"
+                style={{ clipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)` }}
+              >
+                {/* Blurred scaled background */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center filter blur-xl scale-110 opacity-75"
+                  style={{ backgroundImage: "url('/showcase_p7.jpg')" }}
+                />
+                {/* Clean foreground photo with border */}
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <img 
+                    src="/showcase_p7.jpg" 
+                    alt="Widescreen layout" 
+                    className="h-[90%] w-auto object-contain border-4 border-white shadow-xl"
+                  />
+                </div>
+                <div className={`absolute top-4 ${isHebrew ? "left-4" : "right-4"} bg-[var(--color-sky-deep)] text-white font-mono text-[9px] tracking-[0.1em] px-2 py-0.5 rounded`}>
+                  {t.sliderAfter}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* FEATURE 2: COLOR GRADING PREVIEW */}
+          {sliderFeature === "color" && (
+            <>
+              {/* BEFORE: Low-quality green-yellow phone photo */}
+              <div className="absolute inset-0 flex items-center justify-center bg-[#0d0c0a]">
+                <img 
+                  src="/showcase_p2.jpg" 
+                  alt="Raw photo" 
+                  className="w-full h-full object-cover"
+                  style={{ filter: "brightness(0.62) contrast(0.85) sepia(0.3) saturate(0.65) hue-rotate(15deg)" }}
+                />
+                <div className={`absolute top-4 ${isHebrew ? "right-4" : "left-4"} bg-black/70 text-white font-mono text-[9px] tracking-[0.1em] px-2 py-0.5 rounded`}>
+                  {t.sliderBefore}
+                </div>
+              </div>
+              
+              {/* AFTER: Beautiful cinematic color grading (clipped) */}
+              <div 
+                className="absolute inset-0 overflow-hidden"
+                style={{ clipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)` }}
+              >
+                <img 
+                  src="/showcase_p2.jpg" 
+                  alt="Color graded photo" 
+                  className="w-full h-full object-cover"
+                />
+                <div className={`absolute top-4 ${isHebrew ? "left-4" : "right-4"} bg-[var(--color-sky-deep)] text-white font-mono text-[9px] tracking-[0.1em] px-2 py-0.5 rounded`}>
+                  {t.sliderAfter}
+                </div>
+              </div>
+            </>
+          )}
           
           {/* Drag slider handle */}
           <div 
@@ -255,9 +407,101 @@ export default function VideoPortfolio() {
           />
         </div>
         
-        <p className="mt-4 text-[14.5px] leading-[1.65] text-[var(--color-ink-soft)]">
+        <p className="mt-4 text-[14.5px] leading-[1.65] text-[var(--color-ink-soft)] font-sans">
           {t.sliderDesc}
         </p>
+      </section>
+
+      <div className="horizon my-16" />
+
+      {/* Interactive Audio Curation Demo */}
+      <section className="lift lift-6 bg-[var(--color-paper-soft)] p-6 rounded-lg border border-[var(--color-rule)]">
+        <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-muted)] mb-3">
+          {t.audioTitle}
+        </h2>
+        <p className="text-[14.5px] leading-[1.65] text-[var(--color-ink-soft)] font-sans mb-6">
+          {t.audioDesc}
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-6 items-center">
+          {/* Left: Controls */}
+          <div className="flex flex-col gap-4 w-full sm:w-auto min-w-[200px]">
+            <button
+              onClick={() => setAudioPlaying(!audioPlaying)}
+              className={`w-full py-3 px-6 rounded font-mono text-xs uppercase tracking-wider cursor-pointer text-center transition-all duration-300 ${
+                audioPlaying 
+                  ? "bg-[var(--color-muted)] text-[var(--color-paper)]" 
+                  : "bg-[var(--color-sky-deep)] text-white hover:bg-[var(--color-sky)] shadow-sm"
+              }`}
+            >
+              {audioPlaying ? t.audioPause : t.audioPlay}
+            </button>
+
+            {/* Simulated Audio Mode Selector */}
+            <div className="flex flex-col gap-2 font-mono text-[11px] uppercase tracking-wider text-[var(--color-muted)]">
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="radio"
+                  name="audioMode"
+                  checked={!audioDucking}
+                  onChange={() => setAudioDucking(false)}
+                  className="accent-[var(--color-sky-deep)]"
+                />
+                <span>{t.audioModeStandard}</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="radio"
+                  name="audioMode"
+                  checked={audioDucking}
+                  onChange={() => setAudioDucking(true)}
+                  className="accent-[var(--color-sky-deep)]"
+                />
+                <span>{t.audioModeCinematic}</span>
+              </label>
+            </div>
+          </div>
+
+          {/* Right: Audio Waveform Visualizations */}
+          <div className="flex-1 w-full bg-[var(--color-paper)] p-4 rounded border border-[var(--color-rule)] flex flex-col justify-center min-h-[140px]">
+            <div className="flex flex-col gap-4">
+              
+              {/* Music Channel Waveform */}
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[9px] text-[var(--color-muted)] w-12 uppercase tracking-wider">Music</span>
+                <div className="flex items-center gap-0.5 h-16 flex-1 justify-center bg-[var(--color-paper-soft)]/40 rounded px-2">
+                  {Array.from({ length: 28 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-1 bg-[var(--color-muted)] rounded-full transition-all duration-150"
+                      style={{ height: getMusicBarHeight(i) }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Voice Channel Waveform */}
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[9px] text-[var(--color-muted)] w-12 uppercase tracking-wider">Voice</span>
+                <div className="flex items-center gap-0.5 h-16 flex-1 justify-center bg-[var(--color-paper-soft)]/40 rounded px-2">
+                  {Array.from({ length: 28 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-1 bg-[var(--color-sky-deep)] rounded-full transition-all duration-150"
+                      style={{ height: getVoiceBarHeight(i) }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+            </div>
+
+            {/* Audio State Text Update */}
+            <div className="mt-4 font-mono text-[10px] uppercase tracking-wider text-center text-[var(--color-sky-deep)] h-4">
+              {getAudioStatusText()}
+            </div>
+          </div>
+        </div>
       </section>
 
       <div className="horizon my-16" />
@@ -308,7 +552,7 @@ export default function VideoPortfolio() {
         <p className="mt-6 font-display text-[18px] sm:text-[20px] italic leading-[1.4] text-[var(--color-ink)]">
           {t.contactSub}
         </p>
-        <p className="mt-3 text-[14.5px] leading-[1.65] text-[var(--color-ink-soft)]">
+        <p className="mt-3 text-[14.5px] leading-[1.65] text-[var(--color-ink-soft)] font-sans">
           {t.contactDesc}
         </p>
         <ul className="mt-6 space-y-2 text-[14.5px] text-[var(--color-ink-soft)] font-mono">
