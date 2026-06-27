@@ -107,7 +107,7 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     pkgSubtext: "אנחנו לא עובדים עם מונה-זמן או סופרים תיקונים. אנחנו עובדים יחד איתכם עד שהסרט מדוייק ומרגש.",
     
     badge1Title: "מוכן להקרנה באולם",
-    badge1Desc: "יצוא Full HD MP4 מותאם ומנוקה למקרני ענק",
+    badge1Desc: "יצוא Full HD MP4 מותאם ומנוקה למקרני ענק (4K זמין בתיאום)",
     badge2Title: "רישיון מוזיקה מלא",
     badge2Desc: "פסקולים מורשים מסחרית ליוטיוב ללא חסימות או השתקות",
     badge3Title: "עריכה שיתופית ופשוטה",
@@ -116,14 +116,14 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     badge4Desc: "שרת העלאה מוצפן ומחיקת כל חומרי הגלם תוך 30 יום",
     
     faqTitle: "שאלות נפוצות",
-    faqQ1: "איך שומרים על פרטיות הילדים?",
-    faqA1: "כל החומרים נשמרים בשרת מאובטח ופרטי. רק אני נחשף לחומרים (אין עורכי קבלן חיצוניים), והכול נמחק לצמיתות 30 יום אחרי ההקרנה. אנו מספקים לכם מראש נוסח אישור הורים מסודר להפצה.",
-    faqQ2: "איך מתמודדים עם זכויות יוצרים על מוזיקה?",
-    faqA2: "כל המוזיקה בסרטים מורשית ברישוי מסחרי מלא (אנו מספקים לכם את אישור הרישיון הדיגיטלי). הסרט בטוח לחלוטין להעלאה ליוטיוב, פייסבוק או להקרנה באולם ללא סכנת חסימה או השתקה.",
-    faqQ3: "מתי צריך להעביר את החומרים?",
-    faqA3: "העיתוי האידיאלי הוא 14 יום לפני הטקס. זה מאפשר לנו לעשות מיון קפדני ולעבוד איתכם על תיקונים בצורה רגועה. פרויקטים דחופים יותר יתקבלו רק על בסיס זמינות ובתיאום אישי.",
-    faqQ4: "כמה סבבי תיקונים כלולים?",
-    faqA4: "אנחנו לא מאמינים בהגבלת תיקונים נוקשה בסרטי קהילה. אנו מבצעים תיקונים ודיוקים עד שהמוצר מדוייק לחלוטין ועונה על הדרישות החינוכיות והאומנותיות שלכם.",
+    faqQ1: "איך שומרים על פרטיות הילדים והאם אפשר לראות דוגמאות מלאות?",
+    faqA1: "כל החומרים נשמרים בשרת מאובטח ופרטי. רק אני נחשף אליהם והם נמחקים לצמיתות תוך 30 יום מהאירוע. בשל כך, איננו מפרסמים סרטי לקוחות ברשת.\n\nעם זאת, נשמח לקיים שיחת וידאו קצרה (או פגישה) שבה נציג לכם דוגמאות מלאות ומאובטחות (בטשטוש פנים חלקי או באופן אנונימי), או להפנות אתכם ישירות לרכזים קודמים שעבדו איתנו ויכולים להעיד על התהליך.",
+    faqQ2: "איך נראה תהליך העבודה, העלאת החומרים והלו\"ז?",
+    faqA2: "1. **העלאה:** אתם מעלים את מאות התמונות והסרטונים מההורים והמורים לתיקייה מאובטחת שאני פותח עבורכם.\n2. **טיוטה ראשונה:** תוך 5-7 ימי עבודה תקבלו קישור פרטי לצפייה בטיוטה הראשונה (First Cut).\n3. **סבב תיקונים:** באמצעות מערכת הערות דיגיטלית פשוטה, אתם מסמנים תיקונים והערות ישירות על גבי הוידאו בכל שנייה רלוונטית.\n4. **מסירה:** לאחר אישורכם, אנו מפיקים קובץ הקרנה סופי יחד עם אישורי רישוי המוזיקה.",
+    faqQ3: "מה קורה אם הטיוטה הראשונה לא קולעת לטון שרצינו?",
+    faqA3: "לפני תחילת העבודה אנו מקיימים שיחת תיאום ציפיות להבנת אופי השכבה והכיוון הרצוי (קצבי, מרגש, מצחיק או שקט). אם הטיוטה הראשונה דורשת התאמה מחדש, אנו עושים זאת בשיתוף פעולה מלא – אין הגבלת סבבים נוקשה, ועובדים יחד עד שהסרט מדוייק ומרגש.",
+    faqQ4: "האם רישיונות המוזיקה ניתנים בכתב ומהם תנאי התשלום?",
+    faqA4: "כן. עם מסירת הסרט הסופי, אתם מקבלים קובץ רישיונות דיגיטלי מסודר בכתב (PDF) המכסה הקרנה ציבורית והעלאה ליוטיוב/רשתות חברתיות ללא הגבלה.\n\n**תנאי התשלום:** 50% מקדמה עם תחילת העבודה (שלב מיון החומרים), ו-50% הנותרים רק לאחר אישור הגרסה הסופית ולפני מסירת קובץ ההקרנה הסופי.",
     
     formTitle: "בואו נחשוב יחד על הסרט שלכם",
     formSub: "ספרו לי קצת על האירוע שלכם ונחזור אליכם תוך 24 שעות עם כיוון אומנותי ראשוני והצעת עבודה מסודרת",
@@ -180,7 +180,7 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     pkgSubtext: "We do not work with a stopwatch or count revision rounds. We work together with you until the film is exact and moving.",
     
     badge1Title: "Projection Ready",
-    badge1Desc: "Full HD MP4 optimized and cleaned for massive event screens",
+    badge1Desc: "Full HD MP4 optimized and cleaned for massive event screens (4K available on request)",
     badge2Title: "Licensed Music",
     badge2Desc: "Commercially licensed soundtracks, safe from YouTube blocks",
     badge3Title: "Simple Collaboration",
@@ -189,14 +189,14 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     badge4Desc: "Secure upload portal and absolute erasure of all raw files in 30 days",
     
     faqTitle: "Frequently Asked Questions",
-    faqQ1: "How do you protect student privacy?",
-    faqA1: "All assets are stored on a private, secure server. Only I handle the files (no external freelancers), and everything is permanently erased 30 days after the screening. We provide a pre-drafted parental consent letter template for easy distribution.",
-    faqQ2: "How is background music copyright handled?",
-    faqA2: "All music tracks used are commercially licensed (we provide the digital license certificate). The film is 100% safe to upload to YouTube or Facebook without the risk of muted audio or copyright strikes.",
-    faqQ3: "When should we submit the files?",
-    faqA3: "The ideal timing is 14 days prior to the event. This allows us to sort carefully and collaborate on revisions calmly. Urgent projects are accepted only on availability and custom booking.",
-    faqQ4: "How many revision rounds are included?",
-    faqA4: "We do not enforce rigid revision limits on community films. We revise and adjust until the film is exact and meets your educational and artistic standards.",
+    faqQ1: "How do you protect student privacy, and can we see full examples?",
+    faqA1: "All assets are stored on a private, secure server. Only I handle the files (no external freelancers), and everything is permanently erased 30 days after the event. Because of this, we do not publish client films publicly online.\n\nHowever, we are happy to schedule a short video call (or meeting) to show you full, secure examples (anonymized or partially blurred), or put you in touch with previous coordinators who can share their experience.",
+    faqQ2: "What does the process, uploading, and timeline look like?",
+    faqA2: "1. **Upload:** You upload the photos and videos from parents and teachers to a secure folder I set up for you.\n2. **First Draft:** Within 5-7 business days, you receive a private link to view the first cut (First Cut).\n3. **Feedback:** Using a simple digital commenting system, you leave notes and timestamps directly on the video.\n4. **Delivery:** Once approved, we export the final widescreen file along with the music license certificates.",
+    faqQ3: "What happens if the first draft misses the tone we wanted?",
+    faqA3: "Before starting, we hold a coordination call to align on the cohort's vibe (energetic, emotional, humorous, or quiet). If the first draft requires adjustments, we collaborate closely to realign it—we do not enforce rigid revision limits, and we work until the film is perfect.",
+    faqQ4: "Are music licenses in writing, and what are the payment terms?",
+    faqA4: "Yes, every film is accompanied by a written digital license certificate (PDF) covering public screening and YouTube uploads without restriction.\n\n**Payment terms:** 50% deposit at the start of work (sorting stage), and the remaining 50% only after you approve the final cut, prior to delivery of the screening file.",
     
     formTitle: "Let's Brainstorm Your Film",
     formSub: "Tell me a bit about your event and we will get back to you within 24 hours with an initial artistic direction and a structured proposal",
@@ -366,7 +366,7 @@ Notes: ${formState.notes}
         </p>
 
         {/* Privacy Note directly below demos */}
-        <p className="mt-6 text-[12px] leading-relaxed text-[var(--color-ink-soft)] border-t border-[var(--color-rule)] pt-4 italic font-sans">
+        <p className="mt-6 text-[12.5px] leading-relaxed text-[var(--color-ink-soft)] border-t border-[var(--color-rule)] pt-4 italic font-sans">
           🛡️ {t.privacyNotice}
         </p>
       </section>
@@ -591,7 +591,7 @@ Notes: ${formState.notes}
                 required
                 value={formState.school}
                 onChange={handleFormChange}
-                className="p-2 border border-[var(--color-rule)] rounded bg(--color-paper) focus:outline-none focus:border-[var(--color-sky-deep)]"
+                className="p-2 border border-[var(--color-rule)] rounded bg-transparent focus:outline-none focus:border-[var(--color-sky-deep)]"
               />
             </div>
 
