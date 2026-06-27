@@ -15,9 +15,8 @@ type TranslationKey =
   | "tabReels"
   | "videoCaption"
   | "reelsCaption"
+  | "privacyNotice"
   | "sliderTitle"
-  | "sliderTab1"
-  | "sliderTab2"
   | "sliderBefore"
   | "sliderAfter"
   | "sliderDesc"
@@ -42,10 +41,6 @@ type TranslationKey =
   | "badge3Desc"
   | "badge4Title"
   | "badge4Desc"
-  // Testimonial keys
-  | "testimonialTitle"
-  | "testimonialQuote"
-  | "testimonialAuthor"
   // FAQ keys
   | "faqTitle"
   | "faqQ1"
@@ -91,13 +86,12 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     tabReels: "קליפ השטח והתנועה (9:16)",
     videoCaption: "סרטון הדגמה (22 שניות) המציג עריכה קולנועית, תנועה אומנותית עדינה וכתוביות בגובה העיניים התואמות את הרגעים בתמונה.",
     reelsCaption: "קליפ שטח אנכי (12 שניות) המציג מעברים קצביים, מוזיקה סוחפת וכתוביות בסגנון Reels.",
+    privacyNotice: "הערה: פרויקטים של לקוחות נשמרים בסודיות מוחלטת ואינם מפורסמים ברשת. סרטוני הדגמה אלו נוצרו באמצעות מאגרי תמונות (Stock Photos) ברישיון מלא כדי להגן על פרטיות החניכים והתלמידים.",
     
-    sliderTitle: "טיפול קפדני בכל פריים",
-    sliderTab1: "טשטוש רקע (תמונות לגובה)",
-    sliderTab2: "תיקון צבעים ותאורה (צילום סלולר)",
-    sliderBefore: "לפני (תמונה גולמית מההורים)",
-    sliderAfter: "אחרי (העיבוד הקולנועי שלנו)",
-    sliderDesc: "בכל מסיבת סיום, רוב החומרים שמגיעים מהשטח צולמו בנייד. תמונות לאורך יוצרות שוליים שחורים ריקים על המקרן באולם, ותמונות כיתה רבות צולמו בתאורה חלשה או צהובה. אנו מטפלים בכל פריים בנפרד: מטשטשים רקע לתמונות אנכיות ברכות על בסיס צבעי המקור, ומבצעים תיקון צבעים ואיזון תאורה (Color Grading) כדי להעניק לתמונות הפשוטות חמימות קולנועית עשירה.",
+    sliderTitle: "פתרון לתמונות אנכיות (סלולר)",
+    sliderBefore: "לפני (תמונה גולמית לאורך)",
+    sliderAfter: "אחרי (התאמה למקרן רחב)",
+    sliderDesc: "בכל מסיבת סיום, רוב החומרים שמגיעים מהשטח צולמו בנייד. תמונות לאורך יוצרות שוליים שחורים ריקים על המקרן באולם, מה שקוטע את הרצף הויזואלי. אנו מטפלים בכל פריים בנפרד: מייצרים רקע רך ומטושטש המבוסס על צבעי המקור, ומעמידים את התמונה במרכז עם מסגרת עדינה, כדי להבטיח זרימה חלקה ומקצועית על המקרן.",
     
     soundTitle: "סאונד נקי ודיאלוגים ברורים",
     soundDesc: "בסרטי סיום רבים, הדיבור של התלמידים נבלע מתחת למוזיקה רועשת. אנחנו מעצבים את הפסקול ידנית: המוזיקה נחלשת בעדינות (Audio Ducking) בכל פעם שמישהו מדבר, ומתגברת במעברים. אנחנו מנקים רעשי רוח מהשטח ומאזנים את העוצמות כדי שלא תצטרכו לרוץ למקסר של האולם במהלך ההקרנה.",
@@ -109,7 +103,7 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     pkg1Desc: "קליפ אנרגטי וסוחף של 3-5 דקות, המתמקד ברגעי שטח, טיולים, ומחנות. מתאים לפתיחת הטקס או לשיתוף מהיר בווטסאפ של ההורים. כולל מיון של עד 500 קבצים ועריכת סאונד קצבית.",
     pkg2Title: "הסרט התיעודי המלא",
     pkg2Price: "₪7,000",
-    pkg2Desc: "הסרט המרכזי של מסיבת הסיום. 20-30 דקות של סיפור כרונולוגיו של השנה או המחזור. כולל מיון של עד 1,500 קבצים, שילוב ברכות מורים ותלמידים, טיפול בכל התמונות האנכיות, תיקוני צבע וסאונד קפדניים, ובונוס: קליפ רשתות מהיר מותאם לנייד.",
+    pkg2Desc: "הסרט המרכזי של מסיבת הסיום. 20-30 דקות של סיפור כרונולוגי של השנה או המחזור. כולל מיון של עד 1,500 קבצים, שילוב ברכות מורים ותלמידים, טיפול בכל התמונות האנכיות, תיקוני צבע וסאונד קפדניים, ובונוס: קליפ רשתות מהיר מותאם לנייד.",
     pkgSubtext: "אנחנו לא עובדים עם מונה-זמן או סופרים תיקונים. אנחנו עובדים יחד איתכם עד שהסרט מדוייק ומרגש.",
     
     badge1Title: "מוכן להקרנה באולם",
@@ -120,10 +114,6 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     badge3Desc: "סימון הערות ותיקונים ישירות על גבי הסרטון אונליין",
     badge4Title: "פרטיות קפדנית לקטינים",
     badge4Desc: "שרת העלאה מוצפן ומחיקת כל חומרי הגלם תוך 30 יום",
-    
-    testimonialTitle: "מה אומרים הרכזים והמחנכים?",
-    testimonialQuote: "«הפחד הכי גדול שלנו היה לקבל קליפ מסחרי גנרי שלא קשור אלינו. רצינו משהו שישקף את המסע האמיתי של החבר'ה — השטח, העשייה, החברות השקטה. אחיה הבין את זה מיד. הוא עבר על מאות הסרטונים המבולגנים מהטיולים ומצא בדיוק את הרגעים הנכונים. כשהסרט הוקרן בטקס, כולם בכו מהתרגשות. זה היה הכי אותנטי שיש.»",
-    testimonialAuthor: "— עפרה ב., מנהלת חינוכית ורכזת קהילה",
     
     faqTitle: "שאלות נפוצות",
     faqQ1: "איך שומרים על פרטיות הילדים?",
@@ -169,13 +159,12 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     tabReels: "Field & Motion Clip (9:16)",
     videoCaption: "A 22-second demonstration showcasing cinematic editing, natural camera motions, and clean subtitles that match the moments in the photos.",
     reelsCaption: "A 12-second vertical reels clip showcasing dynamic cuts, upbeat climax, and centered caption styling.",
+    privacyNotice: "Note: Real client projects are kept strictly confidential and are never published online. These demo videos were created using licensed stock photos to protect the privacy of students.",
     
-    sliderTitle: "Careful Treatment of Every Frame",
-    sliderTab1: "Widescreen Blur (Vertical Photos)",
-    sliderTab2: "Color Grading & Lighting (Mobile Photos)",
-    sliderBefore: "Before (Raw photo from parents)",
-    sliderAfter: "After (Our cinematic editing)",
-    sliderDesc: "At any ceremony, most media is shot on mobile phones. Vertical photos create empty black sidebars on the projector, and classroom photos are often low-light or yellow-tinted. We process each frame individually: dynamically blurring backgrounds for vertical photos using the image's original palette, and applying color grading to inject warmth and a cinematic texture.",
+    sliderTitle: "Widescreen Fit for Vertical Photos",
+    sliderBefore: "Before (Raw vertical image)",
+    sliderAfter: "After (Widescreen blurred background)",
+    sliderDesc: "At any ceremony, most media is shot on mobile phones. Vertical photos create empty black sidebars on the projector, breaking the visual flow. We process each frame individually: generating a soft, matching blurred background based on the image's original palette, and placing the photo in the center with a clean border to ensure a professional widescreen presentation.",
     
     soundTitle: "Clean Sound & Clear Dialogues",
     soundDesc: "In many graduation videos, student voices are drowned out by loud music. We design the soundtrack manually: ducking the music gently whenever someone speaks and swelling it during transitions. We clean wind noise and balance volume so you won't need to run to the hall mixer during the screening.",
@@ -198,10 +187,6 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     badge3Desc: "Leave feedback and timestamped edits directly on the video online",
     badge4Title: "Strict Privacy for Minors",
     badge4Desc: "Secure upload portal and absolute erasure of all raw files in 30 days",
-    
-    testimonialTitle: "What Do Educators Say?",
-    testimonialQuote: "«Our biggest fear was receiving a generic, commercial clip that had nothing to do with us. We wanted something that reflected the real journey of the group—the field hikes, the activities, the quiet friendships. Ahiya understood this instantly. He sifted through hundreds of messy clips from trips and found the exact right moments. When it played at the ceremony, everyone cried. It was as authentic as it gets.»",
-    testimonialAuthor: "— Ofra B., Educational Director & Community Coordinator",
     
     faqTitle: "Frequently Asked Questions",
     faqQ1: "How do you protect student privacy?",
@@ -238,7 +223,6 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
 export default function VideoPortfolio() {
   const [lang, setLang] = useState<"he" | "en">("he");
   const [sliderPos, setSliderPos] = useState(50);
-  const [sliderFeature, setSliderFeature] = useState<"blur" | "color">("blur");
   const [activeDemo, setActiveDemo] = useState<"ceremony" | "reels">("ceremony");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
@@ -380,109 +364,54 @@ Notes: ${formState.notes}
         <p className="mt-4 font-mono text-[10px] uppercase tracking-[0.1em] text-center text-[var(--color-muted)]">
           {activeDemo === "ceremony" ? t.videoCaption : t.reelsCaption}
         </p>
+
+        {/* Privacy Note directly below demos */}
+        <p className="mt-6 text-[12px] leading-relaxed text-[var(--color-ink-soft)] border-t border-[var(--color-rule)] pt-4 italic font-sans">
+          🛡️ {t.privacyNotice}
+        </p>
       </section>
 
       <div className="horizon my-12" />
 
-      {/* Interactive Before & After Slider */}
+      {/* Interactive Before & After Slider (Only vertical background blur) */}
       <section className="lift lift-6">
         <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-muted)] mb-4">
           {t.sliderTitle}
         </h2>
-
-        {/* Feature Tabs for Slider */}
-        <div className="flex gap-2 mb-6 border-b border-[var(--color-rule)] pb-px font-mono text-[11px] tracking-wider select-none">
-          <button
-            onClick={() => setSliderFeature("blur")}
-            className={`pb-2 px-1 cursor-pointer transition-all duration-300 border-b-2 -mb-px ${
-              sliderFeature === "blur" 
-                ? "border-[var(--color-sky-deep)] text-[var(--color-ink)] font-medium" 
-                : "border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)]"
-            }`}
-          >
-            {t.sliderTab1}
-          </button>
-          <button
-            onClick={() => setSliderFeature("color")}
-            className={`pb-2 px-1 cursor-pointer transition-all duration-300 border-b-2 -mb-px ${
-              sliderFeature === "color" 
-                ? "border-[var(--color-sky-deep)] text-[var(--color-ink)] font-medium" 
-                : "border-transparent text-[var(--color-muted)] hover:text-[var(--color-ink)]"
-            }`}
-          >
-            {t.sliderTab2}
-          </button>
-        </div>
         
         <div className="relative w-full aspect-video overflow-hidden rounded-lg border border-[var(--color-rule)] select-none">
-          {/* FEATURE 1: BLUR PREVIEW */}
-          {sliderFeature === "blur" && (
-            <>
-              {/* BEFORE: Raw vertical photo on black */}
-              <div className="absolute inset-0 bg-[#0d0c0a] flex items-center justify-center">
-                <img 
-                  src="/showcase_p7.jpg" 
-                  alt="Raw vertical photo" 
-                  className="h-[90%] w-auto object-contain"
-                />
-                <div className={`absolute top-4 ${isHebrew ? "right-4" : "left-4"} bg-black/70 text-white font-mono text-[9px] tracking-[0.1em] px-2 py-0.5 rounded`}>
-                  {t.sliderBefore}
-                </div>
-              </div>
-              
-              {/* AFTER: Processed widescreen with blurred background (clipped) */}
-              <div 
-                className="absolute inset-0 overflow-hidden"
-                style={{ clipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)` }}
-              >
-                <div 
-                  className="absolute inset-0 bg-cover bg-center filter blur-xl scale-110 opacity-75"
-                  style={{ backgroundImage: "url('/showcase_p7.jpg')" }}
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <img 
-                    src="/showcase_p7.jpg" 
-                    alt="Widescreen layout" 
-                    className="h-[90%] w-auto object-contain border-4 border-white shadow-xl"
-                  />
-                </div>
-                <div className={`absolute top-4 ${isHebrew ? "left-4" : "right-4"} bg-[var(--color-sky-deep)] text-white font-mono text-[9px] tracking-[0.1em] px-2 py-0.5 rounded`}>
-                  {t.sliderAfter}
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* FEATURE 2: COLOR GRADING PREVIEW */}
-          {sliderFeature === "color" && (
-            <>
-              <div className="absolute inset-0 flex items-center justify-center bg-[#0d0c0a]">
-                <img 
-                  src="/showcase_p2.jpg" 
-                  alt="Raw photo" 
-                  className="w-full h-full object-cover"
-                  style={{ filter: "brightness(0.62) contrast(0.85) sepia(0.3) saturate(0.65) hue-rotate(15deg)" }}
-                />
-                <div className={`absolute top-4 ${isHebrew ? "right-4" : "left-4"} bg-black/70 text-white font-mono text-[9px] tracking-[0.1em] px-2 py-0.5 rounded`}>
-                  {t.sliderBefore}
-                </div>
-              </div>
-              
-              <div 
-                className="absolute inset-0 overflow-hidden"
-                style={{ clipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)` }}
-              >
-                <img 
-                  src="/showcase_p2.jpg" 
-                  alt="Color graded photo" 
-                  className="w-full h-full object-cover"
-                />
-                <div className={`absolute top-4 ${isHebrew ? "left-4" : "right-4"} bg-[var(--color-sky-deep)] text-white font-mono text-[9px] tracking-[0.1em] px-2 py-0.5 rounded`}>
-                  {t.sliderAfter}
-                </div>
-              </div>
-            </>
-          )}
+          {/* BEFORE: Raw vertical photo on black */}
+          <div className="absolute inset-0 bg-[#0d0c0a] flex items-center justify-center">
+            <img 
+              src="/showcase_p7.jpg" 
+              alt="Raw vertical photo" 
+              className="h-[90%] w-auto object-contain"
+            />
+            <div className={`absolute top-4 ${isHebrew ? "right-4" : "left-4"} bg-black/70 text-white font-mono text-[9px] tracking-[0.1em] px-2 py-0.5 rounded`}>
+              {t.sliderBefore}
+            </div>
+          </div>
+          
+          {/* AFTER: Processed widescreen with blurred background (clipped) */}
+          <div 
+            className="absolute inset-0 overflow-hidden"
+            style={{ clipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)` }}
+          >
+            <div 
+              className="absolute inset-0 bg-cover bg-center filter blur-xl scale-110 opacity-75"
+              style={{ backgroundImage: "url('/showcase_p7.jpg')" }}
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <img 
+                src="/showcase_p7.jpg" 
+                alt="Widescreen layout" 
+                className="h-[90%] w-auto object-contain border-4 border-white shadow-xl"
+              />
+            </div>
+            <div className={`absolute top-4 ${isHebrew ? "left-4" : "right-4"} bg-[var(--color-sky-deep)] text-white font-mono text-[9px] tracking-[0.1em] px-2 py-0.5 rounded`}>
+              {t.sliderAfter}
+            </div>
+          </div>
           
           {/* Drag slider handle */}
           <div 
@@ -601,21 +530,6 @@ Notes: ${formState.notes}
 
       <div className="horizon my-12" />
 
-      {/* Testimonials */}
-      <section className="bg-[var(--color-paper-soft)]/30 border border-[var(--color-rule)] rounded-lg p-6 font-sans">
-        <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-muted)] mb-4">
-          {t.testimonialTitle}
-        </h2>
-        <blockquote className="text-[15px] leading-[1.65] italic text-[var(--color-ink)]">
-          {t.testimonialQuote}
-        </blockquote>
-        <cite className="block mt-4 font-mono text-[10px] uppercase tracking-wider text-[var(--color-muted)] not-italic">
-          {t.testimonialAuthor}
-        </cite>
-      </section>
-
-      <div className="horizon my-12" />
-
       {/* FAQ Accordion Section */}
       <section className="spine pr-6 pl-6 rtl:pr-6 rtl:pl-0 ltr:pl-6 ltr:pr-0">
         <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
@@ -677,7 +591,7 @@ Notes: ${formState.notes}
                 required
                 value={formState.school}
                 onChange={handleFormChange}
-                className="p-2 border border-[var(--color-rule)] rounded bg-[var(--color-paper)] focus:outline-none focus:border-[var(--color-sky-deep)]"
+                className="p-2 border border-[var(--color-rule)] rounded bg(--color-paper) focus:outline-none focus:border-[var(--color-sky-deep)]"
               />
             </div>
 
