@@ -236,7 +236,6 @@ export default function VideoPortfolio() {
     date: "",
     files: "",
     pkg: "premium",
-    length: "15-25",
     email: "",
     phone: "",
     notes: ""
@@ -260,7 +259,6 @@ export default function VideoPortfolio() {
 School/Organization Name: ${formState.school}
 Event Date: ${formState.date}
 Est Files: ${formState.files}
-Desired Length: ${formState.length} mins
 Format Channel: ${formState.pkg}
 Contact Email: ${formState.email}
 Phone: ${formState.phone}
@@ -562,7 +560,11 @@ Notes: ${formState.notes}
                 </button>
                 {isOpen && (
                   <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--color-ink-soft)] whitespace-pre-line animate-hit-fade">
-                    {item.a}
+                    {item.a.split("**").map((seg, i) =>
+                      i % 2 === 1
+                        ? <strong key={i} className="font-medium text-[var(--color-ink)]">{seg}</strong>
+                        : seg
+                    )}
                   </p>
                 )}
               </div>
@@ -658,35 +660,18 @@ Notes: ${formState.notes}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1">
-                <label htmlFor="length" className="font-mono text-[9px] uppercase tracking-wider text-[var(--color-muted)]">{t.formLength}</label>
-                <select
-                  id="length"
-                  name="length"
-                  value={formState.length}
-                  onChange={handleFormChange}
-                  className="p-2 border border-[var(--color-rule)] rounded bg-[var(--color-paper)] focus:outline-none focus:border-[var(--color-sky-deep)]"
-                >
-                  <option value="10-15">{isHebrew ? "סרטון קצר (10-15 דקות)" : "Short Film (10-15 min)"}</option>
-                  <option value="15-25">{isHebrew ? "סרטון מלא (15-25 דקות)" : "Full Film (15-25 min)"}</option>
-                  <option value="25-40">{isHebrew ? "סרטון מורחב (25-40 דקות)" : "Extended Film (25-40 min)"}</option>
-                </select>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <label htmlFor="pkg" className="font-mono text-[9px] uppercase tracking-wider text-[var(--color-muted)]">{t.formPkg}</label>
-                <select
-                  id="pkg"
-                  name="pkg"
-                  value={formState.pkg}
-                  onChange={handleFormChange}
-                  className="p-2 border border-[var(--color-rule)] rounded bg-[var(--color-paper)] focus:outline-none focus:border-[var(--color-sky-deep)]"
-                >
-                  <option value="classic">{isHebrew ? "קליפ שטח קצבי (₪4,500)" : "Field Clip (₪4,500)"}</option>
-                  <option value="premium">{isHebrew ? "סרט תיעודי מלא (₪7,000)" : "Full Documentary (₪7,000)"}</option>
-                </select>
-              </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="pkg" className="font-mono text-[9px] uppercase tracking-wider text-[var(--color-muted)]">{t.formPkg}</label>
+              <select
+                id="pkg"
+                name="pkg"
+                value={formState.pkg}
+                onChange={handleFormChange}
+                className="p-2 border border-[var(--color-rule)] rounded bg-[var(--color-paper)] focus:outline-none focus:border-[var(--color-sky-deep)]"
+              >
+                <option value="classic">{isHebrew ? "קליפ שטח קצבי (3-5 דקות · ₪4,500)" : "Field Clip (3-5 min · ₪4,500)"}</option>
+                <option value="premium">{isHebrew ? "סרט תיעודי מלא (20-30 דקות · ₪7,000)" : "Full Documentary (20-30 min · ₪7,000)"}</option>
+              </select>
             </div>
 
             <div className="flex flex-col gap-1">
