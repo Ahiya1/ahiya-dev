@@ -23,16 +23,6 @@ type TranslationKey =
   | "sliderDesc"
   | "soundTitle"
   | "soundDesc"
-  // Pricing keys
-  | "pricingTitle"
-  | "pricingSub"
-  | "pkg1Title"
-  | "pkg1Price"
-  | "pkg1Desc"
-  | "pkg2Title"
-  | "pkg2Price"
-  | "pkg2Desc"
-  | "pkgSubtext"
   // Deliverables Badges
   | "badge1Title"
   | "badge1Desc"
@@ -98,16 +88,6 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     soundTitle: "סאונד נקי ודיאלוגים ברורים",
     soundDesc: "בסרטי סיום רבים, הדיבור של התלמידים נבלע מתחת למוזיקה רועשת. אנחנו מעצבים את הפסקול ידנית: המוזיקה נחלשת בעדינות (Audio Ducking) בכל פעם שמישהו מדבר, ומתגברת במעברים. אנחנו מנקים רעשי רוח מהשטח ומאזנים את העוצמות כדי שלא תצטרכו לרוץ למקסר של האולם במהלך ההקרנה.",
     
-    pricingTitle: "ערוצי עבודה משותפים",
-    pricingSub: "איך אנחנו יכולים לבנות את הסרט שלכם?",
-    pkg1Title: "קליפ השטח הקצבי",
-    pkg1Price: "₪4,500",
-    pkg1Desc: "קליפ אנרגטי וסוחף של 3-5 דקות, המתמקד ברגעי שטח, טיולים, ומחנות. מתאים לפתיחת הטקס או לשיתוף מהיר בווטסאפ של ההורים. כולל מיון של מאות קבצים ועריכת סאונד קצבית.",
-    pkg2Title: "הסרט התיעודי המלא",
-    pkg2Price: "₪7,000",
-    pkg2Desc: "הסרט המרכזי של מסיבת הסיום. 20-30 דקות של סיפור כרונולוגי של השנה או המחזור. כולל מיון של אלפי קבצים, שילוב ברכות מורים ותלמידים, טיפול בכל התמונות האנכיות, תיקוני צבע וסאונד קפדניים, ובונוס: קליפ רשתות מהיר מותאם לנייד.",
-    pkgSubtext: "אנחנו לא עובדים עם מונה-זמן או סופרים תיקונים. אנחנו עובדים יחד איתכם עד שהסרט מדוייק ומרגש.",
-    
     badge1Title: "מוכן להקרנה באולם",
     badge1Desc: "יצוא Full HD MP4 מותאם ומנוקה למקרני ענק (4K זמין בתיאום)",
     badge2Title: "רישיון מוזיקה מלא",
@@ -171,16 +151,6 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     
     soundTitle: "Clean Sound & Clear Dialogues",
     soundDesc: "In many graduation videos, student voices are drowned out by loud music. We design the soundtrack manually: ducking the music gently whenever someone speaks and swelling it during transitions. We clean wind noise and balance volume so you won't need to run to the hall mixer during the screening.",
-    
-    pricingTitle: "Creative Formats",
-    pricingSub: "How can we build your film?",
-    pkg1Title: "The Field Clip",
-    pkg1Price: "₪4,500",
-    pkg1Desc: "An energetic, engaging 3-5 minute clip focusing on outdoor journeys, trips, and camps. Perfect for opening the ceremony or sharing on parents' WhatsApp groups. Includes sorting hundreds of files and rhythm-based sound editing.",
-    pkg2Title: "The Full Documentary Film",
-    pkg2Price: "₪7,000",
-    pkg2Desc: "The core film of the graduation night. A 20-30 minute chronological narrative of the year or cohort. Includes sorting thousands of files, incorporating teacher/student blessings, background blur styling, detailed color/sound correction, and a mobile-friendly bonus reels clip.",
-    pkgSubtext: "We do not work with a stopwatch or count revision rounds. We work together with you until the film is exact and moving.",
     
     badge1Title: "Projection Ready",
     badge1Desc: "Full HD MP4 optimized and cleaned for massive event screens (4K available on request)",
@@ -457,57 +427,6 @@ Notes: ${formState.notes}
 
       <div className="horizon my-12" />
 
-      {/* Pricing & Formats */}
-      <section className="spine pr-6 pl-6 rtl:pr-6 rtl:pl-0 ltr:pl-6 ltr:pr-0">
-        <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-          {t.pricingTitle}
-        </h2>
-        <p className="mt-2 text-[14px] text-[var(--color-muted)] font-mono uppercase tracking-wider">
-          {t.pricingSub}
-        </p>
-
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 font-sans">
-          {/* Channel 1 */}
-          <div className="p-6 rounded-lg border border-[var(--color-rule)] bg-[var(--color-paper-soft)]/20 flex flex-col justify-between">
-            <div>
-              <h3 className="font-display text-xl font-medium text-[var(--color-ink)]">
-                {t.pkg1Title}
-              </h3>
-              <div className="mt-3 text-3xl font-light text-[var(--color-sky-deep)] font-mono">
-                {t.pkg1Price}
-              </div>
-              <p className="mt-4 text-[13.5px] leading-relaxed text-[var(--color-ink-soft)]">
-                {t.pkg1Desc}
-              </p>
-            </div>
-          </div>
-
-          {/* Channel 2 */}
-          <div className="p-6 rounded-lg border-2 border-[var(--color-sky-deep)] bg-[var(--color-paper)] flex flex-col justify-between relative shadow-sm">
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--color-sky-deep)] text-white font-mono text-[9px] tracking-widest px-3 py-1 rounded-full uppercase">
-              מומלץ לטקס מרכזי
-            </div>
-            <div className="mt-2">
-              <h3 className="font-display text-xl font-medium text-[var(--color-ink)]">
-                {t.pkg2Title}
-              </h3>
-              <div className="mt-3 text-3xl font-light text-[var(--color-sky-deep)] font-mono">
-                {t.pkg2Price}
-              </div>
-              <p className="mt-4 text-[13.5px] leading-relaxed text-[var(--color-ink-soft)]">
-                {t.pkg2Desc}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <p className="mt-6 text-center font-mono text-[10.5px] text-[var(--color-muted)] uppercase tracking-wide">
-          {t.pkgSubtext}
-        </p>
-      </section>
-
-      <div className="horizon my-12" />
-
       {/* Trust Deliverables Badges Grid */}
       <section className="grid grid-cols-2 gap-4 font-sans text-center">
         <div className="p-4 rounded border border-[var(--color-rule)] bg-[var(--color-paper-soft)]/20">
@@ -669,8 +588,8 @@ Notes: ${formState.notes}
                 onChange={handleFormChange}
                 className="p-2 border border-[var(--color-rule)] rounded bg-[var(--color-paper)] focus:outline-none focus:border-[var(--color-sky-deep)]"
               >
-                <option value="classic">{isHebrew ? "קליפ שטח קצבי (3-5 דקות · ₪4,500)" : "Field Clip (3-5 min · ₪4,500)"}</option>
-                <option value="premium">{isHebrew ? "סרט תיעודי מלא (20-30 דקות · ₪7,000)" : "Full Documentary (20-30 min · ₪7,000)"}</option>
+                <option value="classic">{isHebrew ? "קליפ שטח קצבי (3-5 דקות)" : "Field Clip (3-5 min)"}</option>
+                <option value="premium">{isHebrew ? "סרט תיעודי מלא (20-30 דקות)" : "Full Documentary (20-30 min)"}</option>
               </select>
             </div>
 
