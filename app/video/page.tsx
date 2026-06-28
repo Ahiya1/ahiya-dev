@@ -85,7 +85,7 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     videoTitle: "הצצה לתוצרים",
     tabCeremony: "סרט הנרטיב המלא (16:9)",
     tabReels: "קליפ השטח והתנועה (9:16)",
-    videoCaption: "סרט תיעודי (כשלוש דקות וחצי) שנערך מחומרים אמיתיים של מחזור שלם: צילומי סלולר, תמונות אורך ורגעים מהשטח, שהפכו לסיפור קולנועי אחד עם כתוביות התואמות את הרגעים.",
+    videoCaption: "סרט תיעודי (כארבע דקות) שנערך מחומרים אמיתיים של מחזור שלם: צילומי סלולר, תמונות ורגעים מהשטח, עם שני משתתפים שמספרים את המסע במילים שלהם, שהפכו לסיפור קולנועי אחד עם כתוביות וליווי מוזיקלי.",
     reelsCaption: "קליפ שטח אנכי (12 שניות) המציג מעברים קצביים, מוזיקה סוחפת וכתוביות בסגנון Reels.",
     privacyNotice: "הערה: סרט ההדגמה הופק מחומרים אמיתיים של תוכנית נוער (דרך פרט) ומוצג כאן באישור מלא של מובילי התוכנית. ככלל, פרויקטים של לקוחות נשמרים בסודיות ואינם מפורסמים ברשת ללא רשות מפורשת.",
     musicCredit: "מוזיקה: \"Affirmations\" מאת Scott Buckley (רישיון CC BY 4.0)",
@@ -159,7 +159,7 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     videoTitle: "A Glimpse of the Deliverables",
     tabCeremony: "Full Narrative Film (16:9)",
     tabReels: "Field & Motion Clip (9:16)",
-    videoCaption: "A documentary film (about three and a half minutes) edited from real material of a full cohort: phone clips, vertical photos, and field moments, woven into one cinematic story with captions matched to each moment.",
+    videoCaption: "A documentary film (about four minutes) edited from real material of a full cohort: phone clips, photos, and field moments, with two participants telling the journey in their own words, woven into one cinematic story with captions and a music score.",
     reelsCaption: "A 12-second vertical reels clip showcasing dynamic cuts, upbeat climax, and centered caption styling.",
     privacyNotice: "Note: This demo film was produced from real material of a youth program (Derech Prat) and is shown here with the full permission of the program's leaders. As a rule, client projects are kept private and are never published online without explicit consent.",
     musicCredit: "Music: \"Affirmations\" by Scott Buckley (licensed under CC BY 4.0)",
@@ -355,7 +355,7 @@ Notes: ${formState.notes}
           }`}>
             <video
               key={activeDemo}
-              src={activeDemo === "ceremony" ? "/showcase_ceremony.mp4" : "/showcase_reels.mp4"}
+              src={activeDemo === "ceremony" ? "https://cr6rqcczeeu7znpp.public.blob.vercel-storage.com/showcase/derech-prat.mp4" : "/showcase_reels.mp4"}
               controls
               className="w-full h-full object-cover"
             />
