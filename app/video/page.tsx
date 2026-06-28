@@ -16,6 +16,7 @@ type TranslationKey =
   | "videoCaption"
   | "reelsCaption"
   | "privacyNotice"
+  | "musicCredit"
   | "sliderTitle"
   | "sliderBefore"
   | "sliderAfter"
@@ -84,9 +85,10 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     videoTitle: "הצצה לתוצרים",
     tabCeremony: "סרט הנרטיב המלא (16:9)",
     tabReels: "קליפ השטח והתנועה (9:16)",
-    videoCaption: "סרטון הדגמה (22 שניות) המציג עריכה קולנועית, תנועה אומנותית עדינה וכתוביות בגובה העיניים התואמות את הרגעים בתמונה.",
+    videoCaption: "סרט תיעודי קצר (כדקה וחצי) שנערך מחומרים אמיתיים של מחזור שלם: צילומי סלולר, תמונות אורך ורגעים מהשטח, שהפכו לסיפור קולנועי אחד עם כתוביות התואמות את הרגעים.",
     reelsCaption: "קליפ שטח אנכי (12 שניות) המציג מעברים קצביים, מוזיקה סוחפת וכתוביות בסגנון Reels.",
-    privacyNotice: "הערה: פרויקטים של לקוחות נשמרים בסודיות מוחלטת ואינם מפורסמים ברשת. סרטוני הדגמה אלו נוצרו באמצעות מאגרי תמונות (Stock Photos) ברישיון מלא כדי להגן על פרטיות החניכים והתלמידים.",
+    privacyNotice: "הערה: סרט ההדגמה הופק מחומרים אמיתיים של תוכנית נוער (דרך פרט) ומוצג כאן באישור מלא של מובילי התוכנית. ככלל, פרויקטים של לקוחות נשמרים בסודיות ואינם מפורסמים ברשת ללא רשות מפורשת.",
+    musicCredit: "מוזיקה: \"Affirmations\" מאת Scott Buckley (רישיון CC BY 4.0)",
     
     sliderTitle: "פתרון לתמונות אנכיות (סלולר)",
     sliderBefore: "לפני (תמונה גולמית לאורך)",
@@ -157,9 +159,10 @@ const translations: Record<"he" | "en", Record<TranslationKey, string>> = {
     videoTitle: "A Glimpse of the Deliverables",
     tabCeremony: "Full Narrative Film (16:9)",
     tabReels: "Field & Motion Clip (9:16)",
-    videoCaption: "A 22-second demonstration showcasing cinematic editing, natural camera motions, and clean subtitles that match the moments in the photos.",
+    videoCaption: "A short documentary film (about ninety seconds) edited from real material of a full cohort: phone clips, vertical photos, and field moments, woven into one cinematic story with captions matched to each moment.",
     reelsCaption: "A 12-second vertical reels clip showcasing dynamic cuts, upbeat climax, and centered caption styling.",
-    privacyNotice: "Note: Real client projects are kept strictly confidential and are never published online. These demo videos were created using licensed stock photos to protect the privacy of students.",
+    privacyNotice: "Note: This demo film was produced from real material of a youth program (Derech Prat) and is shown here with the full permission of the program's leaders. As a rule, client projects are kept private and are never published online without explicit consent.",
+    musicCredit: "Music: \"Affirmations\" by Scott Buckley (licensed under CC BY 4.0)",
     
     sliderTitle: "Widescreen Fit for Vertical Photos",
     sliderBefore: "Before (Raw vertical image)",
@@ -368,6 +371,9 @@ Notes: ${formState.notes}
         {/* Privacy Note directly below demos */}
         <p className="mt-6 text-[12.5px] leading-relaxed text-[var(--color-ink-soft)] border-t border-[var(--color-rule)] pt-4 italic font-sans">
           🛡️ {t.privacyNotice}
+        </p>
+        <p className="mt-3 font-mono text-[10px] tracking-[0.1em] text-[var(--color-muted)]">
+          {t.musicCredit}
         </p>
       </section>
 
