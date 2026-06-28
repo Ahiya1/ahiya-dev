@@ -355,7 +355,7 @@ Notes: ${formState.notes}
           }`}>
             <video
               key={activeDemo}
-              src={activeDemo === "ceremony" ? "https://cr6rqcczeeu7znpp.public.blob.vercel-storage.com/showcase/derech-prat.mp4" : "/showcase_reels.mp4"}
+              src={activeDemo === "ceremony" ? "https://cr6rqcczeeu7znpp.public.blob.vercel-storage.com/showcase/derech-prat-v2.mp4" : "/showcase_reels.mp4"}
               controls
               className="w-full h-full object-cover"
             />
