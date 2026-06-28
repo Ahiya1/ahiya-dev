@@ -176,6 +176,12 @@
   position: absolute;
   top: 0;
   bottom: 0;
+  /* Default to the left edge (LTR). The [dir="rtl"] rule below flips it.
+     Without this default, when no dir ancestor is present the line falls
+     back to its static position next to the text, crowding the first
+     letters. */
+  left: 0;
+  right: auto;
   width: 2px;
   background: var(--color-rule);
   opacity: 0.55;
