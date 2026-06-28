@@ -132,7 +132,7 @@ function ProjectCard({
     </>
   );
 
-  const className = `card group spine block pl-6 ${
+  const className = `card group spine block pl-8 ${
     project.href ? "spine-link" : ""
   } ${isFocused ? "is-focused" : ""} ${quiet ? "is-quiet" : ""}`;
 
