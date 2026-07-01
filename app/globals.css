@@ -291,3 +291,7 @@
     transform: none;
   }
 }
+
+/* tutor markdown: let our code-block wrapper own bg/padding; keep hljs token colors */
+.md .hljs { background: transparent !important; padding: 0 !important; }
+.md pre code { white-space: pre; }

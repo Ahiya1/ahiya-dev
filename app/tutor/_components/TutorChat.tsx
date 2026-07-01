@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { renderRich } from "./rich";
+import Markdown from "./Markdown";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -224,7 +224,7 @@ function Bubble({ msg, streaming }: { msg: Msg; streaming: boolean }) {
   return (
     <div className={isUser ? "flex justify-start" : "flex justify-end"}>
       <div
-        className="max-w-[85%] rounded-2xl px-4 py-3 text-[15px] leading-relaxed"
+        className={`${isUser ? "max-w-[85%]" : "max-w-full w-full"} rounded-2xl px-4 py-3 text-[15px] leading-relaxed`}
         style={
           isUser
             ? { background: "var(--color-sky-deep)", color: "var(--color-paper)" }
@@ -232,7 +232,11 @@ function Bubble({ msg, streaming }: { msg: Msg; streaming: boolean }) {
         }
       >
         {msg.content ? (
-          renderRich(msg.content)
+          isUser ? (
+            <span className="whitespace-pre-wrap">{msg.content}</span>
+          ) : (
+            <Markdown>{msg.content}</Markdown>
+          )
         ) : streaming ? (
           <span style={{ color: "var(--color-muted)" }}>חושב…</span>
         ) : null}

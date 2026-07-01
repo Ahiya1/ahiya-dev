@@ -1,0 +1,397 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   The Sacred Potato — Part I, The Hollow Place.
+   An immersive movement. The reader walks with Kai.
+
+   Grammar (everything else will inherit it):
+   · scroll is footsteps — a held desert, text rising up through it
+   · --p is each scene's own progress (0 → 1), written by the scroll hook
+   · seen scenes carry light and a horizon; felt scenes fall to dark and breath
+   · the portfolio's paper (#ddd9cd) is the ink of this night
+   ──────────────────────────────────────────────────────────────────────── */
+
+.root {
+  position: relative;
+  color: var(--color-paper);
+  font-family: var(--font-fraunces), Georgia, serif;
+  /* never let the paper body flash at the seams of the world */
+  background: #0a0c11;
+  overflow-x: clip;
+}
+
+/* The world floor — a fixed deep beneath every scene, so overscroll and the
+   gaps between sticky stages stay night, never paper. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(120% 80% at 50% 110%, #15110c 0%, #0a0c11 55%, #07080c 100%);
+}
+
+/* Film grain. A whisper of it — the difference between a render and a place. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* The spine — a thread down the left margin that fills as you descend, the
+   same gesture as the project-card spine on the portfolio. Footsteps counted. */
+.spine {
+  position: fixed;
+  left: max(1.1rem, 3.5vw);
+  top: 12vh;
+  bottom: 12vh;
+  width: 1px;
+  z-index: 40;
+  background: rgba(221, 217, 205, 0.12);
+}
+.spineFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transform-origin: top;
+  height: calc(var(--scroll, 0) * 100%);
+  background: linear-gradient(
+    var(--color-sky) 0%,
+    rgba(53, 122, 66, 0.4) 100%
+  );
+  opacity: 0.7;
+}
+
+/* ─── Scenes ─── */
+
+.scene {
+  position: relative;
+}
+
+/* markers — seen scenes carry light & horizon; felt scenes fall to breath */
+.seen {
+}
+
+/* The held desert — sticks to the viewport while the prose walks through it. */
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+/* The prose, pulled up to overlap the sticky stage and ride over it. */
+.flow {
+  position: relative;
+  z-index: 2;
+  margin-top: -100vh;
+  margin-top: -100svh;
+  padding: 0 1.5rem;
+}
+
+/* A single line / cluster of the story. Each one holds roughly a screen of
+   scroll, so the desert delivers them one at a time. */
+.beat {
+  max-width: 33rem;
+  margin: 0 auto;
+  min-height: 88vh;
+  min-height: 88svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.beat.tight {
+  min-height: 64vh;
+}
+.beat.tall {
+  min-height: 104vh;
+}
+
+/* Reveal — a line surfaces as it enters the walk, then stays. */
+.line {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 1100ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 1100ms cubic-bezier(0.16, 1, 0.3, 1);
+  font-size: clamp(1.28rem, 1rem + 1.1vw, 1.7rem);
+  font-weight: 340;
+  line-height: 1.62;
+  letter-spacing: -0.011em;
+  color: var(--color-paper);
+  text-wrap: balance;
+  text-shadow: 0 1px 30px rgba(0, 0, 0, 0.55);
+}
+.line + .line {
+  margin-top: 1.5em;
+}
+.line.in {
+  opacity: 1;
+  transform: none;
+}
+
+/* The opener / the whispered refrains — set apart, lighter, italic. */
+.sacred {
+  font-style: italic;
+  font-weight: 320;
+  font-size: clamp(1.45rem, 1.1rem + 1.5vw, 2.1rem);
+  line-height: 1.4;
+  color: #efe9da;
+}
+
+/* The engineer's reflexes — calculations that surface unbidden in the margin.
+   Mono, dim, italic: a different voice, the one he is trying to escape. */
+.calc {
+  font-family: var(--font-jetbrains), monospace;
+  font-style: normal;
+  font-size: clamp(0.72rem, 0.62rem + 0.3vw, 0.84rem);
+  letter-spacing: 0.02em;
+  line-height: 1.7;
+  color: rgba(221, 217, 205, 0.42);
+  text-transform: none;
+  text-shadow: none;
+}
+
+/* Dialogue — quiet, indented a touch, the desert's etiquette of few words. */
+.said {
+  font-style: italic;
+  color: #e7e1d2;
+}
+
+/* Felt interiors (Neel, the first bite) narrow and center — the world recedes,
+   only the voice and the breath remain. */
+.felt .line {
+  text-align: center;
+  font-size: clamp(1.4rem, 1.1rem + 1.3vw, 1.95rem);
+  font-style: italic;
+  font-weight: 320;
+}
+.felt .beat {
+  max-width: 30rem;
+}
+
+/* ─── Scene atmospheres ───────────────────────────────────────────────── */
+
+/* Layer helper */
+.layer {
+  position: absolute;
+  inset: 0;
+}
+
+/* Arrival — pre-dawn. Stars, a low warm rumor on the horizon, held breath. */
+.skyDawn {
+  background:
+    radial-gradient(140% 90% at 50% 120%, #5a3a20 0%, rgba(40, 26, 15, 0) 48%),
+    linear-gradient(180deg, #070912 0%, #0b0d16 45%, #14110d 100%);
+}
+.stars {
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(221, 217, 205, 0.7), transparent),
+    radial-gradient(1px 1px at 70% 22%, rgba(221, 217, 205, 0.5), transparent),
+    radial-gradient(1px 1px at 42% 14%, rgba(221, 217, 205, 0.6), transparent),
+    radial-gradient(1px 1px at 85% 40%, rgba(221, 217, 205, 0.4), transparent),
+    radial-gradient(1px 1px at 12% 50%, rgba(221, 217, 205, 0.35), transparent),
+    radial-gradient(1.5px 1.5px at 60% 36%, rgba(221, 217, 205, 0.55), transparent),
+    radial-gradient(1px 1px at 33% 44%, rgba(221, 217, 205, 0.4), transparent);
+  /* the stars dim as the eye drops toward the warming horizon */
+  opacity: calc(1 - var(--p, 0) * 0.7);
+}
+
+/* The walk — a sober, sun-bleached dusk. Dim and filmic, not blinding noon. */
+.skyWalk {
+  background:
+    radial-gradient(80% 50% at 50% 90%, rgba(150, 96, 52, 0.35) 0%, transparent 60%),
+    linear-gradient(180deg, #14121a 0%, #20180f 42%, #2c2014 64%, #1d150d 100%);
+}
+.horizonLine {
+  top: 64%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(176, 125, 62, 0.5) 30%,
+    rgba(200, 150, 80, 0.7) 50%,
+    rgba(176, 125, 62, 0.5) 70%,
+    transparent 100%
+  );
+}
+.dunes {
+  top: 64%;
+  bottom: 0;
+  inset-inline: 0;
+  background:
+    radial-gradient(120% 100% at 50% 0%, rgba(58, 42, 26, 0.9) 0%, #160f0a 80%);
+}
+/* heat — a slow vertical drift near the ground, barely there */
+.shimmer {
+  top: 50%;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(221, 217, 205, 0.04) 0px,
+    rgba(221, 217, 205, 0) 3px,
+    rgba(221, 217, 205, 0.04) 6px
+  );
+  opacity: 0.5;
+  animation: drift 9s linear infinite;
+}
+@keyframes drift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-6px);
+  }
+}
+
+/* Felt dark — the desert dims away for memory and interior. */
+.skyFelt {
+  background:
+    radial-gradient(60% 50% at 50% 50%, rgba(30, 26, 22, 0.7) 0%, transparent 70%),
+    linear-gradient(180deg, #07080c 0%, #0a0a0e 50%, #08080b 100%);
+}
+
+/* The tree-hour — "when light begins to change." Amber gathers at the base of
+   the sky; the blue deepens above. The threshold of the whole movement. */
+.skyTree {
+  background:
+    radial-gradient(70% 46% at 50% 88%, rgba(196, 140, 70, 0.55) 0%, transparent 62%),
+    radial-gradient(120% 80% at 50% 100%, rgba(120, 78, 38, 0.5) 0%, transparent 55%),
+    linear-gradient(180deg, #0c1320 0%, #161826 38%, #2a2114 72%, #1a130c 100%);
+}
+
+/* The lone tree, resolving out of the haze as Kai approaches it. */
+.tree {
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  width: min(60vw, 30rem);
+  transform: translateX(-50%) scale(calc(0.965 + 0.05 * var(--p, 0)));
+  color: #0c0a08;
+  opacity: clamp(0, calc((var(--p, 0) - 0.12) / 0.4), 1);
+  filter: drop-shadow(0 0 36px rgba(196, 140, 70, 0.35));
+}
+.tree :global(.fruit) {
+  fill: rgba(210, 150, 78, 0.92);
+}
+
+/* First bite — warmth blooms from the center, holds three heartbeats, then
+   drains to a cold that is emptier than before it came. The pivot of Part I. */
+.bloom {
+  background: radial-gradient(
+    55% 45% at 50% 46%,
+    rgba(214, 150, 74, 0.5) 0%,
+    rgba(160, 96, 44, 0.18) 40%,
+    transparent 70%
+  );
+  opacity: clamp(0, calc(var(--p, 0) / 0.42), 1);
+}
+.hollow {
+  background:
+    radial-gradient(70% 60% at 50% 50%, transparent 0%, rgba(12, 18, 26, 0.6) 70%),
+    linear-gradient(180deg, #0a0f16 0%, #0a0c12 100%);
+  opacity: clamp(0, calc((var(--p, 0) - 0.55) / 0.42), 1);
+}
+
+/* ─── Title & frame ───────────────────────────────────────────────────── */
+
+.kicker {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(221, 217, 205, 0.55);
+}
+.title {
+  margin-top: 1.6rem;
+  font-size: clamp(2.6rem, 1.6rem + 5vw, 4.6rem);
+  font-weight: 360;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: #efe9da;
+}
+.byline {
+  margin-top: 1.4rem;
+  font-style: italic;
+  font-weight: 320;
+  font-size: 1.05rem;
+  color: rgba(221, 217, 205, 0.62);
+}
+.cue {
+  position: absolute;
+  left: 50%;
+  bottom: 7vh;
+  transform: translateX(-50%);
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: rgba(221, 217, 205, 0.5);
+  /* fades the moment the walk begins */
+  opacity: calc(1 - var(--p, 0) * 2.4);
+  animation: cueBreathe 3.6s ease-in-out infinite;
+}
+@keyframes cueBreathe {
+  0%, 100% { opacity: 0.32; }
+  50% { opacity: 0.6; }
+}
+
+/* The close — handing off to Part II, and a quiet way back. */
+.close {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 22vh 1.5rem 30vh;
+  max-width: 33rem;
+  margin: 0 auto;
+}
+.closeKicker {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: rgba(221, 217, 205, 0.45);
+}
+.closeNext {
+  margin-top: 1.1rem;
+  font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.2rem);
+  font-weight: 350;
+  color: #efe9da;
+}
+.closeSub {
+  margin-top: 0.8rem;
+  font-style: italic;
+  color: rgba(221, 217, 205, 0.5);
+}
+.back {
+  display: inline-block;
+  margin-top: 3rem;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(221, 217, 205, 0.7);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(221, 217, 205, 0.25);
+  padding-bottom: 0.25rem;
+  transition: color 250ms ease, border-color 250ms ease;
+}
+.back:hover {
+  color: var(--color-paper);
+  border-color: var(--color-sky);
+}
+
+/* ─── Reduced motion — the walk becomes a quiet, legible read ───────────── */
+@media (prefers-reduced-motion: reduce) {
+  .line {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .shimmer,
+  .cue {
+    animation: none;
+  }
+}

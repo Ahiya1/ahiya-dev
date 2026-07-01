@@ -1,0 +1,229 @@
+/* ─────────────────────────────────────────────────────────────────────────
+   PROBE — the walk, continuous & intimate.
+   "Beneath, only legs, forward, only sand and air."
+
+   No scenes. No slides. One unbroken world that the body walks on regardless
+   of scroll. The gaze is down and forward; the desert is felt, not seen. The
+   thoughts drift through as smoke and sand. Warm, alive, accepting.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.root {
+  position: relative;
+  color: #e9e2d2;
+  font-family: var(--font-fraunces), Georgia, serif;
+  background: #0c0805;
+  overflow-x: clip;
+}
+
+/* ── The world — one fixed, continuous body of desert. Never cuts. ── */
+.world {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+/* Air above, warm ground-light gathering low and close — looking down/forward.
+   This whole field breathes, slow, on a resting rhythm: you breathe with him. */
+.air {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(90% 55% at 50% 92%, rgba(120, 74, 34, 0.55) 0%, rgba(70, 44, 22, 0.2) 38%, transparent 66%),
+    linear-gradient(180deg, #100b07 0%, #160f09 40%, #241710 72%, #160e08 100%);
+  animation: breath 9s ease-in-out infinite;
+}
+@keyframes breath {
+  0%, 100% { filter: brightness(0.96); }
+  50% { filter: brightness(1.06); }
+}
+
+/* The ground — sand close beneath you, drifting forward on its own cadence.
+   The legs simply move forward; the body walks on whether or not you read. */
+.ground {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -6%;
+  height: 56%;
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(58, 38, 20, 0.0) 0%, rgba(40, 26, 14, 0.85) 70%, #150d07 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 24%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 24%);
+}
+/* grain of sand, drifting up = forward motion of the body */
+.sand {
+  position: absolute;
+  inset: -20% 0 0 0;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='s'><feTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0.45  0 0 0 0 0.3  0 0 0 0 0.16  0 0 0 0.5 0'/></filter><rect width='100%25' height='100%25' filter='url(%23s)'/></svg>");
+  background-size: 240px 240px;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 40%, #000 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 40%, #000 100%);
+  animation: forward 26s linear infinite;
+}
+@keyframes forward {
+  from { transform: translateY(0); }
+  to { transform: translateY(-240px); }
+}
+
+/* air carries fine sand — a few motes drifting, the corner of the eye */
+.motes {
+  position: absolute;
+  inset: 0;
+  opacity: 0.5;
+  background-image:
+    radial-gradient(1.5px 1.5px at 22% 70%, rgba(220, 190, 150, 0.5), transparent),
+    radial-gradient(1px 1px at 68% 58%, rgba(220, 190, 150, 0.35), transparent),
+    radial-gradient(1px 1px at 82% 78%, rgba(220, 190, 150, 0.3), transparent),
+    radial-gradient(1.5px 1.5px at 40% 84%, rgba(220, 190, 150, 0.4), transparent),
+    radial-gradient(1px 1px at 55% 66%, rgba(220, 190, 150, 0.3), transparent);
+  background-size: 100% 100%;
+  animation: rise 18s linear infinite;
+}
+@keyframes rise {
+  from { transform: translateY(8%); }
+  to { transform: translateY(-8%); }
+}
+
+/* the intimate pool — edges fall to dark so you are held close, never shown
+   the grand desert, only ever kept near it */
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(78% 70% at 50% 56%, transparent 0%, rgba(8, 5, 3, 0.45) 72%, rgba(6, 4, 2, 0.85) 100%);
+}
+
+/* a barely-there film grain — a place, not a render */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* ── The prose — one continuous column the walk delivers ── */
+.column {
+  position: relative;
+  z-index: 1;
+  max-width: 30rem;
+  margin: 0 auto;
+  /* the walk begins and ends in emptiness */
+  padding: 64vh 1.6rem 80vh;
+}
+
+/* a paragraph surfaces from the haze as it enters — gently, no jump, no slide.
+   spacing is reading density, so several lines share the field: continuous. */
+.p {
+  margin: 2.5em 0;
+  font-size: clamp(1.22rem, 0.98rem + 1vw, 1.5rem);
+  font-weight: 340;
+  line-height: 1.74;
+  letter-spacing: -0.01em;
+  color: #e9e2d2;
+  text-wrap: pretty;
+  text-shadow: 0 1px 26px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  filter: blur(7px);
+  transform: translateY(12px);
+  transition: opacity 1500ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 1500ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1500ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.p.in {
+  opacity: 1;
+  filter: blur(0);
+  transform: none;
+}
+
+.said {
+  font-style: italic;
+  color: #f0e9d8;
+}
+
+/* the opening breath, set apart and lighter */
+.sacred {
+  font-style: italic;
+  font-weight: 320;
+  font-size: clamp(1.4rem, 1.05rem + 1.4vw, 1.9rem);
+  line-height: 1.42;
+  color: #f1ead9;
+}
+
+/* ── Thoughts as smoke and sand ──
+   not a box of numbers — particulate, faint, in the corner of the eye. They
+   form, rise, and dissolve, again and again: the reflex he cannot put down. */
+.smoke {
+  margin: 2.5em 0;
+  padding-left: clamp(1rem, 14vw, 8rem);
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  line-height: 2.4;
+  text-transform: lowercase;
+  color: rgba(216, 196, 162, 0.34);
+  text-shadow: none;
+}
+.smoke span {
+  display: block;
+  filter: blur(0.4px);
+  animation: smoulder 7s ease-in-out infinite;
+}
+.smoke span:nth-child(2) { animation-delay: 1.6s; }
+.smoke span:nth-child(3) { animation-delay: 3.4s; }
+@keyframes smoulder {
+  0% { opacity: 0; transform: translateY(10px); filter: blur(3px); }
+  22% { opacity: 0.5; transform: translateY(0); filter: blur(0.4px); }
+  60% { opacity: 0.4; }
+  100% { opacity: 0; transform: translateY(-26px); filter: blur(7px); }
+}
+
+/* a quiet end to the probe — no "Part II", just the walk continuing */
+.tail {
+  position: relative;
+  z-index: 1;
+  max-width: 30rem;
+  margin: 0 auto;
+  padding: 0 1.6rem 40vh;
+  text-align: center;
+}
+.tailNote {
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: rgba(216, 196, 162, 0.4);
+}
+.back {
+  display: inline-block;
+  margin-top: 1.6rem;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba(233, 226, 210, 0.65);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(233, 226, 210, 0.22);
+  padding-bottom: 0.2rem;
+  transition: color 240ms ease, border-color 240ms ease;
+}
+.back:hover {
+  color: #e9e2d2;
+  border-color: var(--color-sky);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .air, .sand, .motes, .smoke span {
+    animation: none;
+  }
+  .p {
+    opacity: 1;
+    filter: none;
+    transform: none;
+    transition: none;
+  }
+  .smoke span { opacity: 0.4; }
+}
