@@ -16,7 +16,15 @@ const API_URL = "https://api.anthropic.com/v1/messages";
 const CLAUDE_CODE_PREAMBLE =
   "You are Claude Code, Anthropic's official CLI for Claude.";
 
-export type ChatMessage = { role: "user" | "assistant"; content: string };
+export type ContentBlock =
+  | { type: "text"; text: string }
+  | { type: "image"; source: { type: "base64"; media_type: string; data: string } }
+  | { type: "document"; source: { type: "base64"; media_type: string; data: string } };
+
+export type ChatMessage = {
+  role: "user" | "assistant";
+  content: string | ContentBlock[];
+};
 
 type SystemBlock = {
   type: "text";

@@ -1,6 +1,7 @@
 import { getCourse } from "../../../tutor/_lib/courses";
 import { buildSystemPrompt, buildCourseContext } from "../../../tutor/_lib/prompt";
-import { streamTutor, type ChatMessage } from "../../../tutor/_lib/inference";
+import { streamTutor } from "../../../tutor/_lib/inference";
+import { buildApiMessages, type RawMessage } from "../../../tutor/_lib/chat";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -9,7 +10,7 @@ const MAX_MESSAGES = 40;
 const MAX_CHARS = 8000;
 
 export async function POST(req: Request) {
-  let body: { courseId?: string; messages?: ChatMessage[] };
+  let body: { courseId?: string; messages?: RawMessage[] };
   try {
     body = await req.json();
   } catch {
@@ -21,16 +22,18 @@ export async function POST(req: Request) {
     return Response.json({ error: "unknown course" }, { status: 404 });
   }
 
-  const messages = (body.messages ?? [])
+  const raw = (body.messages ?? [])
     .filter(
       (m) =>
         m &&
         (m.role === "user" || m.role === "assistant") &&
         typeof m.content === "string" &&
-        m.content.trim().length > 0,
+        (m.content.trim().length > 0 ||
+          (m.role === "user" && Array.isArray(m.attachments) && m.attachments.length > 0)),
     )
-    .slice(-MAX_MESSAGES)
-    .map((m) => ({ role: m.role, content: m.content.slice(0, MAX_CHARS) }));
+    .slice(-MAX_MESSAGES);
+
+  const messages = buildApiMessages(raw, { maxChars: MAX_CHARS });
 
   if (messages.length === 0 || messages[messages.length - 1].role !== "user") {
     return Response.json({ error: "no user message" }, { status: 400 });
