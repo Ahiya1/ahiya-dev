@@ -1,0 +1,691 @@
+[
+  {
+    "number": 0,
+    "title": "Administrations (Course Introduction)",
+    "topics": [
+      "Course goals",
+      "Course website",
+      "Piazza Q&A forum",
+      "Administrative requests",
+      "Final grade structure"
+    ],
+    "key_concepts": [
+      {"term": "Course 234124", "definition": "Introduction to Systems Programming (Mavo Le'Tichnut Ma'arachot); teaches C++, Unix, git, and Python."},
+      {"term": "Course website", "definition": "Holds announcements, course info, lecture slides, recordings, and homework assignments."},
+      {"term": "Piazza forum", "definition": "The course Q&A forum for questions about homework, materials, and administration; supports anonymous questions and search; check whether a question was already answered before posting."}
+    ],
+    "worked_examples": [],
+    "cheatsheet": [
+      "Course website = announcements + slides + recordings + homework",
+      "Ask questions on Piazza; search first to avoid duplicates"
+    ],
+    "source_file": "Tutorial_00_-_Administrations.pptx (no .txt extraction in corpus; recovered from pptx)"
+  },
+  {
+    "number": 1,
+    "title": "Unix",
+    "topics": [
+      "What is an operating system",
+      "The UNIX family and POSIX",
+      "The shell (bash) and command flow",
+      "UNIX file system, absolute vs relative paths",
+      "File permissions and executing files",
+      "Standard UNIX programs (ls, cd, cp, mv, rm, cat, less, diff, echo)",
+      "Standard channels (stdin/stdout/stderr) and redirection",
+      "Pipelines",
+      "bash variables, environment variables, PATH, internal vs external commands"
+    ],
+    "key_concepts": [
+      {"term": "Operating system", "definition": "An intermediary layer between hardware and software; gives users a convenient interface and gives programmers interfaces to manage memory, files, and hardware devices. Examples: Windows, Ubuntu, OSX, Android, iOS."},
+      {"term": "UNIX / POSIX", "definition": "UNIX is a family of operating systems whose advantage is a convenient standard (POSIX) for the services they provide. Homework is tested on Ubuntu 22.04 (Linux)."},
+      {"term": "Shell", "definition": "Software linking the user to the OS; reads a command, performs text substitutions per its features, and sends the processed command to the OS. bash is the default in most Linux distros; the course uses bash."},
+      {"term": "File system", "definition": "Files and directories. A file is an ordered collection of characters. Root is '/'. Every file/dir sits inside some directory except root."},
+      {"term": "Absolute vs relative path", "definition": "Absolute path starts from root e.g. /usr/ari/progs; relative path is from the current directory. '/' separates path components."},
+      {"term": "Path shortcuts", "definition": ". = current directory, .. = parent directory, ~ = user's home, ~user = that user's home, * = wildcard matching multiple files (e.g. *.txt)."},
+      {"term": "Permissions", "definition": "3 user classes (User=owner, Group, Other) each with 3 permissions Read/Write/Execute. Read allows reading/copying, Write allows modify/delete, Execute allows running the file."},
+      {"term": "Standard channels", "definition": "Each program has stdin (default keyboard), stdout (default terminal), stderr (default terminal, for error messages)."},
+      {"term": "Redirection", "definition": "> redirects stdout to a file (overwrites), < takes stdin from a file, 2> redirects stderr; >> and 2>> append. 2>&1 sends stderr to stdout."},
+      {"term": "Pipeline", "definition": "The '|' operator connects one command's stdout directly to the next command's stdin, avoiding temporary files: command1 | command2 | command3."},
+      {"term": "bash variables", "definition": "Assigned by varname=value (no spaces around =, no declaration needed, visible only in current shell); read with $varname."},
+      {"term": "Environment variables", "definition": "Variables accessible to all programs on the system (e.g. HOME, PATH), holding values that affect process behavior."},
+      {"term": "PATH and internal/external commands", "definition": "bash commands are internal (shell built-ins like history) or external (executable files like ls, cd, gcc, zip). PATH is a ':'-separated list of directories the shell searches for external commands. 'which' finds a command's location."}
+    ],
+    "worked_examples": [
+      "ls / ls -l / ls -al: showing plain listing, long listing (one file per line with permissions/owner/size/date), and listing including hidden dot-files.",
+      "chmod + gcc: running ./main.c gives 'Permission denied' because it is source not an executable; compile with gcc main.c -o hello_world then run ./hello_world; change permissions with chmod u+x <file>.",
+      "cp / mv / rm session: cp hello.c prog.c, mv prog.c private/program.c, rm -i asks confirmation, rm on a directory fails, rm -rf removes recursively/forcefully.",
+      "diff farm1 farm2: compares files line by line printing differing lines with line numbers (e.g. 0a1, 2d2).",
+      "cat redirection: cat > file.txt writes keyboard input to a file; cat file.txt > file2.txt overwrites; >> appends; cat < file2.txt > file.txt combines in/out.",
+      "Redirecting stderr: rmdir foo 2> error.txt captures the error message that would otherwise not go to stdout.",
+      "Temp file vs pipeline: ls -l > tmp; less < tmp; rm tmp replaced simply by ls -l | less; ls | grep test filters filenames."
+    ],
+    "cheatsheet": [
+      "ls [flags] [files]  (-l long, -a hidden, combinable -al)",
+      "pwd ; cd <dir> ; cd ~ ; cd ..",
+      "mkdir <name> ; rmdir <dir>  (rmdir only removes empty dirs)",
+      "cp [-r] [-i] <src> <dst> ; mv [-i] <src> <dst>",
+      "rm [-r] [-i] [-f] <files>  ; DANGER: rm -rf *",
+      "cat <file> ; less <file> ; diff <f1> <f2> ; echo [-n] words",
+      "chmod u+x <file>  (add execute permission to owner)",
+      "gcc main.c -o out ; ./out   (run local executable with ./)",
+      "Redirect: cmd > out ; cmd < in ; cmd 2> err ; cmd >> append ; cmd 2>&1",
+      "Pipe: ls -l | less  ;  ls | grep pattern",
+      "Variables: x=7 (no spaces) ; echo $x ; env vars HOME, PATH",
+      "which <command> ; man <command>"
+    ],
+    "source_file": "Tutorial_01_-_Unix.txt"
+  },
+  {
+    "number": 2,
+    "title": "Intro to C++",
+    "topics": [
+      "C++ vs C, g++ compilation",
+      "I/O with streams (cin/cout, endl, eof)",
+      "std::string",
+      "Pointers, pointer arithmetic, pointer-to-pointer",
+      "nullptr and undefined behavior",
+      "main arguments argc/argv",
+      "Dynamic memory: new/delete, memory leaks, ownership",
+      "Structures (struct)",
+      "Linked lists"
+    ],
+    "key_concepts": [
+      {"term": "C++ over C", "definition": "C++ is built on top of C and adds features for object-oriented, generic, and exception-based programming. Most C compiles as C++, but idiomatic C++ avoids C-style constructs like printf, FILE*, void*."},
+      {"term": "g++ compilation", "definition": "Compile C++ with g++; standard headers have no extension (<iostream>), sources use .cpp/.cc/.C. Example: g++ -std=c++17 -Wall -Werror -pedantic-errors main.cpp -o HelloWorld."},
+      {"term": "Streams", "definition": "I/O uses streams: istream for input, ostream for output. cin reads from stdin, cout writes to stdout. Operators << (output) and >> (input). endl is a newline. Type-aware unlike scanf."},
+      {"term": "eof", "definition": "cin.eof() checks end of input; the eof character marks End Of File. When piping from a file it comes automatically; from terminal press CTRL+D."},
+      {"term": "std::string", "definition": "Represents strings; concatenation with +, copy with =, indexing with [], length via .size(), lexicographic comparison with ==,<,>. Removes manual char* memory management. getline(cin, s) reads a full line including spaces; cin >> s reads a single word."},
+      {"term": "Pointer", "definition": "For type T, T* is a pointer to T holding an address of a T variable. & gets a variable's address; * dereferences. Uninitialized/garbage pointers cause undefined behavior."},
+      {"term": "nullptr", "definition": "The constant representing an invalid address; preferred over NULL. Dereferencing nullptr crashes the program ('segmentation fault' in UNIX)."},
+      {"term": "Pointer arithmetic", "definition": "ptr + n gives the address n elements forward/back (of the pointed type); ptr2 - ptr yields an int distance (only between same-type pointers). *(ptr+n) is equivalent to ptr[n]. Arrays and pointers behave similarly."},
+      {"term": "Pointer to pointer", "definition": "T** is a pointer to a T*; used e.g. for arrays of pointers or swap_strings(char** a, char** b)."},
+      {"term": "argc / argv", "definition": "int main(int argc, char** argv): argc = number of command-line args (including program name); argv is an array of strings, argv[0] is the program name, with an extra final NULL element."},
+      {"term": "Variable storage classes", "definition": "Local (allocated per block, freed automatically), global (whole program lifetime), function-static (persist value between calls). Globals and statics are considered bad practice in this course."},
+      {"term": "Dynamic memory (heap)", "definition": "Memory whose lifetime the programmer controls, allocated on the heap (vs local variables on the call stack). Heap is much larger; heap allocation failure can be handled but stack failure cannot."},
+      {"term": "new / delete", "definition": "new allocates a single object (new int, new int(7)); new[size_t] allocates an array (new int[n]); free with delete / delete[] respectively. new never returns nullptr. Don't mix new/delete with malloc/free; delete on nullptr is a safe no-op."},
+      {"term": "Memory leak", "definition": "Forgetting to free allocated memory; grows the program's memory use and slows the system over time. Detect with valgrind under UNIX."},
+      {"term": "Ownership", "definition": "The owner of memory is who is responsible for freeing it. A function that allocates frees it unless it returns it (then ownership transfers to the caller); must be documented."},
+      {"term": "struct", "definition": "Combines several existing types into a new type with named fields stored contiguously. Access with . (dot); for a pointer to struct use -> (arrow). Assignment/copy is field-by-field (by value); unsafe when the struct contains pointers, so complex structs are usually passed via pointers."},
+      {"term": "Linked list", "definition": "A chain of nodes (struct Node { int data; Node* next; }) each pointing to the next; end marked by nullptr. Unbounded size, easy mid-list insert/remove. Nodes must be dynamically allocated and freed. Can be doubly-linked (next+previous); a dummy head node reduces edge cases."}
+    ],
+    "worked_examples": [
+      "cat program: read lines with getline in a while(!cin.eof()) loop and echo each to stdout.",
+      "echo program: iterate argv from index 1 to argc-1, printing each arg separated by spaces then endl.",
+      "swap_strings(char** str1, char** str2): why a pointer-to-pointer is needed to swap what two char* variables point to.",
+      "CreateIntArray: documents that the caller is responsible for freeing the returned new[] array (ownership transfer).",
+      "Reverse-order print via linked list: read numbers until eof, insert each at the head (insert returns new head), then traverse printing, and destroyList frees each node using a toDelete temp before advancing head."
+    ],
+    "cheatsheet": [
+      "#include <iostream>; using namespace std; int main(){ cout << \"Hi\" << endl; return 0; }",
+      "g++ -std=c++17 -Wall -Werror -pedantic-errors main.cpp -o prog",
+      "cin >> x; getline(cin, line); while(!cin.eof()){...}",
+      "int* p = &n;  *p;  int* a = new int[n];  delete[] a;  delete p;",
+      "*(ptr+n) == ptr[n]  (pointer arithmetic)",
+      "int main(int argc, char** argv)  // argv[0] = program name",
+      "struct Node { int data; Node* next; };  p->data;  (*p).data",
+      "Detect leaks: valgrind ./prog",
+      "Prefer nullptr over NULL; never leave pointers uninitialized"
+    ],
+    "source_file": "Tutorial_02_-_Intro_to_C++.txt"
+  },
+  {
+    "number": 3,
+    "title": "Git",
+    "topics": [
+      "Version control intuition (repository, commit)",
+      "File states (Committed/Modified/Staged/Untracked)",
+      "Basic commands: add, commit, status, diff, log",
+      "Branches: branch, checkout, merge, fast-forward, rebase",
+      "Remote / distributed model: clone, fetch, pull, push, remote branches",
+      "Conflicts and resolving them in merge and rebase",
+      "Extras: .git, .gitignore, revert, commit --amend, --abort, Pull Request, Fork"
+    ],
+    "key_concepts": [
+      {"term": "Git / VCS", "definition": "Git is an open-source Version Control System: it saves versions of code, lets you track files over time, work in parallel with others, compare and revert versions. Originally built to develop the Linux kernel."},
+      {"term": "Repository (repo)", "definition": "A project managed by git; a folder holding the project files plus git's own tracking files."},
+      {"term": "Commit", "definition": "The basic building block: a set of changes saved as a new version; has a unique id and points to the previous commit; the chain of commits is the project's current state. Each commit should be atomic (one logical change) with an informative message."},
+      {"term": "File states", "definition": "Every file is in one of 4 states: Committed (unchanged since last commit), Modified (changed, not yet committed), Staged (marked to include in the next commit), Untracked (git doesn't track it)."},
+      {"term": "Branch", "definition": "A name given to a commit for convenience; usually refers to the whole preceding commit chain. There is a 'current' branch that new commits are added to. Branches need not be nested and evolve independently."},
+      {"term": "merge / fast-forward", "definition": "merge combines two branches by creating a special merge commit pointing to both; run from the target branch naming the source branch. If branches are nested, no new commit is made and the branch pointer just moves forward (Fast Forward)."},
+      {"term": "rebase", "definition": "Moves one branch on top of another by creating copies of its commits pointing to the second branch; run from the source branch naming the target. git rebase master."},
+      {"term": "Distributed model", "definition": "Host the repo on a git server (e.g. GitHub); each developer keeps a local copy and periodically syncs. Repos can be public or private (do NOT upload homework to public repos)."},
+      {"term": "Remote branches", "definition": "For each server branch there is a local mirror named with the remote prefix (usually 'origin', e.g. origin/main). You get 3 versions of a branch: local main, local origin/main, and main on the server. Don't commit directly to origin/* copies."},
+      {"term": "fetch / pull / push", "definition": "fetch brings server changes and updates the remote-tracking branches (doesn't touch your local branches). pull = fetch + fast-forward of the current branch; if both sides changed use pull --rebase (fetch then rebase). push updates the server with your local branch's changes (only the current branch)."},
+      {"term": "First push / token", "definition": "GitHub asks for username and a token (not password) generated at github.com/settings/tokens. To push you must own the repo or be added as a Collaborator (Settings > Collaborators)."},
+      {"term": "Conflicts", "definition": "Merging can create conflicts when both branches changed the same line. Use status to find conflicted files; git wraps the conflicting content with marker lines; resolve by editing, then add and commit (creates a Merge Commit). In rebase, conflicts can occur per moved commit; resolve each, add, then git rebase --continue."},
+      {"term": ".git and .gitignore", "definition": "The .git folder stores all repo info (commits, branches); never edit it directly. .gitignore lists files/dirs git should ignore (e.g. executables, .vscode); git add . adds everything except ignored files."},
+      {"term": "revert / amend / abort", "definition": "git revert <id> creates a new commit undoing a given commit. git commit --amend modifies the last commit (HEAD) with staged changes. git merge --abort / git rebase --abort cancels an in-progress merge/rebase, restoring the prior state."},
+      {"term": "Pull Request / Fork", "definition": "To contribute to a repo you lack write access to (e.g. open source), Fork it (a copy in your account), make changes, then open a Pull Request asking the original owner to merge your branch's changes."}
+    ],
+    "worked_examples": [
+      "Feature-branch workflow (local): create and switch to a temporary branch, add commits, merge or rebase into master, optionally delete the temporary branch; keep master updated only via merges.",
+      "Remote workflow: pull the base branch (main/master), create a local branch, periodically pull base + rebase your branch on it, merge your branch into base, then push the base.",
+      "Rebase conflict resolution loop: git stops at a conflicting commit, edit files, git add, git rebase --continue until finished."
+    ],
+    "cheatsheet": [
+      "git <sub-command> [flags] [files/branches]",
+      "git add file1.c ; git commit -m \"message\"",
+      "git status ; git diff ; git diff --staged ; git log --all --graph --oneline",
+      "git branch ; git branch name ; git checkout branch ; git checkout -b branch",
+      "git merge feature_branch ; git rebase master",
+      "git clone <url> ; git fetch ; git pull ; git pull --rebase ; git push",
+      "git revert 1234abcd ; git commit --amend",
+      "git merge --abort ; git rebase --abort ; git rebase --continue",
+      "Resolve conflict: edit files, then git add, then git commit (or rebase --continue)"
+    ],
+    "source_file": "Tutorial_03_-_Git.txt"
+  },
+  {
+    "number": 4,
+    "title": "Files, Modules, Compilation, assert, const, References, Overloading, Namespaces",
+    "topics": [
+      "File I/O with fstream (ifstream/ofstream)",
+      "Modular programming: interface vs implementation, .h and .cpp files",
+      "Compilation stages: preprocessing, compilation, linking; object files; static functions",
+      "assert macro and when to use it",
+      "const variables and const pointers, const correctness",
+      "References and const references",
+      "Function overloading, overload resolution, default arguments",
+      "Namespaces and using"
+    ],
+    "key_concepts": [
+      {"term": "File streams", "definition": "File I/O uses streams from <fstream>: ofstream for writing, ifstream for reading. Both take the filename in the constructor and close the file in their destructor. Read/write with >> and << (and getline); eof() checks end. fstream objects cannot be copied, so pass files by pointer or reference."},
+      {"term": "ifstream/ofstream are istream/ostream", "definition": "ifstream/ofstream are kinds of istream/ostream, so they work anywhere regular streams do."},
+      {"term": "Modular programming", "definition": "Splitting software into modules by role, enabling reuse, hiding implementation details, and reducing dependencies. A module has an interface (operations, exposed to the user) and an implementation (usually hidden)."},
+      {"term": ".h vs .cpp", "definition": "The .h file holds the interface: function declarations, type definitions, constants of interest to the user. The .cpp file holds the implementation: function bodies, internal helper functions/types, internal constants. Providing only the header lets you change the implementation freely without affecting the client."},
+      {"term": "Compilation stages", "definition": "1) Preprocessing (executes # directives via simple cut-and-paste), 2) Compilation (each source -> an object file .o, may contain 'holes' for unimplemented functions), 3) Linking (combines .o files into one executable, filling holes; exactly one file must define main)."},
+      {"term": "Preprocessor directives", "definition": "#define <macro> <value> replaces the macro text everywhere; #include <file> pastes the file contents (angle brackets = standard library, quotes = your own files). Included code is also preprocessed."},
+      {"term": "Linker errors", "definition": "Occur at link time: 'undefined reference' (no implementation found for a function) or 'multiple definition' (more than one implementation, e.g. two mains)."},
+      {"term": "static functions", "definition": "static <function> makes a function invisible outside its source file; the linker won't link it across translation units. Used for helper functions not part of the interface; not declared in .h."},
+      {"term": "assert", "definition": "assert(<expression>) from <cassert> verifies assumptions at runtime: if true nothing happens, if false the program aborts with the failing location. Turn off with the -DNDEBUG compile flag (then the code inside assert does NOT run — never put essential computations inside assert). Use for programmer-bug checks (arguments, return values, invariants), NOT for user input or checks needed in release mode."},
+      {"term": "const variable", "definition": "Adding const makes a variable's value unchangeable after initialization (so const variables must be initialized); enforced by the compiler."},
+      {"term": "const pointers", "definition": "const int* cptr (pointed-to value is const), int const* (same), int* const ptr (the pointer address is const, must be initialized), const int* const (both). Rule: const applies to its left, unless first where it applies to the type after it. You may convert only in the stricter direction (non-const to const)."},
+      {"term": "const correctness", "definition": "Define constants (e.g. magic numbers) as const variables rather than #define, enabling type checking and complex-typed constants. Apply const from the start; adding it late causes a snowball of changes."},
+      {"term": "Reference", "definition": "For type X, X& is another name (alias) for an existing variable; must be initialized and cannot be re-bound afterward. A plain X& cannot bind to a constant/temporary; const X& can bind to temporaries. Used to pass parameters and return values; never return a reference to a local variable."},
+      {"term": "Reference vs pointer", "definition": "A pointer can be nullptr, a reference always refers to a valid object; pointers need * and &, can be reassigned, support pointer arithmetic and []. Pass complex types as const X& (no perf gain for primitives, pass those by value)."},
+      {"term": "Function overloading", "definition": "In C++ a function is identified by name AND parameter number/types (unlike C, name only). You can overload the same name with different parameter types; the compiler picks the match by the call's arguments. Return type is not part of overload selection."},
+      {"term": "Overload resolution ranking", "definition": "Among functions with the right name/count, the compiler picks best by: 1) exact match or trivial conversion (T->const T, T->T&), 2) promotion (char->int, float->double), 3) standard conversion (int<->double, T*->void*), 4) user-defined conversions. Two equal-level matches = ambiguous, won't compile; resolve with explicit casts."},
+      {"term": "Default arguments", "definition": "void print(int n, int base = 10); default values may be given only to the LAST parameters, and written once (in the declaration, not the definition)."},
+      {"term": "Namespaces", "definition": "namespace fast_math { ... } groups identifiers like folders in a file system; full name is namespace::item (fast_math::sqrt). Identifiers not in any namespace are in the Global Scope. The C++ standard library is under std. Prevents name clashes between different files' definitions."},
+      {"term": "using", "definition": "using namespace mtm::ex2; or using mtm::ex2::grade; shortens already-defined names (does not define new ones). Never use 'using' in a .h file to avoid 'name pollution' in every file that includes it."}
+    ],
+    "worked_examples": [
+      "ofstream write example: open output.txt via ofstream and write \"Hello, World!\" << endl.",
+      "cp program: takes two path arguments, opens argv[1] with ifstream and argv[2] with ofstream, copies line-by-line with getline; checks argc<3; discusses edge cases (output exists, input missing, same path in and out).",
+      "vector2d module: struct vector2d {double x,y;} + const zero_vector + length() go in the .h (with #pragma once); the internal static dot_product and the length implementation go in vector2d.cpp.",
+      "Compilation-stage quiz: missing ';' -> compile error; declared-but-unimplemented used function -> link error; #include of a missing file -> preprocessing error; no main defined -> link error.",
+      "assert pitfalls: assert(doSomethingImportant() != FAILED) is wrong because the call is dropped under NDEBUG; asserting user input (assert(input>0)) is wrong — validate and handle instead.",
+      "const pointer quiz: which of 14 lines (assigning through const pointers, converting const away, etc.) cause compilation errors.",
+      "swap(int& a, int& b): uses references to swap the caller's variables.",
+      "getMax(int array[], int size) returns int&: allows getMax(array,5)=0; warns never to return a reference to a local variable.",
+      "print overload trace: given print(int/double/const char*/char), determine which is called for char, float, double, int, long, 'a', 49, 0, \"Hello\"; ambiguity resolved with explicit casts print(int(l)).",
+      "Name clash: including both network.h and printer.h that each declare connect() causes a compile error; namespaces (or fast_math::sqrt vs std::sqrt) resolve it."
+    ],
+    "cheatsheet": [
+      "#include <fstream>; ofstream out(\"f.txt\"); ifstream in(\"f.txt\"); out << x; getline(in, s);",
+      "Header guard: #pragma once ; put declarations in .h, definitions in .cpp",
+      "g++ a.cpp b.cpp -o prog   (multi-file compile: preprocess -> compile -> link)",
+      "static <function>  hides a helper from other translation units",
+      "#include <cassert>; assert(height >= 0 && weight > 0);  disable with -DNDEBUG",
+      "const int n = 5;  const int* p; int* const q = &i; const int* const r = &i;",
+      "int& r = n;  const int& cr = a+b;  pass by const X& for complex types",
+      "void print(int); void print(double);  // overloading",
+      "void f(int n, int base = 10);  // default only on last params, in declaration",
+      "namespace N { ... }  N::item ;  using N::item;  (never 'using' in a .h)"
+    ],
+    "source_file": "Tutorial_04.txt"
+  },
+  {
+    "number": 5,
+    "title": "Classes",
+    "topics": [
+      "Motivation: data types and ADTs (Date example)",
+      "Classes, methods, and the this pointer",
+      "const methods",
+      "public / private access control; class vs struct",
+      "Constructors and destructors; static members",
+      "Data structures as classes (Stack example)",
+      "Copy constructor, assignment operator, destructor (Rule of Three), =default / =delete",
+      "Implementing a string class with operator overloading (friend, subscript, +=, +, ==, <, <<)"
+    ],
+    "key_concepts": [
+      {"term": "Data type / ADT", "definition": "A type plus its allowed operations is a data type (built-ins like int, float are primitive). An Abstract Data Type (ADT) hides the implementation and exposes only the interface (operations); the same ADT may have several implementations without the client depending on the specific one."},
+      {"term": "Class and methods", "definition": "New data types are created with class (or struct). Functions defined as part of the type are methods / member functions. A method needs an object of the type to be called on: p1.distance(p2). Methods can be defined inside the class (usually short ones, go in the .h) or declared inside and defined outside with Class::method (in the .cpp)."},
+      {"term": "this", "definition": "Every method of an object of type X receives a hidden pointer this of type X* pointing to the object it was called on; use it only when there is ambiguity."},
+      {"term": "const method", "definition": "Adding const at the end of a method signature lets it be called on const objects and makes it promise not to modify the object (this becomes const X* const, all fields become const). Mark every method that doesn't change the object's state as const."},
+      {"term": "public / private", "definition": "Access control hides implementation. Code inside the type may access private parts; outside code cannot. Default is private for class, public for struct (that is the only difference). Use struct for simple all-public types."},
+      {"term": "Constructor", "definition": "A special method with the same name as the class and no return type, used to initialize a new object. Multiple constructors follow overloading rules; one with no parameters is the default constructor. If none is declared, the compiler generates a default c'tor (calling each field's default c'tor) — but not if any other constructor is declared. Array allocation uses the default c'tor for each element."},
+      {"term": "Initialization list", "definition": "Y(): a(1), c(0.0) { ... } initializes fields before the constructor body runs; fields not listed use their default c'tor; fields are initialized in DECLARATION order, not list order."},
+      {"term": "Destructor", "definition": "~X() has no parameters and no return type; exactly one per class; called automatically when the object is released. After the destructor body runs, destructors of all fields are called (in reverse order of construction)."},
+      {"term": "static members", "definition": "static variables/methods belong to the class, not a specific object. A static method has no this and needs no object. Static members obey access control. Static data members are defined once in the .cpp (Point Point::origin(0,0);)."},
+      {"term": "Copy constructor", "definition": "X::X(const X& x) — a constructor taking an object of the same type; used to pass/return by value and initialize copies. The compiler always generates one if not defined (even if other constructors exist), copying field by field. For classes with pointers this shallow copy is usually wrong (deep copy needed)."},
+      {"term": "Assignment operator", "definition": "X& X::operator=(const X& x) changes an existing object to equal another. Compiler-generated one assigns field by field. A correct one for pointer-owning classes must: check self-assignment (this == &s), allocate/copy new data, delete old data, and return *this for chaining."},
+      {"term": "Rule of Three", "definition": "The copy constructor, destructor, and assignment operator are linked: if you must implement one, you usually must implement all three. Signs you need them: the class involves pointers, uses new/delete, or manages other resources (e.g. files)."},
+      {"term": "=default / =delete", "definition": "=default explicitly asks the compiler to generate the default implementation (also forces a default c'tor when another c'tor exists); the course requires =default for c'tors/operator= you want defaulted. =delete blocks an auto-generated function you don't want."},
+      {"term": "friend", "definition": "A function/operator/class declared friend is defined outside the class but may access its private members. Needed for symmetric binary operators (e.g. ==, <, <<) to support conversions; avoid overusing friend — usually a sign of bad design/excess coupling."},
+      {"term": "Operator overloading (string)", "definition": "Overload +=, [] (two versions: const char& operator[](int) const and char& operator[](int) for const and non-const objects, both returning references), + (returns by value, not a reference), == and < (implement the rest in terms of them), and << as friend ostream& operator<<(ostream&, const string&) returning the stream for chaining."}
+    ],
+    "worked_examples": [
+      "Bad Date struct: shows that not every combination is a valid date (BLA month, 31 SEP, 29 FEB 2010) motivating a class with validating methods.",
+      "Point class: fields x,y; methods distance(const Point&) const and set(double,double); why set cannot be const.",
+      "Undo/redo problem solved directly with a raw array: error-prone (size-- vs --size, > vs >=), doesn't self-document.",
+      "Stack class: interface push/pop/top/getSize/isFull/isEmpty with data/maxSize/nextIndex; the same undo problem re-solved cleanly with the Stack (self-documenting, testable, reusable, fewer bugs).",
+      "Stack constructor/destructor: allocate data=new int[maxSize] in c'tor, delete[] data in d'tor; push/pop/top guard with isFull/isEmpty.",
+      "Constructor/destructor call-order quiz (class Y with two X fields): trace which c'tors and d'tors print and in what order.",
+      "Stack copy constructor: the compiler-generated one copies the data pointer (shallow) — wrong; the correct one allocates a new array and copies elements.",
+      "Stack assignment operator: self-assignment check, delete[] old, allocate new, copy, return *this; discusses what if new throws.",
+      "Event class with =default: explicitly defaults copy c'tor, operator=, and destructor while defining a custom constructor.",
+      "string class implementation: fields int length + char* data + static helper allocateAndCopy; constructor, copy constructor, destructor (delete[] data), size() const, assignment operator (allocate-then-delete for exception safety); operators +=, +, [] (two versions), ==, <, and the != <= > >= derived from == and <; << as friend."
+    ],
+    "cheatsheet": [
+      "class X { private: int a; public: X(int n); ~X(); int get() const; };",
+      "Definition outside class: int X::get() const { return a; }",
+      "Init list: X(int n) : a(n) { }  // fields init in declaration order",
+      "static member: declared in class, defined in .cpp: Point Point::origin(0,0);",
+      "Copy c'tor: X(const X& other);  Assign: X& operator=(const X& other);",
+      "operator= body: if(this==&other) return *this; delete[] data; ... return *this;",
+      "Rule of Three: implement copy c'tor + destructor + operator= together",
+      "X(const X&) = default;  X& operator=(const X&) = default;  X(const X&) = delete;",
+      "friend ostream& operator<<(ostream& os, const X& x);  // returns os",
+      "Two [] overloads: const char& operator[](int) const;  char& operator[](int);"
+    ],
+    "source_file": "Tutorial_05_-_Classes.txt"
+  },
+  {
+    "number": 6,
+    "title": "Iterators",
+    "topics": [
+      "What iterators are; begin/end; the minimal operator interface",
+      "Range-based for",
+      "Optional operators (--, +), rbegin/rend, invalidation",
+      "Implementing an iterator for the Stack class",
+      "const-correct iterators (const& operator*, separate Iterator / constIterator classes)",
+      "Iterator for the string class via typedef char*"
+    ],
+    "key_concepts": [
+      {"term": "Iterator", "definition": "An object that lets you iterate sequentially over the elements of another object, giving the user a uniform interface. Each data structure defines its own iterator matching its implementation; a structure may define several iterators (e.g. different orders)."},
+      {"term": "begin / end", "definition": "Methods begin() and end() return iterators to the start and to one-past-the-end. end() does NOT point to a valid element; it is used as a stop sentinel to detect reaching the end."},
+      {"term": "Minimal iterator interface", "definition": "An iterator must define: operator++ (prefix, advance to next element), operator* (access current element, usually returns a reference to allow modification), and operator!= (compare iterators, especially against end)."},
+      {"term": "Range-based for", "definition": "For structures/iterators with the minimal interface: for (int n : s1) { ... } is equivalent to for (Iterator it = s1.begin(); it != s1.end(); ++it) { int n = *it; ... }."},
+      {"term": "Optional operators", "definition": "Depending on the structure, an iterator may also define operator-- (go back), operator+ (skip several forward); rbegin/rend give reverse-order iterators."},
+      {"term": "Invalidation", "definition": "Modifying the structure (adding/removing elements) invalidates all iterators created before the change; using an invalidated iterator is undefined behavior. Comparing iterators from different structures is also undefined unless stated otherwise. Valid use is the user's responsibility."},
+      {"term": "const iterators", "definition": "To iterate const objects, begin/end must be const methods. But if operator* returns a non-const reference you could still modify a const object's elements. Fixes: make operator* return const& (but then you can never modify via iterators), or define a separate constIterator class returned by the const begin/end while Iterator (non-const operator*) is returned by the non-const begin/end."},
+      {"term": "Iterator via typedef", "definition": "Sometimes no dedicated class is needed: for the string (char* data), char* is already an iterator with ++, !=, * defined — use typedef char* Iterator; typedef const char* constIterator; and still add begin/end methods."}
+    ],
+    "worked_examples": [
+      "Set iterator usage: it = s1.begin(); *it prints 1; ++it; *it prints 2; end() marks the stop.",
+      "Rewriting the Stack undo program to use range-based for (for (int n : stack) cout << n) instead of the while(!isEmpty){top;pop} loop.",
+      "Stack::Iterator: nested class holding Stack* stack and int index; declared with a private constructor and friend Stack so only begin/end create it; begin() returns Iterator(this, nextIndex-1), end() returns Iterator(this, -1); operator++ does index--, operator!= compares indices, operator* returns stack->data[index].",
+      "Making Stack iteration work on const stacks: mark begin/end const; then fix operator* to return const int& (or split into Iterator and constIterator) so a const Stack's elements can't be modified via *it = 5.",
+      "string iterator: typedef char* Iterator / const char* constIterator; add begin()/end() (and const versions) reusing the built-in pointer operators."
+    ],
+    "cheatsheet": [
+      "Minimal iterator: Iterator& operator++();  T& operator*();  bool operator!=(const Iterator&);",
+      "Get iterators: auto it = c.begin(); it != c.end(); ++it",
+      "Range-for: for (auto x : container) { ... }  // needs begin/end + the 3 operators",
+      "const-correct: const T& operator*() const;  or separate constIterator class",
+      "const begin/end: Iterator begin() const; return const iterators",
+      "Reverse: rbegin() / rend()",
+      "typedef trick: typedef T* Iterator; typedef const T* constIterator;",
+      "Any structure change invalidates existing iterators (UB to use them)"
+    ],
+    "source_file": "Tutorial_06_-_Iterators.txt"
+  },
+  {
+    "number": 7,
+    "title": "Exceptions & Templates",
+    "topics": [
+      "Exception mechanism: throw / try / catch",
+      "Stack unwinding and propagation",
+      "std::bad_alloc from new; exception-safe code (do risky work before freeing)",
+      "When to use exceptions; never throw from a destructor",
+      "Adding exception classes to the Stack",
+      "Function templates, instantiation, overload resolution with templates",
+      "Template requirements on the type T",
+      "Multi-parameter and non-type templates",
+      "Class templates; generic exception-safe Stack<T>"
+    ],
+    "key_concepts": [
+      {"term": "Exceptions", "definition": "C++ error-handling with 3 keywords: throw (used by the function that detects an error it can't handle, taking the object to throw), try (marks a block that may throw), catch (right after try, names the exception type to catch and the handling code). A function that neither detects nor handles the error can ignore it."},
+      {"term": "Propagation / stack unwinding", "definition": "When thrown, the current function stops immediately and returns no value; the exception passes to the caller. If uncaught it keeps bubbling up the call stack (stack unwinding) until caught, or the program crashes if thrown from main. During unwinding, local variables' destructors are called (only that code runs) before the exception moves up."},
+      {"term": "Multiple catch blocks", "definition": "Several catch blocks may follow one try, each for a different type; if none matches, the exception keeps propagating; after a matching catch runs, execution continues after the last catch."},
+      {"term": "std::bad_alloc", "definition": "When new fails it throws std::bad_alloc (e.g. catch (const std::bad_alloc& e) { cerr << e.what(); }). Allocation is a classic exception case: the allocating function usually can't handle failure and must propagate it up."},
+      {"term": "Exception-safe ordering", "definition": "When code mixes freeing and allocating, do the risky part (which may throw) FIRST into a temp, and only then free the old data — so a throw doesn't leave you with freed data and no replacement (allocate-then-delete)."},
+      {"term": "When to use exceptions", "definition": "Separate the function's desired behavior (use a normal return value) from undesired events preventing success (throw). Do NOT use exceptions as a substitute for return values. Throw when a function hits a problem preventing its job (invalid input, invalid state). If a simple check can avoid the exception, prefer that over try/catch (clearer code)."},
+      {"term": "Never throw from a destructor", "definition": "During unwinding, destructors of locals are already being called; only one exception can be 'in flight'. If a destructor throws while another exception is propagating, the program crashes. Never throw from a destructor."},
+      {"term": "Function template", "definition": "template <class T> defines generic code where T stands for a type usable like a normal type name. The compiler generates code per needed type at compile time (instantiation). Templates must always be defined in .h files so their full code is visible to the compiler."},
+      {"term": "Template call / deduction", "definition": "Call with explicit args max<int>(array,3) or let the compiler deduce them from the arguments max(array,3). When deduced, the template participates in overload resolution with other same-named functions."},
+      {"term": "Template overload priority", "definition": "1) an exact-matching non-template function, 2) a template function usable without conversions, 3) a non-template function using automatic conversions. The compiler NEVER applies automatic conversions to match a template; force a template with explicit args."},
+      {"term": "Requirements on T", "definition": "For a template to compile on given args, T must satisfy the (implicit) requirements the code imposes. E.g. copy-by-value max needs copy c'tor, operator<, operator=, destructor; a reference-returning max needs only operator< (also more efficient, no copies). You can offer several versions requiring more or less of T."},
+      {"term": "Multi-parameter & non-type templates", "definition": "template<class T, class S> struct Pair {...} (std::pair in <utility>). Templates can take non-type params: template<class T, int N> class Vector holding T data[N]; N is fixed at compile time, so Vector<int,3> and Vector<int,5> are different types and can't be added."},
+      {"term": "Template error messages", "definition": "The compiler catches only basic errors when reading a template; type-dependent errors appear only at instantiation, producing long multi-line messages listing templates and their args. Recommendation: write and debug normal code first (using typedef int T;), then convert to a template."},
+      {"term": "Class template", "definition": "template <class T> class Stack {...} makes a generic class. Unlike functions, class template arguments must be written explicitly when creating an object (Stack<int> s) — not deduced. Each argument set creates a new type. Inside the class body you may write Stack instead of Stack<T>."},
+      {"term": "Exception-safe generic Stack", "definition": "In the templated copy c'tor / operator=, the element assignment data[i]=s.data[i] may be a complex type that throws; wrap the copy loop in try { ... } catch(...) { delete[] data; throw; } so allocated memory is freed and the exception is re-thrown (propagated)."}
+    ],
+    "worked_examples": [
+      "factorial/choose: factorial throws -1 (an int) for n<0; the exception propagates through choose up to main; caught in main with catch(int n){ cerr << error }.",
+      "weirdThrow trace 1: throws 42 (int), 3.14 (double), \"oopsy...\" (const char*); a try with catch(int)/catch(double)/catch(const string&) — output is 42 then stops (int caught).",
+      "weirdThrow trace 2: same throws inside a loop; catch int/double/const string& — prints 1, 3.14, then the const char* is uncaught -> terminate/Aborted (const char* is not const string&).",
+      "bad_alloc loop: infinite new int[10000] eventually throws std::bad_alloc, caught printing e.what().",
+      "copyFromAnotherStack exception safety: the buggy version deletes old data then allocates (throw leaves dangling); fixed by allocating tmp first, then delete[] and assign.",
+      "good vs bad stack drain: good() uses while(!s.isEmpty()){top;pop}; bad() loops forever with try/catch(Stack::Empty) using break — the check is preferred over exception-driven flow.",
+      "Adding exception classes to Stack: empty classes InvalidSize{}, Empty{}, Full{}; constructor throws InvalidSize, push throws Full, pop/top throw Empty.",
+      "horriblyWrong: SomeClass destructor throws NegativeValue while another exception is thrown -> crash (never throw from a destructor).",
+      "generic max: template<class T> T max(const T* array, int size) requires 4 operations of T; a reference-returning const T& version requires only operator< (works on more types, no copies).",
+      "Pair<T,S> and Vector<int,N>: non-type template param N; Vector<int,3> += Vector<int,5> won't compile (different types).",
+      "Stack<T> copy c'tor and operator= with try/catch(...) around the copy loop to delete[] tempData and re-throw on failure.",
+      "Stack<int> vs Stack<string>: s3 = s2 (Stack<int> = Stack<string>) is a compile error — different instantiated types."
+    ],
+    "cheatsheet": [
+      "throw obj;  try { ... } catch (const T& e) { ... }  catch (...) { ... }",
+      "new failure: catch (const std::bad_alloc& e) { cerr << e.what(); }",
+      "Exception-safe: allocate into tmp FIRST, then delete[] old, then assign",
+      "Never throw from a destructor; don't use exceptions as return values",
+      "template <class T> T max(const T* a, int n) { ... }  // define in .h",
+      "Call: max<int>(a,3) explicit  or  max(a,3) deduced",
+      "Class template: template <class T> class Stack { ... };  use Stack<int> s;",
+      "Non-type param: template <class T, int N> class Vector { T data[N]; };",
+      "Generic copy: try { copy loop } catch(...) { delete[] tmp; throw; }",
+      "Dev tip: write with typedef int T; get it working, then convert to template"
+    ],
+    "source_file": "Tutorial_07_-_Exceptions_Templates.txt"
+  },
+  {
+    "number": 8,
+    "title": "STL (Standard Template Library) and Smart Pointers",
+    "topics": [
+      "Motivation: pointers cause memory bugs; smart pointers",
+      "unique_ptr (implementation, blocking copy, move, ownership)",
+      "shared_ptr (reference counting, circular-reference pitfall)",
+      "make_unique / make_shared",
+      "STL overview: containers and algorithms via templates",
+      "vector, list, deque; set, map; unordered containers",
+      "Iterators, const_iterator, iterator categories, invalidation",
+      "The <algorithm> library (count, sort, binary_search, any_of)",
+      "Worked template class exercise: Poly<T>"
+    ],
+    "key_concepts": [
+      {"term": "Why smart pointers", "definition": "Pointers cause most memory errors. C++ features (constructors/destructors, STL collections) removed most unsafe pointer use, but pointers are still needed (e.g. with inheritance). Raw pointers lose C++'s safety and force manual memory management everywhere; e.g. a leak if a second new throws after the first."},
+      {"term": "unique_ptr", "definition": "A class behaving like a pointer but adding behavior — freeing the pointed object when the smart pointer is destroyed (automatic release). Implemented with a T* data member, operator* and operator->, and delete data in the destructor. std::unique_ptr models sole ownership; copy and assignment are blocked (=delete) so two owners can't both free the same memory."},
+      {"term": "move / ownership transfer", "definition": "Transfer ownership between unique_ptrs with std::move: ptr2 = std::move(ptr1); afterward ptr1 no longer owns and points to nullptr (do not use it). Ownership can also be moved into functions (foo(std::move(ptr1))). Returning a value transfers ownership automatically (no need for move with return)."},
+      {"term": "shared_ptr", "definition": "std::shared_ptr models shared ownership: several pointers co-own the same memory; the memory is freed by the last one destroyed. Implemented with reference counting (a shared counter incremented on copy, decremented in the destructor; freed when it reaches 0)."},
+      {"term": "shared_ptr circular reference", "definition": "If nodes hold shared_ptrs to each other cyclically (e.g. a doubly-linked list), destroying the head does NOT free the memory — the counts never reach 0. shared_ptr is not suitable for cyclic references."},
+      {"term": "make_unique / make_shared", "definition": "Use make_unique<T>(args) and make_shared<T>(args) to create smart pointers; they take the same arguments as the pointed object's constructor (better than passing new ...)."},
+      {"term": "STL", "definition": "The Standard Template Library, present in every C++ implementation; contains generic Containers and Algorithms built with templates — generic, extensible, efficient. Reference: cppreference.com."},
+      {"term": "vector", "definition": "std::vector (#include <vector>) is a dynamic array: contiguous in memory, fast random access via [], fast insert/remove at the END (pre-allocated). Insert/remove elsewhere can be very slow. [] is unchecked (UB on bad index); at() is checked (throws std::out_of_range). Stored objects must define a copy constructor and assignment operator (no default c'tor needed). vector is the recommended default container."},
+      {"term": "list / deque", "definition": "std::list is a doubly-linked list: fast insert anywhere, sequential forward/backward access, no fast random access; adds push_front/pop_front and drops random-access methods. std::deque (double-ended queue) is like a vector but with fast insert/remove at BOTH ends (push_front/pop_front). Much of list/vector interface is shared, so containers are interchangeable."},
+      {"term": "Associative containers", "definition": "In associative structures insertion order doesn't affect iteration order. std::set keeps elements sorted via operator< and holds no duplicates. std::map stores key->value pairs with at most one pair per key; operator[] accesses/inserts/updates; a missing key with [] inserts a default value; find(key) returns an iterator to the pair or end() if absent. unordered_set/unordered_map don't keep order."},
+      {"term": "iterators & const_iterator", "definition": "Almost all STL containers provide iterator to traverse elements, enabling uniform code across containers. Each container also defines const_iterator (iterator converts to it; get one from a non-const container with cbegin/cend). Container changes may invalidate iterators (UB to use invalidated ones)."},
+      {"term": "iterator categories", "definition": "Different containers return iterators supporting different operations: list gives a bidirectional iterator (++ and --); vector gives a random access iterator (also +/- an integer and [] access). STL docs state each container's iterator category."},
+      {"term": "<algorithm>", "definition": "#include <algorithm> provides built-in algorithms operating on iterators. Some require certain iterator operations. Examples: count(first,last,value); sort(first,last) needs random access (works on vector, not list); binary_search picks the most efficient implementation per iterator (O(log n) on vector, O(n) on list); any_of(first,last,condition) takes a predicate (e.g. a function object with operator())."}
+    ],
+    "worked_examples": [
+      "bad() vs ok(): two raw new Circle allocations — if the second throws, the first leaks; ok() wraps the second in try/catch to delete ptr1 and re-throw.",
+      "unique_ptr implementation: template class with T* data, explicit constructor, destructor delete data, operator* and operator->; good() uses unique_ptr<Circle> so cleanup is automatic.",
+      "Blocking unique_ptr copy: copy would give two owners freeing the same memory (double free); solution is unique_ptr(const unique_ptr&) = delete and operator= = delete. Deep-copying the pointee is rejected as wrong behavior.",
+      "move ownership: unique_ptr<Circle> ptr2 = std::move(ptr1); and foo(std::move(ptr1)); ptr1 becomes unusable (nullptr).",
+      "shared_ptr copy c'tor and destructor with a shared int* counter (increment on copy, decrement and free when 0).",
+      "Circular shared_ptr list: destroying head does not free memory — motivates not using shared_ptr for cycles.",
+      "make_unique/make_shared: make_unique<Circle>(5.0) and make_shared<Circle>(7.0) instead of wrapping new.",
+      "readAndPrint: read ints into a vector<int> with push_back until cin fails, then print by index.",
+      "vector at() vs []: words.at(2) throws std::out_of_range caught and printed.",
+      "map grades: grades[\"Baraa\"]=100; iterate with for(const pair<string,int>& g : grades) printing g.first and g.second; find(key) to test membership.",
+      "mostFrequentWord: read words into a map<string,int> count, increment count[word], track max_count/max_word, print the most frequent.",
+      "algorithm examples: count(v.begin(),v.end(),5) prints 2; sort works on vector but not list; binary_search O(log n) on vector vs O(n) on list; any_of with a SomeCondition function object.",
+      "Poly<T> exercise: design the minimal interface (getCoefficient, setCoefficient, degree, operator(), and free operator+) to support a given usage; implement it with a std::map<unsigned int, T> m_coefficients — getCoefficient uses find (returns T() if absent), degree scans the map for the max nonzero exponent, operator+ sums coefficients up to the max degree, operator() evaluates using pow."
+    ],
+    "cheatsheet": [
+      "#include <memory>  unique_ptr<T> p(new T(...));  auto p = make_unique<T>(args);",
+      "unique_ptr: no copy; transfer with std::move; return transfers ownership automatically",
+      "auto sp = make_shared<T>(args);  // reference-counted shared ownership (avoid cycles)",
+      "#include <vector>  vector<int> v; v.push_back(x); v[i]; v.at(i); v.size();",
+      "vector<T>::iterator it = v.begin(); it != v.end(); ++it;  *it;  rbegin()/rend()",
+      "list: push_front/pop_front (bidirectional iterator, no random access)",
+      "deque: push_front/push_back/pop_front/pop_back",
+      "set<int> s; s.insert(x);  (sorted, unique)   map<K,V> m; m[k]=v; m.find(k)!=m.end();",
+      "Iterate map: for (const pair<K,V>& p : m) use p.first, p.second",
+      "#include <algorithm>  count(b,e,val); sort(b,e); binary_search(b,e,val); any_of(b,e,pred);"
+    ],
+    "source_file": "Tutorial_08_-_STL.txt"
+  },
+  {
+    "number": 9,
+    "title": "C++ Exercises",
+    "topics": [
+      "Constructor/copy-constructor call-order tracing with templates and inheritance",
+      "Adding operator<< to a polymorphic class hierarchy (Shape/Circle/Square)",
+      "Function objects (operator()) and generic condition classes (exam question)",
+      "Exam-format guidance for the C++ questions"
+    ],
+    "key_concepts": [
+      {"term": "Constructor call-order tracing", "definition": "Practice reading code with class templates A<T>, B<T>, and a class C : public B<int> to predict exactly which constructors/copy-constructors/destructors print and in what order when objects are created, copied, and bound to base references."},
+      {"term": "Polymorphic printing with operator<<", "definition": "To print a polymorphic hierarchy via <<, add a single free friend operator<<(ostream&, const Shape&) that delegates to a protected virtual method. Option 1: virtual void print(ostream&) const overridden per class. Option 2: virtual string getRepresentation() const per class (using an ostringstream), with operator<< returning os << s.getRepresentation()."},
+      {"term": "Function object (functor)", "definition": "A class with an operator() so its instances can be called like functions. Example Divides: constructor stores k and throws std::runtime_error(\"Cannot divide by 0!\") if k==0; operator()(int x) const returns x % m_k == 0."},
+      {"term": "Generic condition base class", "definition": "template<class T> class Cond with a virtual bool operator()(const T& x) const returning true by default (condition always holds) and a virtual destructor; concrete conditions inherit and override operator(). Divides becomes class Divides : public Cond<int> with operator()(const int&) const override."},
+      {"term": "Combining conditions with &&", "definition": "template<class T> class CondAnd : public Cond<T> holds two const Cond<T>& and its operator() returns m_cond1(x) && m_cond2(x); a free template operator&&(const Cond<T>&, const Cond<T>&) returns CondAnd<T>(c1,c2), letting conditions be composed (e.g. divisible by both 3 and 5)."},
+      {"term": "Exam C++ questions", "definition": "The exam has 2 large C++ questions: one on correct C++ design with inheritance and polymorphism (including drawing UML), and a general one covering the whole course (proper use of templates, function/operator overloading, smart pointers, STL, data structures)."}
+    ],
+    "worked_examples": [
+      "Question 1: template classes A<T> (default and copy c'tor that print) and B<T> (constructed from A<T> by value, plus copy c'tor), plus C : public B<int> holding another A<int>; trace the exact printed sequence across constructions, copies, a base reference binding, and destruction (e.g. A::A(), A::A(A&), B::B(A), B::B(B&), C::C(A aa), C::~C()).",
+      "Question 2: add << support to Shape/Circle/Square so a Circle radius 3 prints 'Circle: radius=3' and a Square side 2 prints 'Square: side length=2'; two solutions — a virtual print(ostream&) or a virtual getRepresentation() returning a string via ostringstream, both driven by one friend operator<<(ostream&, const Shape&).",
+      "Exam Spring 2020 Moed B: (a) implement functor Divides with operator() and a throw when k==0; (b) define generic base Cond<T> (default-true predicate, virtual dtor) and make Divides inherit Cond<int> with override; (c) implement CondAnd<T> and operator&& to and-combine two conditions of the same type."
+    ],
+    "cheatsheet": [
+      "Functor: class F { public: bool operator()(int x) const { ... } };",
+      "Polymorphic <<: friend ostream& operator<<(ostream& os, const Base& b) { return os << b.repr(); }  // repr() virtual",
+      "Use ostringstream to build a string representation, then os.str()",
+      "Generic predicate base: template<class T> class Cond { virtual bool operator()(const T&) const; virtual ~Cond(){} };",
+      "Compose: template<class T> CondAnd<T> operator&&(const Cond<T>& a, const Cond<T>& b);",
+      "Throw a real exception type: throw std::runtime_error(\"msg\");  (from <stdexcept>)"
+    ],
+    "source_file": "Tutorial_09_-_C++_Excercises.pptx (no .txt extraction in corpus; recovered from pptx)"
+  },
+  {
+    "number": 10,
+    "title": "Intro to Python",
+    "topics": [
+      "Python language and interpreter vs compiler",
+      "Running Python (interactive, script, shebang), PyCharm IDE",
+      "Numeric variables, dynamic typing, type()",
+      "Arithmetic operators (incl. / vs // and %)",
+      "Strings: immutability, indexing (negative), slicing, methods, f-strings, print",
+      "Lists: creation, indexing/slicing, add/remove, copy vs deepcopy, is vs ==, list methods",
+      "Tuples (immutable), sequences, unpacking, * spread operator",
+      "Control flow: if/elif/else, boolean operators, ternary, while loops"
+    ],
+    "key_concepts": [
+      {"term": "Python & interpreter", "definition": "Python is a very popular, easy, cross-platform, free/open-source language with a huge ecosystem; the course uses python3.9. It runs via an interpreter (executes code line by line, interactively) rather than a compiler producing an executable (like bash, also interpreted). No manual memory management — allocation/free are automatic."},
+      {"term": "Running Python", "definition": "Three ways: interactive python3 (exit with Ctrl+D/EOF or exit()); run a script python3 hello.py; make a script executable in UNIX with a shebang (#! line) and chmod. Recommended IDE: PyCharm (free for Technion students, similar to CLion), but any editor works."},
+      {"term": "Dynamic typing", "definition": "Create a variable by direct assignment x = 7 (no declaration). Python is dynamic: variables have no fixed type, only values do; re-assignment can change the value's type. type(x) returns the type; comments start with # to end of line."},
+      {"term": "Arithmetic operators", "definition": "+ - * ** (power) / (true division, always returns float) % (modulo) // (integer/floor division). E.g. 5/3 -> 1.666..., 5//3 -> 1, 5%3 -> 2."},
+      {"term": "Strings", "definition": "str stores text; written with single or double quotes. Access chars by index (negative index counts from the end, -1 = last). Strings are Immutable — you cannot change a char, only build a new string; operations return a new value. Concatenate with +; no separate char type (a single char is a length-1 string). Use quote escaping or the other quote type inside."},
+      {"term": "Slicing", "definition": "s[start:end] returns a new string from index start (inclusive) to end (exclusive); s[start:end:step] adds a step size; omitting start/end defaults to beginning/end. Works for lists too."},
+      {"term": "String methods", "definition": "len(s); startswith/endswith; strip (trim whitespace); islower/isupper, lower/upper; isdigit/isalpha, isspace; find (first index of substring); replace(old, new)."},
+      {"term": "print & f-strings", "definition": "print takes multiple comma-separated args printed with spaces (change with sep=\";\"); accepts many types. f-strings embed values: f\"num is {x} and twice is {2*x}\"; format specifiers like f\"{pi:.2f}\"."},
+      {"term": "Lists", "definition": "list is an ordered, mutable sequence holding any types, created with [ ]; closer to std::vector than a linked list. Indexing/slicing like strings; IndexError on bad index. Mutable — assign to my_list[i]. [0]*5 makes [0,0,0,0,0]."},
+      {"term": "List operations", "definition": "append(value) adds to end; insert(pos, value) at a position; extend(other) or + concatenates; remove(value) deletes first occurrence; del my_list[i]; pop(index) removes and returns; len, max, min, count(value), index(value), sort()/reverse() (in place) vs sorted()/reversed() (return a copy); membership with 'in'."},
+      {"term": "copy vs deepcopy / by reference", "definition": "Non-numeric values are passed by reference (behave like pointers): b = a makes both refer to the same list, so b[1]=5 changes a too. a.copy() makes a shallow copy (top level independent, but nested lists still shared); from copy import deepcopy for a fully independent copy of nested structures."},
+      {"term": "is vs ==", "definition": "is tests identity (same object in memory); == tests equality (by type/value). For small ints/strings 'is' may be True due to implementation optimizations (don't rely on it); a=3;b=a guarantees a is b until reassignment."},
+      {"term": "Tuples & sequences", "definition": "tuple is an immutable list, created with ( ); a single-element tuple needs a trailing comma (0,). + concatenates tuples. Prefer list when you need to change the sequence; use tuple to guarantee immutability, for readability, slight efficiency, and because tuples can go in a set while lists cannot. Strings, lists, tuples are built-in sequence types sharing len, slicing, +, index, count."},
+      {"term": "Spread * and unpacking", "definition": "The * operator expands a sequence into comma-separated values usable wherever Python expects them (e.g. (3, *mixed) or print(*mytuple)). Unpacking assigns a sequence to n variables: a, b = my_tuple; use _ to skip a value (a, _, b = ...)."},
+      {"term": "Control flow", "definition": "if <condition>: with indentation (TAB or 4 spaces, consistent) defining the block — no braces. if/elif/else (final else optional). Ternary: X if cond else Y. Boolean operators and/or/not (precedence not > and > or); literals True/False; while <expr>: with break/continue like C."}
+    ],
+    "worked_examples": [
+      "Division demo: dividing two ints with / yields a float (5/3 -> 1.666...), // gives 1, % gives 2.",
+      "String indexing/slicing: s = 'Hello'; s[0]='H', s[-1]='o'; 'Some String'[1:6] -> 'ome S'; steps and omitted bounds ([5:], [::2]).",
+      "Immutability error: s = 'Dog'; s[0]='d' raises TypeError; reassigning s = 'Cat' is fine.",
+      "List aliasing: a=[1,2,3]; b=a; b[1]=5 -> a becomes [1,5,3]; using a.copy() keeps a unchanged.",
+      "deepcopy: nested list of lists — a.copy() shares inner lists (b[2][0]=5 changes a), deepcopy(a) does not.",
+      "is vs ==: a=[1,2,3]; b=a; c=a.copy(); a is b True, a is c False, a==c True.",
+      "if examples: 32 % 8 == 0 branch; if x>y: decrement x; f-string / print with sep.",
+      "while loop: count from 0 to 2 printing 'count:', then 'Done'."
+    ],
+    "cheatsheet": [
+      "python3 script.py  |  interactive python3 (exit(), Ctrl+D)  |  shebang #!/usr/bin/env python3 + chmod",
+      "x = 7 ; type(x) ; a, b = 1, 2  (# comment)",
+      "Arithmetic: + - * ** / // %   (/ is float division, // floor)",
+      "String: s[i], s[-1], s[start:end:step], len(s), s.upper(), s.find(x), s.replace(a,b), s.strip()",
+      "f-string: f\"val {x} and {pi:.2f}\" ; print(a, b, sep=\";\")",
+      "List: [1,2,3], lst.append(x), lst.insert(i,x), lst.extend(o), lst.remove(x), del lst[i], lst.pop(i)",
+      "lst.sort()/reverse() in place ; sorted(lst)/reversed(lst) copy ; x in lst",
+      "Copy: b = a.copy() (shallow) ; from copy import deepcopy",
+      "Tuple: (1,2) immutable ; single element (0,) ; a,b = pair (unpacking) ; *seq spread",
+      "if/elif/else, while with indentation blocks ; and/or/not, True/False ; X if c else Y"
+    ],
+    "source_file": "Tutorial_10_-_Intro_to_Python.pptx (no .txt extraction in corpus; recovered from pptx)"
+  },
+  {
+    "number": 11,
+    "title": "Python Loops, Dictionaries, Functions",
+    "topics": [
+      "for loops over iterables; range, enumerate, zip",
+      "List and dictionary comprehensions",
+      "Dictionaries (dict): creation, access, keys/values/items, iteration",
+      "Functions: def, no overloading, None, passing functions as parameters",
+      "Import and running files, if __name__ == '__main__'",
+      "Default, named (keyword), and variadic (*args / **kwargs) arguments"
+    ],
+    "key_concepts": [
+      {"term": "for loop", "definition": "for element in iterable: iterates over any iterable (lists, etc.); indentation defines the loop scope. break/continue work as in C (also in while)."},
+      {"term": "range", "definition": "A built-in returning an iterable of ints; range(stop), range(start, stop), range(start, stop, step) (default start 0, step 1); convert with list(range(...)). Used with for i in range(n) for index loops; use _ if the index is unused."},
+      {"term": "enumerate & zip", "definition": "enumerate(iterable) yields (index, element) tuples for looping with both. zip(l1, l2, ...) iterates multiple iterables in parallel, producing tuples (for e1, e2 in zip(l1,l2)). Both return iterable objects."},
+      {"term": "List comprehension", "definition": "Build a new list by computing over an existing iterable: [output_expr for var in input if condition]. The condition is optional; e.g. [elem**2 for elem in a_list if type(elem) is int]. Using () instead of [] gives a generator/tuple-style comprehension."},
+      {"term": "dict", "definition": "A dictionary mapping keys to values, created with { }; storage order of (key, value) pairs is undefined. Keys MUST be immutable (a list key raises TypeError: unhashable type; a tuple key is fine)."},
+      {"term": "dict operations", "definition": "Access d[key]; assign/insert d[key]=value; delete del d[key]; membership 'key in d'. keys(), values(), items() return iterables of keys, values, and (key,value) pairs; iterating d is like iterating d.keys(); iterate pairs with for k, v in d.items()."},
+      {"term": "dict comprehension", "definition": "Build a dict: {key: value for var in input if condition}, e.g. {elem: elem**2 for elem in a_list if type(elem) is int}; can iterate an input dict's items: {letter: code.lower() for (letter, code) in a_dict.items()}."},
+      {"term": "Functions", "definition": "def function_name(arg1, arg2, ...): with a body; no return type or argument types declared, no separate declaration. Usable from the line after its definition. pass is an empty statement. A function with no return returns None. Unlike C++, Python has NO function overloading."},
+      {"term": "Functions as objects", "definition": "A function is an object (type 'function') supporting the call operator, so it can be passed as a parameter and returned; e.g. a map(f, seq) that returns [f(el) for el in seq]. Python's built-in map exists."},
+      {"term": "import & modules", "definition": "The interpreter runs a file line by line; import runs the imported file (a 'module') and stores its definitions under a namespace named after the file (module.name). Import specific names with from module import name."},
+      {"term": "if __name__ == '__main__'", "definition": "A file can be both run directly (as a script) and imported. Code under if __name__ == '__main__': runs only on direct execution, NOT on import — used e.g. to keep tests out of imports."},
+      {"term": "Default & named arguments", "definition": "Like C++, define default values for the LAST parameters (def student(name, grade=100)). Arguments can be passed positionally or by name (named/keyword: student(name='Alice', grade=90)); named args need not follow signature order and improve readability. When mixing, all positional args must come first."},
+      {"term": "Variadic arguments", "definition": "def f(*numbers) collects an unknown number of positional args into a list; def f(**students) collects named args into a dict (keys are names, values are values). The print keyword arg end sets the trailing string (default newline)."}
+    ],
+    "worked_examples": [
+      "for over a list: for element in [3,'a',5.5]: print(element) then 'Done'.",
+      "range demos: list(range(5)) -> [0,1,2,3,4]; range(10,0,-2) -> [10,8,6,4,2]; range(4,2) -> [].",
+      "index loop with range and element access; enumerate to get index+element; zip over two lists ('C is', 'for Cookie'); exercise: implement enumerate using zip and range.",
+      "Count occurrences of 's' in a string by looping letters (or seq.count('s')).",
+      "List comprehension: squared_ints = [elem**2 for elem in a_list if type(elem) is int] (note isinstance(elem,int) is the more correct check); adding x to each.",
+      "dict basics: d = {'one':1,'two':2,'three':3}; access, reassign to a list, add 'four', del, membership; iterate keys/values/items.",
+      "dict comprehension: {letter: code.lower() for (letter, code) in a_dict.items()}; filtered {'-'+letter+'-': code ... if len(code)>=5}.",
+      "sumTwo(a,b) returns a+b (works for any type supporting +); avg(elements) sums then divides by len.",
+      "Passing a function: map(seq, f) returns [f(el) for el in seq]; derivative(f, x, epsilon) approximates a numeric derivative and is tested against cos at pi/4.",
+      "import: myfile1.py defines getlanguageName and prints on run; myfile2.py imports it; using if __name__=='__main__' to run the greeting only on direct execution.",
+      "applyFactor: shows named args make a call self-documenting vs applyFactor(grades,5,1.1,True).",
+      "print_numbers(*numbers, separator=', '): variadic positional args joined by separator; print_grades(**students): variadic named args iterated via items()."
+    ],
+    "cheatsheet": [
+      "for element in iterable: ...   for i in range(n): ...   (break/continue work)",
+      "range(start, stop, step) ; enumerate(it) -> (i, e) ; zip(a, b) -> (x, y)",
+      "List comp: [expr for x in it if cond]   Dict comp: {k: v for x in it if cond}",
+      "dict: d={'a':1}; d[k]; d[k]=v; del d[k]; k in d; d.keys()/values()/items()",
+      "def f(a, b=default): ...   (no overloading; no return -> None; pass = empty)",
+      "Functions are objects: pass/return them; built-in map(f, seq)",
+      "import module -> module.name ; from module import name",
+      "if __name__ == '__main__':  # runs only when executed directly",
+      "Named args: f(name='Alice', grade=90) ; *args -> list ; **kwargs -> dict",
+      "print(..., sep=';', end='')"
+    ],
+    "source_file": "Tutorial_11_-_Python_Loops_Dictionaries_Functions_.pptx (no .txt extraction in corpus; recovered from pptx)"
+  },
+  {
+    "number": 12,
+    "title": "Python Files, Libraries, Exceptions, Classes",
+    "topics": [
+      "File I/O: open modes, read/readlines/readline, write, close, with",
+      "JSON: json.dump / json.load for dictionaries",
+      "Exceptions: raise, built-in exception types, try/except/else/finally, as, stack unwinding/traceback, assert",
+      "Classes: class, self, __init__, fields, no access control, inheritance & polymorphism",
+      "Magic methods (dunders): comparison and arithmetic operator overloading, __len__, __repr__, __del__",
+      "Common libraries: sys, os (os.path), and others (argparse, shutil, math, numpy, etc.)"
+    ],
+    "key_concepts": [
+      {"term": "open & modes", "definition": "open(filename, mode) returns a file object. Modes: 'w' write (truncates/creates), 'r' read (file must exist else error), 'a' append (write at the end). Course works with text files."},
+      {"term": "Reading", "definition": "read() returns the whole file as one string; readlines() returns a list of line strings; readline() returns the next single line per call. The convenient way is for line in f: to read line by line."},
+      {"term": "Writing & closing", "definition": "write(s) writes a string (add '\\n' for newlines). You must close every opened file with close(): closing ends the link between file and variable, lets other programs access it, and guarantees the data is saved."},
+      {"term": "with (auto-close)", "definition": "The recommended way: with open(filename, mode) as f: ... automatically closes the file at the end of the with scope, so you don't manage close() manually."},
+      {"term": "JSON", "definition": "JSON (JavaScript Object Notation) is a common plain-text data format supported by many languages. Python's standard library reads/writes dicts to JSON easily: json.dump(my_dict, f, indent=4) writes (indent for readable output), json.load(f) reads; keys must be strings; json.dumps/json.loads work with strings directly. Requires import json."},
+      {"term": "raise & exception types", "definition": "Python has exceptions like C++; throw with raise (not throw). You may raise objects of type Exception or subclasses. Common types: ValueError, TypeError, RuntimeError. Built-ins: IndexError/KeyError (missing list index / dict key), TypeError (operation not valid for the type), ValueError (right type but bad value, e.g. sqrt of negative), ZeroDivisionError, IOError (file handling)."},
+      {"term": "try/except/else/finally", "definition": "Like C++ try/catch, Python uses try ... except. Multiple except blocks allowed; one except can catch several types (except (ValueError, TypeError):). Get the exception value with 'as' (except ValueError as err:). else runs if no exception was thrown; finally always runs (e.g. to close files)."},
+      {"term": "Stack unwinding & traceback", "definition": "Exceptions propagate up the stack like C++; if uncaught in the main script the program ends and prints the call-stack Traceback. traceback.print_stack can print the stack state."},
+      {"term": "assert", "definition": "assert <condition> [, message] verifies runtime assumptions; a failing condition raises AssertionError (with the optional message). Same principle as C/C++."},
+      {"term": "Classes & self", "definition": "Define a class with class; methods are defined inside with an extra first parameter self (like C++ this). Python classes have a default constructor if none is defined. Constructor is the method __init__(self, ...). You must always use self to access fields (name -> self.name)."},
+      {"term": "Fields & access control", "definition": "Access fields via <object>.<field>; fields aren't declared, just initialized (conventionally all in __init__). There is NO access control — everything is effectively public. No destructor method is needed thanks to automatic memory management (though __del__ exists)."},
+      {"term": "Inheritance & polymorphism", "definition": "Python has inheritance and polymorphism: class Chiwawa(Dog): can override methods (e.g. bark), and calling the method on a list of mixed Dog/Chiwawa dispatches to each type's version."},
+      {"term": "Magic methods (dunders)", "definition": "Special methods starting and ending with __ (double underscore), the equivalent of C++ operator overloading. Built-in types already implement them. Comparison: __eq__, __ne__, __lt__, __gt__, __le__, __ge__. Arithmetic: __add__, __sub__, __mul__, __mod__, __pow__, __neg__, __pos__. Also __init__, __len__, __repr__, __del__ (a destructor)."},
+      {"term": "sys library", "definition": "Built-in; access to interpreter-linked variables/functions: sys.stderr (print(..., file=sys.stderr)), sys.argv (command-line arguments of a script)."},
+      {"term": "os library", "definition": "Access to many OS operations, OS-independent (works on Linux/Windows/etc.). File-related: os.listdir(path) lists files in a directory; os.sep the path separator; os.path.join(*parts) builds a path; os.path.dirname/basename; os.path.split (start, end tuple); os.path.splitext (path, extension); os.mkdir(path); os.path.isfile / os.path.isdir."},
+      {"term": "Other libraries", "definition": "Install new libraries with pip. Standard: argparse (advanced CLI args), shutil (copy/delete files/dirs), math, abc (abstract classes), itertools, random, time, pickle, async. External: numpy, scipy, matplotlib, openCV, requests, TensorFlow/PyTorch. Prefer reusing library code over writing your own."}
+    ],
+    "worked_examples": [
+      "Read a file 3 ways: f.read() returns the whole content string; f.readlines() a list of lines; f.readline() one line at a time; the idiomatic for line in f: loop.",
+      "Write: open('new_file.txt','w'); write s1='Hello World\\n' and s2='End of file'.",
+      "with block: with open(file_name,'r') as f: lines = f.readlines(); file auto-closes at end of scope.",
+      "JSON round-trip: json.dump(my_dict, f, indent=4) to write, json.load(f) to read back the dict.",
+      "print_pos_number: raises ValueError(num) for non-positive input; wrapped in try/except ValueError printing a message; extended with catching (ValueError, TypeError) and KeyboardInterrupt, using 'as err', and adding else (ran on success) and finally (always runs).",
+      "Uncaught exception: calling print_pos_number(-1) at top level prints a Traceback ending in ValueError: -1.",
+      "assert examples: assert x == 'goodbye' raises AssertionError; with a message assert x=='goodbye', \"...\" adds the message.",
+      "Dog class: __init__(self, name) sets self.name; bark(self) prints using self.name; Chiwawa(Dog) overrides bark; polymorphic list comprehension [dog.bark() for dog in dogs].",
+      "Iterable class with dunders: __init__ sets self.l, add appends, __len__ returns len(self.l), __repr__ returns str(self); shows print(len(i)) and print(i).",
+      "os summary program: read sys.argv for a directory path, loop os.listdir(path), join with os.path.join, and for each os.path.isfile print its contents via with open(...) as f: f.read()."
+    ],
+    "cheatsheet": [
+      "f = open(name, 'r'|'w'|'a') ; f.read() / f.readlines() / f.readline() ; f.write(s) ; f.close()",
+      "with open(name, 'r') as f:  ...   # auto-closes",
+      "import json ; json.dump(d, f, indent=4) ; json.load(f) ; json.dumps/loads",
+      "raise ValueError(x)  (not throw) ; common: ValueError, TypeError, KeyError, IndexError, ZeroDivisionError",
+      "try: ... except (ValueError, TypeError) as err: ... else: ... finally: ...",
+      "assert condition, 'message'  -> AssertionError",
+      "class Dog:\\n    def __init__(self, name): self.name = name\\n    def bark(self): print(self.name)",
+      "Inheritance: class Chiwawa(Dog): def bark(self): ...   (override)",
+      "Dunders: __init__, __eq__, __lt__, __add__, __len__, __repr__, __del__",
+      "import sys/os ; sys.argv ; sys.stderr ; os.listdir(p) ; os.path.join(a,b) ; os.path.isfile(p) ; pip installs libs"
+    ],
+    "source_file": "Tutorial_12_-_Python_Files_Libraries_Exceptions_Classes_-_Copy.pptx (no .txt extraction in corpus; recovered from pptx)"
+  },
+  {
+    "number": 13,
+    "title": "Design Questions (Exam Structure and C++ Design)",
+    "topics": [
+      "Exam structure and material; how to study",
+      "What design questions are; identifying objects/relations; UML",
+      "Design patterns taught (Strategy, Command, Composite, Adapter, Decorator, Abstract Factory, Singleton)",
+      "Worked BankSystem design (Command pattern, ownership, inheritance/extension)",
+      "Bonus Pokemon design (Command, Strategy, Adapter, Decorator)"
+    ],
+    "key_concepts": [
+      {"term": "Exam structure", "definition": "3 questions: (1) a 'classic' C++ question testing correct use of C++ features (often implement a class or data structure, possibly with templates; emphasis on templates, function/operator overloading, smart pointers, STL); (2) a C++ design question (design a system from a story; emphasis on extensible and maintainable design and correct use of design patterns); (3) a Python question implementing a program using the language mechanisms learned. The exam is open-material and must be written in pen (not pencil)."},
+      {"term": "Design questions", "definition": "Given a story describing system requirements (or an API of functions to support), describe the design with UML and/or provide class/system interfaces and/or implement some classes. Some cases fit a known design pattern from the lectures."},
+      {"term": "Identifying design from a story", "definition": "Find the 'objects' in the story: words representing entities and the relationships between them — is-a (inheritance) vs has-a/characterization/management/ownership (composition). Nouns typically indicate classes. Then consider whether a taught design pattern fits, and usually draw UML."},
+      {"term": "Design patterns", "definition": "Taught patterns — Behavioral: Strategy, Command. Structural: Composite, Adapter, Decorator. Creational: Abstract Factory, Singleton."},
+      {"term": "Command pattern", "definition": "An operation is represented by a dedicated class that performs and holds all the info needed to do (and undo) the action. Used for the bank's actions (deposit/withdraw/transfer with undo) and for a Pokemon's move."},
+      {"term": "Strategy pattern", "definition": "Encapsulate interchangeable behaviors behind a common interface so an object's algorithm can vary. Used for a Trainer's Character (Impulsive/Greedy/Chaotic) choosing which Pokemon to draw."},
+      {"term": "Adapter pattern", "definition": "Wrap an incompatible class behind an expected interface so existing code needn't change. Used to make a NextGenProvider usable where an InfoProvider is expected via a ProviderAdapter inheriting InfoProvider and holding a NextGenProvider."},
+      {"term": "Decorator pattern", "definition": "Extend/modify existing elements' behavior flexibly and modularly. Used for Shiny Pokemon via a templated class Shiny<P> : public P overriding getPicture to request the shiny image."},
+      {"term": "Ownership in design", "definition": "Use unique_ptr for sole ownership of dynamic memory (auto-freed); use a plain (non-owning) pointer when you only need access, not ownership (e.g. Action/Transfer only access an Account); use shared_ptr for shared ownership when it's unclear which owner frees the object."}
+    ],
+    "worked_examples": [
+      "BankSystem (a): complete the class interface from a given main — addAccount(ownerName, initialBalance=0) returning an account number, deposit, withdraw, transfer, undoLastAction, getBalance const; accounts stored as std::map<int, std::unique_ptr<Account>>.",
+      "BankSystem (b): design with UML using the Command pattern — each action is a class holding the data to apply/undo it.",
+      "BankSystem (c): implement transfer by creating a unique_ptr<Transfer>, calling apply(), then saveAction(std::move(...)); Action is an abstract base (virtual apply/undo) with a non-owning Account* pointer; Transfer : public Action holds target + amount; Account holds ownerName, balance, and a vector<unique_ptr<Action>> history with saveAction/addToBalance/reduceBalance.",
+      "BankSystem (d): SecuredBankSystem : public BankSystem overrides addAccount to check govAPI::getIdentityApproval and throw UnapprovedAccount on failure; requires making addAccount virtual in the base.",
+      "BankSystem (e): extend the design to manage customers (unique id, may own several accounts; an account may have one or two owners) supporting queries of customers and their accounts; described with UML (multiplicity).",
+      "Pokemon (bonus a): makeMove implemented with an abstract Move base (virtual apply(Pokemon&)) and concrete move subclasses; Pokemon holds a unique_ptr<Move> and calls m_move->apply(opponent) — the Command pattern.",
+      "Pokemon (bonus b): drawPokemon implemented via an abstract Character base with concrete Impulsive/Greedy/Chaotic subclasses; Trainer holds a unique_ptr<Character> and delegates to it — the Strategy pattern.",
+      "Pokemon (bonus c): an unmaintained InfoProvider is wrapped by ProviderAdapter : public InfoProvider holding a NextGenProvider and forwarding getPokemonPicture to getPokePic — the Adapter pattern (only the object creation changes).",
+      "Pokemon (bonus d): Shiny Pokemon implemented with a template class Shiny<P> : public P overriding getPicture to pass is_shiny=true — the Decorator pattern."
+    ],
+    "cheatsheet": [
+      "Exam: 3 questions (classic C++, C++ design, Python); open material; answer in pen",
+      "Design approach: find entities (nouns) and relations (is-a = inheritance, has-a = composition), then match a pattern, draw UML",
+      "Patterns: Behavioral Strategy/Command; Structural Composite/Adapter/Decorator; Creational Abstract Factory/Singleton",
+      "Command: action-as-class with apply()/undo() (e.g. Transfer : public Action)",
+      "Strategy: swap behavior via a held interface (unique_ptr<Character> -> drawPokemon)",
+      "Adapter: class Adapter : public Expected { Actual m; ... forwards calls; }",
+      "Decorator: template<class P> class Shiny : public P { override ...; }",
+      "Ownership: unique_ptr = sole owner, raw pointer = access only, shared_ptr = shared ownership",
+      "Override virtual base methods; make base method virtual to allow overriding in a derived system"
+    ],
+    "source_file": "Tutorial_13_-_Design_Questions.pptx (no .txt extraction in corpus; recovered from pptx)"
+  }
+]

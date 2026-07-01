@@ -1,0 +1,314 @@
+{
+  "_meta": {
+    "course": "234124 Introduction to Systems Programming (Technion)",
+    "purpose": "Exam-intelligence knowledge base for an AI tutor 'exam drill' mode.",
+    "corpus": "Official past exams + solutions, pdftotext extractions. Semesters: Spring 22, Winter 22-23 ('Winter 23'), Spring 23, Winter 23-24 ('Winter 24'), Spring 24, Winter 24-25 ('Winter 25'), Spring 25 (Mo'ed A/B), Winter 25-26 Mo'ed A (solution only). ~15 individual exam papers.",
+    "extraction_caveats": [
+      "Exam prose is Hebrew (RTL) and garbled by pdftotext; C++/Python code blocks and point values extracted cleanly and are high-confidence.",
+      "UML class diagrams are images and did NOT survive extraction in any file; design intent recovered from surrounding prose+code.",
+      "Official solution keys contain real transcription/logic bugs (e.g. map::operator[] inside a const method; dynamic_cast on the iterator instead of *it; json.dump argument order swapped; iterating a dict's keys instead of .values()). Solutions below are cleaned/corrected."
+    ]
+  },
+  "topic_frequency": [
+    {"topic": "inheritance & polymorphism (abstract base + derived overrides)", "appearances": 15, "notes": "The backbone of Q1 in EVERY exam. Given an abstract base with a pure-virtual method, implement 2-4 concrete subclasses that override it; virtual dispatch is then exercised through base-class pointers/containers. Examples: Contestant/Singer/Dancer, Vehicle/Ship/Airplane, Sailor/Worker/Warrior, Vegetable/Cabbage/Tomato, Cell/EmptyCell/PizzaCell, Animal/Land-WaterAnimal, Channel/IG-WAChannel, Package/Internal-ExternalPackage."},
+    {"topic": "abstract classes, pure virtual functions & virtual destructor", "appearances": 15, "notes": "Always paired with inheritance. A missing 'virtual ~Base()' is an explicitly penalized common mistake. Signature correctness of the pure virtual (const, params, '= 0', 'override') is graded."},
+    {"topic": "design patterns (name it + justify + implement)", "appearances": 15, "notes": "Every Q1 ends with a 'redesign for this new feature, name the design pattern you used' sub-part. Patterns seen across exams: Strategy, Composite, Decorator, Factory, Adapter, Singleton, Command, Prototype/virtual-clone. Students must also justify WHY (and often why a wrong-looking alternative like Decorator/Strategy does NOT fit)."},
+    {"topic": "templates / generic programming", "appearances": 15, "notes": "Q2 ('basic C++') is essentially always a generic container or generic algorithm: Matrix<T>, MultiSet<T>, HashSet<T,Hash>, Graph<V>, Tree<T>, MemManager<T>, Poly<T>, tuple<T,N>, Unrolled<T>, CyclicBuffer<T>, cow_ptr<T>, plus STL-style all_of/calcAvg. A recurring sub-part asks 'what operations must type T support?' (copy ctor, assignment, operator==/>/+, default ctor)."},
+    {"topic": "Rule of 3 / copy control reasoning", "appearances": 13, "notes": "Two flavors: (a) IMPLEMENT a deep-copy copy-ctor/assignment/dtor for a class owning a raw T*; (b) THEORY: 'are the compiler-generated copy ctor/assignment/dtor sufficient? explain.' The discriminator is always: raw owning pointer => must write them (double-free/dangling otherwise); only STL/smart-pointer members => defaults suffice."},
+    {"topic": "dynamic memory: raw new[]/delete[], exception-safe ctor (no STL)", "appearances": 10, "notes": "Q2 frequently forbids STL and smart pointers, forcing raw arrays. Tests: allocation in ctor, cleanup-and-rethrow on bad_alloc, pointer arithmetic for indexing, a leak-free destructor."},
+    {"topic": "smart pointers & ownership semantics (unique_ptr / shared_ptr / std::move)", "appearances": 11, "notes": "Increasingly dominant in recent exams. unique_ptr for exclusive ownership (captain, actions, cart items) => class becomes non-copyable; shared_ptr for shared/flyweight objects (crew, grid cells, channels). Ownership transfer via std::move, factory functions returning smart pointers. A classic pitfall flagged: make_shared(this)."},
+    {"topic": "exceptions (custom classes deriving std::exception + what())", "appearances": 15, "notes": "Nearly universal. Define a custom exception inheriting std::exception, override what(), throw on error conditions (full/empty/not-found/invalid). Also std::invalid_argument, std::out_of_range, std::runtime_error. try/catch used for cleanup and for exception propagation."},
+    {"topic": "operator overloading", "appearances": 11, "notes": "operator<< (friend, delegating to a virtual print), operator[] (const AND non-const pair), operator() (call operator / matrix access), operator+ (free function, often delegating to member operator+=), comparison operators, conversion operators (operator std::set<T>(), operator vector<T>()), operator* and operator-> for smart pointers."},
+    {"topic": "STL containers (map, set, vector, list, queue, pair)", "appearances": 14, "notes": "Allowed in Q1 and part of Q2 unless stated. Container CHOICE is graded: map for unique-key lookup, list for O(1) priority insert, map<T,int> for multiset counts, map<int,set<T>> to group-by. Notes penalize e.g. map<Point,Cell> when Point has no operator<, or map::operator[] inside a const method (use .at())."},
+    {"topic": "const correctness & references", "appearances": 15, "notes": "Graded pervasively as a 'correct programming principles' item. Pass by const&, const methods, const/non-const overload pairs, returning const& (and NOT returning a dangling reference). A reference cannot be null (so null-checking a const T& is wrong)."},
+    {"topic": "custom iterators / range-based for support", "appearances": 5, "notes": "Implement a nested iterator class (holding a reference back to its container) with begin()/end(), operator++ (prefix), operator!=, operator* so 'for (auto& x : container)' compiles. Often built on modulo advance (ring buffer) or 'equal elements are consecutive' (multiset)."},
+    {"topic": "Python: file & directory I/O", "appearances": 15, "notes": "Q3 staple. with open(...), readlines, os.listdir / os.path.join / isdir / isfile, filter files by extension, stream large files line-by-line, propagate open errors."},
+    {"topic": "Python: comprehensions replacing loops (no for/while, no recursion)", "appearances": 13, "notes": "A signature constraint of this course. Specific sub-parts forbid loops/recursion and must be solved with list/dict comprehensions. Recurring tricks: sum(list_of_lists, []) to flatten, the two-pass 'build the distinct keys then a nested comprehension per key' group-by idiom, any()/all() over slices."},
+    {"topic": "Python: classes, __init__, dunder methods", "appearances": 10, "notes": "Define classes parsing a delimited/structured line into typed fields; defensive copies (name[:], .copy()); dunder methods __eq__ (with isinstance guard), __str__, __repr__, __lt__ so objects work in sets/queues/sorting."},
+    {"topic": "Python: JSON serialization", "appearances": 9, "notes": "json.load / json.dump to read/write records; often combined with the no-loops constraint. (Watch the real solution-key bug: json.dump(obj, file) argument order.)"},
+    {"topic": "Python: scripting entry point (argv, __main__, stderr)", "appearances": 12, "notes": "Final Q3 sub-part: a runnable script guarded by if __name__ == '__main__', reading sys.argv, validating argument count, printing a friendly error to sys.stderr (no raw traceback) and sys.exit(1)."},
+    {"topic": "custom exceptions in Python", "appearances": 9, "notes": "class MyError(Exception): pass, raised on duplicate/missing/invalid records; sometimes re-raising a library error as ValueError."},
+    {"topic": "UML class diagrams", "appearances": 15, "notes": "Every C++ design question opens with a 5-6 pt 'draw the class diagram' and later a second diagram for the redesign. Rewards a minimal design that stays open to extension; penalizes wrong association arrows (e.g. drawing containment where there is none)."},
+    {"topic": "dynamic_cast / RTTI", "appearances": 5, "notes": "Used to discriminate the runtime subtype inside a base-pointer container: prefer a SuperWand, count Warriors on a ship, sort vehicles into airplane/ship fleets."},
+    {"topic": "Git & Unix/shell", "appearances": 3, "notes": "Rare and light, appears only in some Winter/Spring Mo'ed A Python questions. Tested: git branch/add/commit -m/push sequence; explaining merge-conflict markers (<<<<<<< HEAD / ======= / >>>>>>>); rebase-vs-merge conflict counts; reading ls/cd/pwd output. NOT a heavily weighted topic."},
+    {"topic": "complexity / efficiency justification", "appearances": 4, "notes": "Never a standalone Big-O question, but recent exams grade choosing an efficient data structure/algorithm (O(1) ring-buffer vs O(n) shift; linear two-pointer merge; append is O(1))."}
+  ],
+  "question_archetypes": [
+    {
+      "archetype": "Big OOP system design & implementation (Q1)",
+      "description": "A multi-part (~43-50 pt) problem framed around a themed system (zoo, tea shop, delivery company, library, soccer game, drone fleet, logger). Sub-parts: (a) draw a UML class diagram; (b-c) implement an abstract base hierarchy + a managing container class with custom exceptions; (d) redesign for a new feature and NAME the design pattern; (e) implement the pattern class.",
+      "topics": ["inheritance & polymorphism", "abstract classes / pure virtual", "design patterns", "smart pointers & ownership", "exceptions", "STL containers", "UML"],
+      "how_to_approach": "First read ALL sub-parts before writing code; the later parts reveal what the base class must expose. Make the base abstract with a virtual destructor and the varying behavior a pure virtual. Pick containers by access pattern (map for by-name lookup). Decide ownership up front (unique_ptr => delete copy ops; shared_ptr => shared lifetime). For the pattern sub-part, match the requirement to the pattern (repeatable/stackable ops=>Command or Composite; per-object swappable behavior=>Strategy; runtime add-on that changes a computed value order-dependently=>Decorator; create-by-name/per-source=>Factory; polymorphic copy=>virtual clone/Prototype; single global=>Singleton; wrap an incompatible existing class=>Adapter) and justify against the obvious wrong alternative."
+    },
+    {
+      "archetype": "Generic container / algorithm from scratch (Q2, 'basic C++')",
+      "description": "A ~27-31 pt problem: implement a class template (Matrix, MultiSet, HashSet, Graph, Tree, Poly, tuple, Unrolled list, CyclicBuffer, cow_ptr) or STL-style generic algorithms (all_of, calcAvg, groupBy). Usually one sub-part fixes the constructor/interface, others add operators, iterators, or copy control, and a final sub-part asks 'what requirements must type T satisfy?'.",
+      "topics": ["templates / generics", "Rule of 3 / copy control", "dynamic memory", "operator overloading", "custom iterators", "exceptions", "const correctness"],
+      "how_to_approach": "Check whether STL is allowed: if forbidden you own raw memory and MUST write the Rule of 3 (deep copy, exception-safe ctor, leak-free dtor); if STL members only, the compiler defaults are correct and you should say so. Provide const AND non-const operator[] / operator*. For the 'requirements on T' part, scan your own code for every operation you invoked on a T (default ctor, copy ctor, assignment, ==, >, +, etc.)."
+    },
+    {
+      "archetype": "Copy-control theory / Rule-of-3 justification",
+      "description": "A short (2-5 pt) sub-part: 'Does this class need a user-defined copy ctor / assignment / destructor? Is the class copyable? Explain why or why not.'",
+      "topics": ["Rule of 3 / copy control", "smart pointers & ownership", "dynamic memory"],
+      "how_to_approach": "Answer with the discriminator: raw owning pointer => YES, defaults would shallow-copy and cause double-free/dangling (UB). Only STL/smart-pointer members => NO, defaults recurse correctly. A unique_ptr member => class is non-copyable (unique_ptr has no copy ctor) so you should = delete copy ops or provide a deep copy via clone(). A Singleton => = delete copy ops to preserve the single instance."
+    },
+    {
+      "archetype": "Design-pattern identification & justification",
+      "description": "Given a new requirement, name the pattern that fits and explain why (often ruling out a plausible wrong answer).",
+      "topics": ["design patterns", "inheritance & polymorphism"],
+      "how_to_approach": "Map requirement->pattern and always contrast with the trap alternative. E.g. 'apply the same topping multiple times, in any order' = Command (not Decorator/Strategy, which don't naturally reapply the same op). 'A container that is itself a member of the hierarchy and delegates recursively' = Composite. 'Swap one algorithm at runtime' = Strategy. 'Wrap and augment a computed value, order matters' = Decorator. 'Create the right subtype by name/source' = Factory. 'Copy through a base pointer' = virtual clone/Prototype."
+    },
+    {
+      "archetype": "Custom iterator for range-based for",
+      "description": "Extend a hand-written container with begin()/end() and a nested iterator (operator++, operator!=, operator*) so a range-based for loop works.",
+      "topics": ["custom iterators", "templates / generics", "const correctness", "operator overloading"],
+      "how_to_approach": "Remember what 'for (auto x : c)' expands to: auto it=c.begin(); it!=c.end(); ++it; *it. The iterator stores a position plus a reference to its container; operator!= compares position (and container identity); operator* returns the element (const& for read-only). Reuse the container's advance logic (e.g. modulo for ring buffers)."
+    },
+    {
+      "archetype": "Python function under a hard constraint (no loops / no regex / streaming)",
+      "description": "Implement a Python function that must avoid for/while (comprehensions only), or must parse without the re/HTML/XML modules, or must stream a file too large for memory.",
+      "topics": ["Python: comprehensions replacing loops", "Python: file & directory I/O", "Python: classes & dunder methods"],
+      "how_to_approach": "For no-loops: use list/dict comprehensions, sum(lists, []) to flatten, and the two-pass group-by (distinct keys, then a nested comprehension per key). For no-regex parsing: str.split / find / slicing / isdigit / startswith / endswith. For streaming: iterate the file object line by line, never readlines() the whole thing."
+    },
+    {
+      "archetype": "Runnable Python script (argv / __main__ / error handling)",
+      "description": "Final Q3 sub-part: a command-line script with __name__=='__main__' guard, sys.argv parsing/validation, JSON or file processing, and friendly error reporting to stderr.",
+      "topics": ["Python: scripting entry point", "Python: JSON serialization", "custom exceptions in Python"],
+      "how_to_approach": "Guard with if __name__ == '__main__'; validate len(sys.argv); wrap the work in try/except that prints a human message to sys.stderr (NOT a traceback) and sys.exit(1). Let lower-level functions propagate exceptions upward."
+    },
+    {
+      "archetype": "Git / Unix short answer",
+      "description": "A small (2-4 pt) conceptual item: give the git command sequence to commit & push a branch, or explain a merge conflict and its markers, or contrast rebase vs merge.",
+      "topics": ["Git & Unix/shell"],
+      "how_to_approach": "Memorize the core sequence (git add . ; git commit -m '...' ; git push origin <branch>) and the conflict markers (<<<<<<< HEAD / ======= / >>>>>>>). Low effort, high certainty points."
+    }
+  ],
+  "exam_structure": {
+    "typical_sections": [
+      "Q1 (~43-50 pts): C++ object-oriented DESIGN + implementation of a themed system (UML, abstract hierarchy, managing container, custom exceptions, a design pattern).",
+      "Q2 (~27-31 pts): 'Basic'/fundamentals C++ = a generic container or generic algorithm (templates, Rule of 3 or smart pointers, operator overloading, sometimes an iterator).",
+      "Q3 (~20-26 pts): Python (classes, file/JSON I/O, comprehensions, a runnable script); in some Mo'ed-A sittings the last 2-6 pts are Git/Unix."
+    ],
+    "format_facts": "3 questions, 100 points, 3-hour time limit, open-book (any printed/handwritten material; no electronics). Nearly 100% code-writing/design plus short 'explain why' theory. NO multiple choice, NO find-the-bug, NO standalone output-prediction (expected-output comments appear only as a spec to implement against). STL and 'using namespace std;' and all #includes are assumed unless a question forbids STL. Reserve-duty (miluim) students may substitute a homework grade for the Python question / a specific sub-part.",
+    "examA_vs_examB": "Mo'ed A and Mo'ed B in the SAME semester are near-identical in structure, weighting, difficulty, and topic mix (both cover the full syllabus: OOP design + generics + Python). B is simply the second sitting with different themed scenarios, not an easier/harder or differently-scoped paper. So any past A or B is equally good practice; there is no 'A is theory, B is coding' style split. The only mild trend is that later-in-year sittings sometimes swap which patterns/containers appear (e.g. Composite in one, Decorator in the other).",
+    "time_pressure_notes": "3 hours for ~250-350 lines of correct, const-correct, memory-safe C++ plus Python is tight. Q1 alone is ~half the exam and its sub-parts are dependent, so a wrong base-class decision cascades. Budget roughly 80 min on Q1, 55 min on Q2, 40 min on Q3, 5 min slack. Grab the cheap guaranteed points first: UML sketches, the 'name the pattern / does it need a copy ctor / requirements on T' theory parts, and the Git question are fast and high-yield. Do not perfect one subclass while leaving whole sub-parts blank."
+  },
+  "practice_bank": [
+    {
+      "id": "q1",
+      "topic": "inheritance & polymorphism",
+      "difficulty": "medium",
+      "source": "Spring 22 Mo'ed A, Q1a",
+      "question": "Given an abstract base Contestant (holds name, pure-virtual print(ostream&), and a free operator<< that calls print), implement an intermediate SingleAct (adds country, age) and its subclasses Singer and Dancer (Dancer adds a DanceType). Make 'cout << singer' print 'Jimmy, Singer, 23 years old from Canada' and 'cout << dancer' print 'Efrat, Tango Dancer, 25 years old from UK'.",
+      "solution": "class SingleAct : public Contestant {\n  string country; int age;\npublic:\n  SingleAct(const string& n, const string& c, int a): Contestant(n), country(c), age(a) {}\n  virtual string getTitle() const = 0;\n  void print(ostream& os) const override {\n    os << getName() << \", \" << getTitle() << \", \" << age << \" years old from \" << country;\n  }\n};\nclass Singer : public SingleAct {\npublic:\n  Singer(const string& n,const string& c,int a): SingleAct(n,c,a) {}\n  string getTitle() const override { return \"Singer\"; }\n};\nclass Dancer : public SingleAct {\n  DanceType d;\npublic:\n  Dancer(const string& n,const string& c,int a,DanceType d): SingleAct(n,c,a), d(d) {}\n  string getTitle() const override { return danceToString(d) + \" Dancer\"; }\n};",
+      "teaching_note": "Factor shared state into an intermediate base and delegate only the varying text to a virtual hook (getTitle) while one print() owns formatting. Reinforces base-ctor calls in the init list, override, and a virtual destructor on the base."
+    },
+    {
+      "id": "q2",
+      "topic": "Rule of 3 / dynamic memory",
+      "difficulty": "medium",
+      "source": "Spring 22 Mo'ed A, Q2b",
+      "question": "Matrix<T> stores its elements in a raw T* allocated with new T[n*m]. Does it need a user-defined copy constructor? If so, implement it exception-safely.",
+      "solution": "template <class T>\nMatrix<T>::Matrix(const Matrix<T>& other) : n(other.n), m(other.m) {\n  int size = other.n * other.m;\n  elems = new T[size];\n  try {\n    for (int i = 0; i < size; ++i) elems[i] = other.elems[i];\n  } catch (...) { delete[] elems; throw; }\n}",
+      "teaching_note": "A class owning a raw pointer needs the Rule of 3: the default copy is a shallow pointer copy => double-free/aliasing. Drills deep copy and cleanup-and-rethrow exception safety in a constructor."
+    },
+    {
+      "id": "q3",
+      "topic": "Python: strings, ASCII arithmetic",
+      "difficulty": "easy",
+      "source": "Spring 22 Mo'ed A, Q3a",
+      "question": "Write encrypt_char(c, k): Caesar-shift a single-character string c by k. Leave non-letters unchanged, preserve case, wrap cyclically. Allowed: ord, chr, isalpha, isupper, lower. Avoid the magic number 26.",
+      "solution": "def encrypt_char(c, k):\n    if not c.isalpha():\n        return c\n    low = c.lower()\n    size = ord('z') - ord('a') + 1\n    out = chr((ord(low) - ord('a') + k) % size + ord('a'))\n    return out.upper() if c.isupper() else out",
+      "teaching_note": "Modular arithmetic for a cyclic shift; derive the alphabet size as ord('z')-ord('a')+1 rather than hardcoding 26; preserve case by remembering isupper()."
+    },
+    {
+      "id": "q4",
+      "topic": "templates + STL (generic hash table)",
+      "difficulty": "hard",
+      "source": "Spring 23 Mo'ed B, Q2a",
+      "question": "Implement a generic HashSet<T, HashFunctionType>. Elements live in 'size' buckets; a user-supplied hash object maps an element to a bucket index. Implement HashSet(int size, HashFunctionType hash), contains, insert (no-op if present), remove (no-op if absent). Throw HashOutOfRange if a computed index is outside [0,size). std::set/std::map are forbidden.",
+      "solution": "template<class T, class HashFunctionType>\nclass HashSet {\n  vector<list<T>> m_table;\n  HashFunctionType m_hash;\npublic:\n  HashSet(int size, HashFunctionType hash): m_table(size), m_hash(hash) {}\n  bool contains(const T& e) const {\n    int i = m_hash(e);\n    if (i < 0 || i >= (int)m_table.size()) throw HashOutOfRange();\n    return count(m_table[i].begin(), m_table[i].end(), e) > 0;\n  }\n  void insert(const T& e){ if(!contains(e)) m_table[m_hash(e)].push_back(e); }\n  void remove(const T& e){ if(contains(e)) m_table[m_hash(e)].remove(e); }\n};",
+      "teaching_note": "Class template with a FUNCTOR type parameter, vector<list<T>> bucket design, bounds-checked exceptions, and STL count / list::remove. (The official key's range check used m_hash.size() by mistake; it should be m_table.size().)"
+    },
+    {
+      "id": "q5",
+      "topic": "template requirements + Rule of 3 theory",
+      "difficulty": "medium",
+      "source": "Spring 23 Mo'ed B, Q2b-c",
+      "question": "For the HashSet<T> above: (b) what must type T support? (c) Does HashSet need a copy ctor, assignment operator, or destructor? Justify.",
+      "solution": "(b) T needs operator== (for contains/dedup/remove), a copy constructor (elements are copied in on insert), and a destructor. (c) No user-defined copy ctor/assignment/destructor are needed: all dynamic memory is owned by the STL members (vector, list), whose compiler-generated copy/assign/destroy recurse correctly. You would only need the Rule of 3 if the class held a raw owning pointer.",
+      "teaching_note": "Two skills: enumerating a template's implicit requirements on T by scanning the operations you call, and articulating exactly when the Rule of 3 does NOT apply (STL members => defaults are correct)."
+    },
+    {
+      "id": "q6",
+      "topic": "design pattern identification (Command vs Decorator/Strategy)",
+      "difficulty": "hard",
+      "source": "Spring 23 Mo'ed A, Q1d-e",
+      "question": "A Tea can take multiple toppings (e.g. Jasmine halves its bitterness), possibly several of the same kind, applied in any order, and extensible to future toppings. Name the design pattern and implement the abstract TeaTopping, a concrete Jasmine, and Tea::addTopping.",
+      "solution": "// Pattern: Command (each topping is an object encapsulating an operation on a Tea; the same command may be applied repeatedly). Decorator/Strategy are wrong: they don't naturally re-apply the same operation multiple times.\nclass TeaTopping {\npublic:\n  virtual ~TeaTopping() = default;\n  virtual void addTopping(Tea& tea) const = 0;\n};\nclass Jasmine : public TeaTopping {\npublic:\n  void addTopping(Tea& tea) const override { tea.setBitterness(0.5 * tea.getBitterness()); }\n};\nvoid Tea::addTopping(const TeaTopping& t){ t.addTopping(*this); }",
+      "teaching_note": "Choosing a pattern from the requirements AND justifying it against the trap alternative. Also drills virtual destructor, a const pure-virtual signature, and override."
+    },
+    {
+      "id": "q7",
+      "topic": "Python: parsing without regex + comprehensions",
+      "difficulty": "medium",
+      "source": "Spring 23 Mo'ed B, Q3",
+      "question": "Without using the re module: (a) starts_with_address(words) returns the length (in words) of an address prefix - a number, then 1-2 street-name words, then one of 'Street'/'Avenue'/'Road' - or None. (c) find_killer(line, context) returns each address in the line surrounded by `context` words on each side, clamped at the line edges, using comprehensions only (no loops).",
+      "solution": "ADDRESS_SUFFIXES = ['Street', 'Avenue', 'Road']\n\ndef starts_with_address(words):\n    head = words[:4]\n    return (len(head) if head and head[0].isdigit()\n            and any(head[-1] == s for s in ADDRESS_SUFFIXES) else None)\n\ndef search_address(line):\n    w = line.split()\n    return [(i, starts_with_address(w[i:])) for i in range(len(w))\n            if starts_with_address(w[i:]) is not None]\n\ndef find_killer(line, context):\n    w = line.split()\n    return [\" \".join(w[max(0, i - context): i + length + context + 1])\n            for i, length in search_address(line)]",
+      "teaching_note": "str.isdigit / any / slicing, and boundary clamping with max(0, ...) (forgetting the clamp is the flagged common mistake). Replacing loops with comprehensions."
+    },
+    {
+      "id": "q8",
+      "topic": "inheritance + operator overloading + generic algorithm",
+      "difficulty": "medium",
+      "source": "Winter 22-23 Mo'ed A, Q2",
+      "question": "Implement template<class V> class Graph for an undirected simple graph (no self-edges, no duplicate vertices/edges; an edge's endpoints must already be vertices). Provide addVertex, containsVertex, addEdge(a,b), containsEdge(a,b) all returning bool, then operator+= (merge another graph) and a free operator+. Edge<V> with a symmetric operator== is given.",
+      "solution": "template<class V>\nclass Graph {\n  set<V> vertices; vector<Edge<V>> edges;\npublic:\n  bool containsVertex(const V& v) const { return vertices.count(v) > 0; }\n  bool addVertex(const V& v){ if(containsVertex(v)) return false; vertices.insert(v); return true; }\n  bool containsEdge(const V& a,const V& b) const {\n    Edge<V> e(a,b);\n    for(const Edge<V>& x : edges) if(x==e) return true;\n    return false; }\n  bool addEdge(const V& a,const V& b){\n    if(!containsVertex(a)||!containsVertex(b)||a==b||containsEdge(a,b)) return false;\n    edges.push_back(Edge<V>(a,b)); return true; }\n  Graph& operator+=(const Graph& o){\n    for(const V& v : o.vertices) addVertex(v);\n    for(const Edge<V>& e : o.edges) addEdge(e.first(), e.second());\n    return *this; }\n};\ntemplate<class V>\nGraph<V> operator+(const Graph<V>& a,const Graph<V>& b){ Graph<V> r(a); r += b; return r; }",
+      "teaching_note": "Template class design plus the canonical idiom of implementing operator+ as a free function on top of member operator+=. V must support copy and operator==."
+    },
+    {
+      "id": "q9",
+      "topic": "BST template: copy ctor + virtual override pitfall",
+      "difficulty": "hard",
+      "source": "Winter 22-23 Mo'ed B, Q2",
+      "question": "Given template<class T> class Tree with a nested Node{ shared_ptr<Node> left,right; T data; }, root, and a provided insert_aux: implement insert and find, write a copy constructor, state what T must support, and implement TreeUnique (rejects duplicates). What changes if raw Node* replaces shared_ptr?",
+      "solution": "void insert(const T& d){ insert_aux(root, d); }\nbool find(const T& v) const { return contains(v, root); }\nbool contains(const T& v, shared_ptr<Node> c) const {\n  if(!c) return false;\n  if(c->data > v) return contains(v, c->left);\n  if(v > c->data) return contains(v, c->right);\n  return true; }\nTree() = default;\nTree(const Tree& t){ copy(t.root); }\nvoid copy(shared_ptr<Node> n){ if(!n) return; insert_aux(root, n->data); copy(n->left); copy(n->right); }\n// TreeUnique:\ntemplate<class T>\nclass TreeUnique : public Tree<T> {\npublic:\n  void insert(const T& d) override { if(!this->find(d)) Tree<T>::insert(d); }\n};\n// T needs a copy ctor and operator>. Base insert + destructor must be virtual.\n// The copy helper must call insert_aux, NOT the virtual insert (virtuals don't dispatch to overrides from within a constructor).\n// With raw Node*: add a recursive destructor and handle bad_alloc in insert_aux.",
+      "teaching_note": "Deep copy of a recursive structure, the 'calling a virtual from a constructor' hazard, and how removing smart pointers reintroduces the Rule of 3."
+    },
+    {
+      "id": "q10",
+      "topic": "smart pointers & ownership + custom exceptions",
+      "difficulty": "hard",
+      "source": "Winter 23-24 Mo'ed A, Q1c",
+      "question": "Implement class Ship built from a unique_ptr<Warrior> captain (owned exclusively by the ship). addSailor(shared_ptr<Sailor>) adds crew but throws ShipIsFull past 12. canSail() returns true only if at least 5 crew are Warriors, else throws TooFewWarriors. Crew are shared (a sailor may serve several ships). Ships must not be copyable.",
+      "solution": "class Ship {\n  static const int MAX_SIZE = 12, MIN_WARRIORS = 5;\n  unique_ptr<Warrior> m_captain;\n  vector<shared_ptr<Sailor>> m_sailors;\npublic:\n  Ship(unique_ptr<Warrior> captain): m_captain(std::move(captain)) {}\n  Ship(const Ship&) = delete;\n  Ship& operator=(const Ship&) = delete;\n  void addSailor(const shared_ptr<Sailor>& s){\n    if(m_sailors.size() >= MAX_SIZE) throw ShipIsFull();\n    m_sailors.push_back(s); }\n  bool canSail() const {\n    int n = 0;\n    for(const auto& s : m_sailors) if(dynamic_cast<Warrior*>(s.get())) ++n;\n    if(n < MIN_WARRIORS) throw TooFewWarriors();\n    return true; }\n};",
+      "teaching_note": "Choosing unique_ptr vs shared_ptr by ownership model, deleting copy ops when a class owns a unique resource, dynamic_cast for runtime type discrimination, and custom exceptions."
+    },
+    {
+      "id": "q11",
+      "topic": "templates + higher-order functions + STL",
+      "difficulty": "medium",
+      "source": "Winter 23-24 Mo'ed A, Q2b",
+      "question": "Write a template function groupBy that takes a set<T> and a callable f: T -> int, partitions elements into groups where equal f(elem) land together, and returns set<set<T>>.",
+      "solution": "template<class T, class Function>\nset<set<T>> groupBy(const set<T>& input, Function f){\n  map<int, set<T>> groups;\n  for(const T& e : input) groups[f(e)].insert(e);\n  set<set<T>> result;\n  for(auto& g : groups) result.insert(std::move(g.second));\n  return result;\n}",
+      "teaching_note": "Deducing a functor as a template type parameter and using a map as an index to bucket data. A follow-up reuses it with a lambda [mod](int x){return x%mod;} and throws DivideByZero on mod==0 - layering lambdas + exceptions on a generic helper."
+    },
+    {
+      "id": "q12",
+      "topic": "Singleton pattern + copy suppression",
+      "difficulty": "medium",
+      "source": "Winter 23-24 Mo'ed B, Q1a,d",
+      "question": "Given a Logger with a private constructor, make a single global instance reachable everywhere and write a main that logs two messages. Then: should Logger be copyable/assignable? Justify and show the code.",
+      "solution": "class Logger {\npublic:\n  static Logger& getInstance(){ static Logger instance; return instance; } // Meyers singleton\n  Logger(const Logger&) = delete;\n  Logger& operator=(const Logger&) = delete;\n};\nint main(){\n  Logger& log = Logger::getInstance();\n  log.log(\"Hello, World\");\n  log.log(\"Goodbye, World\", DEBUG);\n  log.dump();\n}\n// Not copyable/assignable: copying would create a second Logger, breaking the single-instance invariant, so both are = delete-d.",
+      "teaching_note": "The Meyers-singleton idiom (function-static for lazy init + automatic teardown) and why a singleton must delete its copy/assignment operations."
+    },
+    {
+      "id": "q13",
+      "topic": "Composite pattern (nested actions)",
+      "difficulty": "medium",
+      "source": "Spring 24 Mo'ed A, Q1b,g",
+      "question": "Define an abstract Action with pure-virtual execute(). Implement PrintAction (prints a stored string) and BeepAction (calls a global beep()). Then add a MacroAction that holds several sub-actions and, on execute, runs them all in order.",
+      "solution": "class Action {\npublic:\n  virtual void execute() = 0;\n  virtual ~Action() = default;\n};\nclass PrintAction : public Action {\n  string message;\npublic:\n  PrintAction(const string& m): message(m) {}\n  void execute() override { cout << message << endl; }\n};\nclass BeepAction : public Action {\npublic:\n  void execute() override { beep(); }\n};\nclass MacroAction : public Action {\n  vector<unique_ptr<Action>> actions;\npublic:\n  void addAction(unique_ptr<Action> a){ actions.push_back(std::move(a)); }\n  void execute() override { for(const auto& a : actions) a->execute(); }\n};",
+      "teaching_note": "The Composite pattern: an Action composed of Actions, with a virtual interface, virtual destructor, and unique_ptr ownership of the children."
+    },
+    {
+      "id": "q14",
+      "topic": "Rule of 3 without STL (raw memory pool)",
+      "difficulty": "hard",
+      "source": "Spring 24 Mo'ed A, Q2",
+      "question": "Implement template<class T> class MemManager for a real-time system (no STL, no smart pointers). The ctor takes numBlocks and blockSize, allocates numBlocks*blockSize T values in ONE array (throw invalid_argument for non-positive params). acquire() returns a pointer to a free block or throws NoMoreBlocks; release(const T*) frees a block. Also: are the default copy ctor/assignment sufficient? Explain.",
+      "solution": "class NoMoreBlocks : public std::exception {\npublic: const char* what() const noexcept override { return \"No more blocks\"; }\n};\ntemplate<class T>\nclass MemManager {\n  const int m_numBlocks, m_blockSize;\n  T* blocks; bool* inUse;\npublic:\n  MemManager(int n, int s): m_numBlocks(n), m_blockSize(s) {\n    if(n<=0||s<=0) throw std::invalid_argument(\"positive only\");\n    blocks = new T[n*s];\n    try { inUse = new bool[n](); }\n    catch(...) { delete[] blocks; throw; }\n  }\n  ~MemManager(){ delete[] blocks; delete[] inUse; }\n  T* acquire(){\n    for(int i=0;i<m_numBlocks;++i)\n      if(!inUse[i]){ inUse[i]=true; return blocks + i*m_blockSize; }\n    throw NoMoreBlocks(); }\n  void release(const T* b){ inUse[(b - blocks)/m_blockSize] = false; }\n};\n// Default copy is NOT sufficient: it shallow-copies the raw arrays, so two objects share/double-free the same memory (dangling/UB). Same for assignment.",
+      "teaching_note": "Rule of 3 with raw arrays, exception-safe construction (cleanup + rethrow), pointer arithmetic for block indexing, custom exceptions, and articulating why shallow copy is unsafe."
+    },
+    {
+      "id": "q15",
+      "topic": "virtual clone (Prototype) + Factory + custom exception",
+      "difficulty": "hard",
+      "source": "Spring 24 Mo'ed B, Q1",
+      "question": "Vegetable is an abstract base (weight, basePrice, virtual getPrice()); Tomato doubles the price when weight < 20g. Implement Cart holding vector<unique_ptr<Vegetable>>, with addVegetable(name, weight, basePrice) that creates a Cabbage or Tomato by name (throw UnsupportedVegetable otherwise) and getTotalPrice(). Explain why a virtual clone() is needed instead of a copy ctor, add clone(), and write Cart's copy constructor.",
+      "solution": "class Vegetable {\nprotected: float m_weight, m_basePrice;\npublic:\n  Vegetable(float w,float p): m_weight(w), m_basePrice(p) {}\n  virtual float getPrice() const { return m_weight * m_basePrice; }\n  virtual Vegetable* clone() const = 0;\n  virtual ~Vegetable() = default;\n};\nclass Cabbage : public Vegetable {\npublic: Cabbage(float w,float p):Vegetable(w,p){}\n  Vegetable* clone() const override { return new Cabbage(*this); }\n};\nclass Tomato : public Vegetable {\npublic: Tomato(float w,float p):Vegetable(w,p){}\n  float getPrice() const override { return m_weight < 20 ? Vegetable::getPrice()*2 : Vegetable::getPrice(); }\n  Vegetable* clone() const override { return new Tomato(*this); }\n};\nclass Cart {\n  vector<unique_ptr<Vegetable>> v;\npublic:\n  Cart() = default;\n  Cart(const Cart& o){ for(const auto& x : o.v) v.push_back(unique_ptr<Vegetable>(x->clone())); }\n  void addVegetable(const string& name,float w,float p){\n    if(name==\"Cabbage\") v.push_back(make_unique<Cabbage>(w,p));\n    else if(name==\"Tomato\") v.push_back(make_unique<Tomato>(w,p));\n    else throw UnsupportedVegetable(); }\n  float getTotalPrice() const { float t=0; for(auto& x : v) t += x->getPrice(); return t; }\n};\n// Why clone(): duplicating through a base pointer needs the DYNAMIC type; a copy ctor cannot be virtual, so each subclass overrides clone() as 'new Derived(*this)'.",
+      "teaching_note": "The virtual-clone / Prototype idiom, deep-copying a container of owning pointers, polymorphic pricing, a name-based Factory, and custom exceptions - a very representative hard Q1."
+    },
+    {
+      "id": "q16",
+      "topic": "Python: reduce + functional merge (no loops)",
+      "difficulty": "medium",
+      "source": "Spring 24 Mo'ed B, Q3",
+      "question": "(a) merge_lists(a,b) merges two ascending lists into one sorted list in O(n), no built-in sort. (b) reduce(init,l,f) folds f across l from init. (c) merge_lists_in_path(path) reads a file whose lines are space-separated ascending ints and returns one merged sorted list using no loops (comprehensions), propagating any open error.",
+      "solution": "def merge_lists(a, b):\n    i = j = 0; out = []\n    while i < len(a) and j < len(b):\n        if a[i] < b[j]: out.append(a[i]); i += 1\n        else:           out.append(b[j]); j += 1\n    out.extend(a[i:]); out.extend(b[j:])\n    return out\n\ndef reduce(init, l, f):\n    result = init\n    for e in l:\n        result = f(result, e)\n    return result\n\ndef merge_lists_in_path(path):\n    with open(path) as f:\n        lists = [[int(x) for x in line.split()] for line in f]\n    return reduce([], lists, merge_lists)",
+      "teaching_note": "Two-pointer linear merge, implementing/using a fold (reduce) as a higher-order function, nested comprehensions replacing loops, and letting file exceptions propagate."
+    },
+    {
+      "id": "q17",
+      "topic": "Decorator pattern + polymorphic pricing",
+      "difficulty": "medium",
+      "source": "Winter 24-25 Mo'ed A, Q1d-e",
+      "question": "Book is now abstract (virtual getPrice() const, virtual getTitle() const). Upgrades change the price and are order-dependent (a special cover adds 8 shekels). Name the pattern and implement BookWithCover, which wraps a Book and adds 8 to its price.",
+      "solution": "class BookWithCover : public Book {\n  static const int COVER_PRICE = 8;\n  unique_ptr<Book> book;\npublic:\n  BookWithCover(unique_ptr<Book> b): book(std::move(b)) {}\n  string getTitle() const override { return book->getTitle(); }\n  float getPrice() const override { return book->getPrice() + COVER_PRICE; }\n};\n// Pattern: Decorator - each upgrade wraps a Book and augments getPrice(), so wrapping order changes the result.",
+      "teaching_note": "Decorator = composition over inheritance: wrap an owning smart pointer to the wrapped object and augment a computed value. Order-dependence is the tell that distinguishes it from a flat subclass."
+    },
+    {
+      "id": "q18",
+      "topic": "templated ring buffer + Rule of 3 reasoning",
+      "difficulty": "hard",
+      "source": "Winter 24-25 Mo'ed B, Q2a-b",
+      "question": "Implement generic bounded CyclicBuffer<T> (no STL). Capacity fixed at construction. push adds at the tail, pop removes at the head; throw FullBuffer on overflow and EmptyBuffer on underflow. Implement ctor/dtor/push/pop/size, and explain whether a copy ctor and assignment are needed.",
+      "solution": "template<class T>\nclass CyclicBuffer {\n  T* data; int cap; int head, tail;\npublic:\n  explicit CyclicBuffer(int maxSize): data(new T[maxSize+1]), cap(maxSize+1), head(0), tail(0) {}\n  ~CyclicBuffer(){ delete[] data; }\n  bool isFull() const { return (tail+1)%cap == head; }\n  bool isEmpty() const { return head == tail; }\n  void push(const T& x){ if(isFull()) throw FullBuffer(); data[tail]=x; tail=(tail+1)%cap; }\n  T pop(){ if(isEmpty()) throw EmptyBuffer(); T r=data[head]; head=(head+1)%cap; return r; }\n  int size() const { return ((tail-head)+cap)%cap; }\n};\n// A copy ctor and assignment ARE required and must be non-default: the class owns a raw T*, so a shallow copy would share/double-free the buffer.",
+      "teaching_note": "The ring-buffer trick (one spare slot so full != empty, modulo for wraparound giving O(1) ops) plus the Rule of 3 reasoning for a class that owns raw memory."
+    },
+    {
+      "id": "q19",
+      "topic": "custom iterator for range-based for",
+      "difficulty": "hard",
+      "source": "Winter 24-25 Mo'ed B, Q2d",
+      "question": "Extend CyclicBuffer<T> so that 'for (auto x : buffer) cout << x;' works as a read-only traversal from head to tail.",
+      "solution": "Iterator begin() const { return Iterator(head, *this); }\nIterator end()   const { return Iterator(tail, *this); }\nclass Iterator {\n  int index; const CyclicBuffer<T>& buf;\n  Iterator(int i, const CyclicBuffer<T>& b): index(i), buf(b) {}\n  friend class CyclicBuffer;\npublic:\n  Iterator& operator++(){ index = (index+1)%buf.cap; return *this; }\n  bool operator!=(const Iterator& o) const { return &buf != &o.buf || index != o.index; }\n  const T& operator*() const { return buf.data[index]; }\n};",
+      "teaching_note": "What a range-based for expands to (begin/end + != + prefix ++ + *), a nested iterator holding a reference back to its container, and reusing the container's modulo advance."
+    },
+    {
+      "id": "q20",
+      "topic": "Composite + polymorphic unique_ptr ownership",
+      "difficulty": "hard",
+      "source": "Spring 25 Mo'ed A, Q1 (Zoo)",
+      "question": "Implement an Area storing animals by unique name: addAnimal(unique_ptr<Animal>), hasAnimal(name), removeAnimal(name) returning the removed animal, getTotalWaterConsumption(). Then extend so an area can also contain other areas (addArea(unique_ptr<Area>)) and name the pattern.",
+      "solution": "class Area {\n  map<string, unique_ptr<Animal>> animals;\npublic:\n  void addAnimal(unique_ptr<Animal> a){ animals[a->getName()] = std::move(a); }\n  virtual bool hasAnimal(const string& n) const { return animals.count(n) > 0; }\n  virtual unique_ptr<Animal> removeAnimal(const string& n){\n    if(!Area::hasAnimal(n)) throw std::runtime_error(\"not found\");\n    auto it = animals.find(n);\n    unique_ptr<Animal> a = std::move(it->second);\n    animals.erase(it); return a; }\n  virtual float getTotalWaterConsumption() const {\n    float t=0; for(auto& p : animals) t += p.second->getWaterConsumption(); return t; }\n};\nclass SpecialArea : public Area {          // Composite\n  vector<unique_ptr<Area>> subAreas;\npublic:\n  bool hasAnimal(const string& n) const override {\n    if(Area::hasAnimal(n)) return true;\n    for(auto& s : subAreas) if(s->hasAnimal(n)) return true;\n    return false; }\n  void addArea(unique_ptr<Area> a){ subAreas.push_back(std::move(a)); }\n  float getTotalWaterConsumption() const override {\n    float t = Area::getTotalWaterConsumption();\n    for(auto& s : subAreas) t += s->getTotalWaterConsumption(); return t; }\n};\n// Pattern: Composite.",
+      "teaching_note": "Composite with recursive delegation through the hierarchy, transferring unique_ptr ownership with std::move, and knowing which methods must be virtual for the recursion to dispatch correctly."
+    },
+    {
+      "id": "q21",
+      "topic": "copy-on-write reference-counted smart pointer",
+      "difficulty": "hard",
+      "source": "Winter 25-26 Mo'ed A, Q2 (cow_ptr)",
+      "question": "Implement template<class T> class cow_ptr holding T* data and size_t* ref_count. Provide the explicit ctor, copy ctor, copy assignment, destructor (correct ref-count teardown), const T& operator*() const, T& operator*() (which performs copy-on-write via a private detach()), and size_t count() const.",
+      "solution": "template<class T>\nclass cow_ptr {\n  T* data; size_t* ref_count;\n  void detach(){ if(*ref_count > 1){ --(*ref_count); data = new T(*data); ref_count = new size_t(1); } }\npublic:\n  explicit cow_ptr(T* p): data(p), ref_count(new size_t(1)) {}\n  cow_ptr(const cow_ptr& o): data(o.data), ref_count(o.ref_count) { ++(*ref_count); }\n  cow_ptr& operator=(const cow_ptr& o){\n    if(this != &o){\n      if(--(*ref_count) == 0){ delete data; delete ref_count; }\n      data = o.data; ref_count = o.ref_count; ++(*ref_count);\n    } return *this; }\n  ~cow_ptr(){ if(--(*ref_count) == 0){ delete data; delete ref_count; } }\n  const T& operator*() const { return *data; }\n  T& operator*(){ detach(); return *data; }\n  size_t count() const { return *ref_count; }\n};",
+      "teaching_note": "Rule of 3 with a shared reference count, copy-on-write triggered only by the non-const accessor, self-assignment safety, and providing both const and non-const operator*. A variation on the shared_ptr shown in tutorials."
+    },
+    {
+      "id": "q22",
+      "topic": "STL-style generic algorithms + top-x average",
+      "difficulty": "medium",
+      "source": "Spring 25 Mo'ed B, Q2 Part 1",
+      "question": "(a) Implement generic all_of(first,last,pred). (b) Implement calcAvg(first,last,func) = mean of func over the range (throw on empty). (c) Using them and std::sort, write calcAreas(vector<shared_ptr<Shape>>, x) = the average area of the x largest shapes.",
+      "solution": "template<class It,class Pred>\nbool all_of(It first, It last, Pred p){ for(; first!=last; ++first) if(!p(*first)) return false; return true; }\n\ntemplate<class It,class Fn>\ndouble calcAvg(It first, It last, Fn f){\n  if(first==last) throw std::invalid_argument(\"empty\");\n  double sum=0; int n=0;\n  for(It it=first; it!=last; ++it){ sum += f(*it); ++n; }\n  return sum/n; }\n\ndouble calcAreas(vector<shared_ptr<Shape>> shapes, int x){\n  if(shapes.empty() || x<=0) throw std::invalid_argument(\"bad args\");\n  std::sort(shapes.begin(), shapes.end(),\n            [](const auto& a, const auto& b){ return a->getArea() < b->getArea(); });\n  return calcAvg(shapes.end()-x, shapes.end(),\n                 [](const auto& s){ return s->getArea(); });\n}",
+      "teaching_note": "Iterator-range template algorithms that work over any container, passing predicates/lambdas, composing your own generic functions, and slicing the top-x tail after sorting with a comparator."
+    },
+    {
+      "id": "q23",
+      "topic": "Python: dunder methods + comprehension group-by",
+      "difficulty": "medium",
+      "source": "Spring 25 Mo'ed B, Q3",
+      "question": "Given books = [(\"1984\",328),(\"Hobbit\",304),(\"Dune\",688),(\"Hamlet\",342)], a loop groups UPPERCASED titles by shelf number (pages-1)//200 + 1 into a dict of lists. Reproduce the same result using comprehensions only (no loops, no recursion).",
+      "solution": "shelves = {(pages-1)//200 + 1: [] for _, pages in books}\nresult = {\n    shelf: [title.upper() for title, pages in books if (pages-1)//200 + 1 == shelf]\n    for shelf in shelves\n}",
+      "teaching_note": "The two-pass group-by comprehension idiom: first build the set of distinct keys, then a nested list-comprehension per key. Avoids imperative accumulation entirely."
+    },
+    {
+      "id": "q24",
+      "topic": "Git & merge conflicts",
+      "difficulty": "easy",
+      "source": "Winter 24-25 Mo'ed A, Q3d-e",
+      "question": "(d) Give the git commands to stage all changes, commit with a message, and push the current branch to origin. (e) Explain what a merge conflict is and what the markers <<<<<<< / ======= / >>>>>>> mean, and how you resolve it.",
+      "solution": "(d)\n  git add .\n  git commit -m \"your message\"\n  git push origin <branch-name>\n(e) A merge conflict happens when two branches changed the same lines and git cannot auto-merge. Git writes both versions into the file: the current branch's version between '<<<<<<< HEAD' and '=======', and the incoming branch's version between '=======' and '>>>>>>> <branch>'. You resolve it by editing the file to keep the desired content, deleting the three marker lines, then git add the file and commit.",
+      "teaching_note": "Low-effort, high-certainty points: memorize the add/commit/push sequence and the three conflict markers. Rebase can produce up to one conflict per replayed commit; a merge produces at most one."
+    }
+  ]
+}

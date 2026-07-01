@@ -1,0 +1,40 @@
+{
+  "course_number": "234124",
+  "course_name_en": "Introduction to Systems Programming",
+  "course_name_he": "מבוא לתכנות מערכות",
+  "summary_en": "An introduction to systems programming centered on C++ and the development of large software systems. It covers the compilation process, object-oriented programming (classes, operator overloading, templates, exceptions, inheritance and polymorphism, move semantics), software design (design patterns, UML), UNIX/shell basics, configuration management with Git, and an introduction to Python.",
+  "summary_he": "קורס מבוא לתכנות מערכות המתמקד בשפת C++ ובפיתוח מערכות תוכנה גדולות. הקורס מכסה את תהליך הקומפילציה, תכנות מונחה עצמים (מחלקות, העמסת אופרטורים, תבניות, חריגות, ירושה ופולימורפיזם, Move Semantics), תיכון תוכנה (Design Patterns, UML), שימוש במערכות UNIX ופקודות SHELL בסיסיות, ניהול תצורה באמצעות Git, ומבוא לפייתון.",
+  "weekly_topics": [
+    "Week 1 - Lecture: Introduction, introduction to C++; Tutorial: Introduction, UNIX systems",
+    "Week 2 - Lecture: The compilation process; Tutorial: Pointers, dynamic memory management, structs",
+    "Week 3 - Lecture: Classes, constructors and destructors; Tutorial: The compilation process, Git",
+    "Week 4 - Lecture: Classes, operator overloading; Tutorial: References, files, classes",
+    "Week 5 - Lecture: Classes, iterators; Tutorial: Classes, constructors, destructors and assignment",
+    "Week 6 - Lecture: Exceptions, templates; Tutorial: Classes, Function Objects",
+    "Week 7 - Lecture: Templates; Tutorial: Exceptions",
+    "Week 8 - Lecture: Inheritance; Tutorial: Templates",
+    "Week 9 - Tutorial: Templates - advanced",
+    "Week 10-11 - Lecture: Software design; Tutorial: Programming in Python",
+    "Week 12 - Lecture: Advanced topics; Tutorial: Programming in Python",
+    "Week 13 - Lecture: Testing; Tutorial: Exam review tutorial"
+  ],
+  "grading": [
+    {"component": "homework", "weight": "30%"},
+    {"component": "final exam", "weight": "70%"}
+  ],
+  "policies": [
+    "Must receive a passing grade of 55 or above on the final exam in order to pass the course.",
+    "6 homework assignments during the semester (HW0 through HW5).",
+    "Homework is submitted in pairs, except HW0 which is submitted individually.",
+    "No extensions on homework except for reserve (military) duty or exceptional cases per Technion regulations.",
+    "Late submissions lose 5 points per day, up to a maximum of 4 days late; more than 4 days late receives a grade of 0. Friday and Saturday together count as one day.",
+    "No opportunity for resubmission after a homework grade is received - check your work carefully before submitting.",
+    "Homework grades from previous semesters cannot be carried over, except for students entitled to do so under special academic accommodations.",
+    "Plagiarism is treated severely: both copiers and those copied from receive a grade of 0 on all homework and are referred to the disciplinary committee.",
+    "Homework weights toward the final grade: HW0 2%, HW1 5%, HW2 5%, HW3 6%, HW4 8%, HW5 4% (totaling 30%)."
+  ],
+  "primary_language_taught": "C++ (with Python, Unix, git)",
+  "prerequisites": [
+    "Introduction to Computer Science (234114 or 234117)"
+  ]
+}
