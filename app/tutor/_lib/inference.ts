@@ -99,6 +99,46 @@ function buildSystem(
   return blocks;
 }
 
+export interface Tool {
+  name: string;
+  description: string;
+  input_schema: Record<string, unknown>;
+}
+
+/** One-shot structured output via forced tool use (validated JSON). */
+export async function structured<T = unknown>(opts: {
+  system: string;
+  messages: ChatMessage[];
+  tool: Tool;
+  model?: string;
+  maxTokens?: number;
+}): Promise<T> {
+  const { bridge, headers } = resolveAuth();
+  const system: SystemBlock[] = bridge
+    ? [{ type: "text", text: CLAUDE_CODE_PREAMBLE }, { type: "text", text: opts.system }]
+    : [{ type: "text", text: opts.system }];
+  const body = {
+    model: opts.model ?? defaultModel(bridge),
+    max_tokens: opts.maxTokens ?? 1500,
+    system,
+    tools: [opts.tool],
+    tool_choice: { type: "tool", name: opts.tool.name },
+    messages: opts.messages,
+  };
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    throw new Error(`Anthropic API ${res.status}: ${(await res.text()).slice(0, 300)}`);
+  }
+  const data = await res.json();
+  const block = (data.content ?? []).find((b: any) => b.type === "tool_use");
+  if (!block) throw new Error("no tool_use in response");
+  return block.input as T;
+}
+
 /** Stream the assistant reply as text chunks. */
 export async function* streamTutor(
   opts: TutorCallOpts,

@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getCourse, listCourses } from "../_lib/courses";
-import TutorChat from "../_components/TutorChat";
+import { getUnits, getMeta } from "../_lib/coursedata";
+import Home from "../_components/Home";
 
 export function generateStaticParams() {
   return listCourses().map((c) => ({ courseId: c.id }));
@@ -14,8 +15,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { courseId } = await params;
   const course = getCourse(courseId);
-  if (!course) return { title: "Tutor · ahiya.dev" };
-  return { title: `${course.nameHe} · tutor` };
+  return { title: course ? `${course.nameHe} · tutor` : "Tutor · ahiya.dev" };
 }
 
 export default async function CoursePage({
@@ -27,12 +27,20 @@ export default async function CoursePage({
   const course = getCourse(courseId);
   if (!course) notFound();
 
+  const meta = getMeta();
+  const units = getUnits().map((u) => ({
+    id: u.id,
+    kind: u.kind,
+    number: u.number,
+    title: u.title,
+  }));
+
   return (
-    <TutorChat
+    <Home
       courseId={course.id}
-      number={course.number}
       nameHe={course.nameHe}
-      nameEn={course.nameEn}
+      summaryHe={meta.summaryHe}
+      units={units}
     />
   );
 }

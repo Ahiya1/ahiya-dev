@@ -1,0 +1,878 @@
+{
+  "sections": [
+    {
+      "id": "cpp-core-1",
+      "title_he": "בסיס C++: קונסטים, רפרנסים, מבנים ותקורת קומפילציה",
+      "title_en": "C++ Core: const, references, structs, compilation",
+      "category": "C++ Core",
+      "blurb_he": "יסודות שחוזרים כמעט בכל שאלה: נכונות const, רפרנסים לעומת מצביעים, הפרדת הצהרה/הגדרה, ותהליך הקומפילציה.",
+      "items": [
+        {
+          "label_he": "const pointer מול pointer to const",
+          "detail_he": "const משפיע על מה שמשמאלו, אלא אם הוא ראשון ואז משפיע על הטיפוס שאחריו. int* const p - מצביע קבוע (חייב init, לא ניתן לשינוי הכתובת); const int* p - מצביע למשתנה קבוע (אפשר לשנות את הכתובת אך לא את הערך המוצבע).",
+          "code": "const int* p1;      // pointer to const\nint* const p2 = &x;  // const pointer\nconst int* const p3 = &x; // both"
+        },
+        {
+          "label_he": "רפרנס (Reference)",
+          "detail_he": "שם נוסף (alias) למשתנה קיים. חייב אתחול בהצהרה, לא ניתן 'לחבר מחדש' (rebind), ותמיד מצביע לאובייקט חוקי (בניגוד למצביע שיכול להיות nullptr). const T& יכול להיקשר גם לזמניים (temporaries).",
+          "code": "int& r = i;           // must init, no rebind\nvoid f(const int& x); // binds to temp/literal too"
+        },
+        {
+          "label_he": "נכונות const (const correctness)",
+          "detail_he": "מתודה המסומנת const מבטיחה שלא תשנה את מצב האובייקט, ומאפשרת קריאה לה על אובייקטים const. this הופך ל-const T* const. תמיד לסמן מתודות שאינן משנות מצב כ-const.",
+          "code": "double abs() const { return sqrt(re*re+im*im); }"
+        },
+        {
+          "label_he": "הצהרה לפני שימוש / הפרדת קבצים",
+          "detail_he": "בכל קובץ יש להצהיר פונקציה/טיפוס לפני השימוש בו. בפרויקט רב-קבצי: הממשק (הצהרות) ב-.h, המימוש ב-.cpp; שימוש ב-#pragma once כדי למנוע הכללה כפולה.",
+          "code": "// point.h\n#pragma once\nstruct Point { double x, y; double dist(const Point&) const; };"
+        },
+        {
+          "label_he": "תהליך הקומפילציה",
+          "detail_he": "Preprocessor (מבצע #include/#define כהעתק-הדבק) -> Compiler (מייצר קבצי אובייקט .o, עם 'חורים' לפונקציות לא ממומשות) -> Linker (מאחד .o וספריות לקובץ הרצה; שגיאות 'undefined reference' / 'multiple definition').",
+          "code": "g++ -std=c++17 -Wall -Werror a.cpp b.cpp -o prog"
+        },
+        {
+          "label_he": "new / delete מול malloc/free",
+          "detail_he": "new מחזיר מצביע מטיפוס נכון ומאתחל את האובייקט (בניגוד ל-malloc שמחזיר void* עם זבל). מערך יש לשחרר עם delete[], לא delete - שכחה גורמת להתנהגות לא מוגדרת/דליפת זיכרון.",
+          "code": "int* p = new int(5);\nint* a = new int[10]();\ndelete p; delete[] a;"
+        },
+        {
+          "label_he": "assert ו-NDEBUG",
+          "detail_he": "assert(cond) בודק הנחת תוכנית בזמן ריצה; אם קומפילציה עם -DNDEBUG, הביטוי כלל לא מוערך - לכן אסור לשים בתוך assert קוד עם תופעות לוואי נדרשות, ואסור להשתמש בו לבדיקת קלט משתמש.",
+          "code": "assert(arr != nullptr && i >= 0 && i < size);"
+        }
+      ]
+    },
+    {
+      "id": "cpp-core-2",
+      "title_he": "מחלקות: מבנה בסיסי, מחזור חיים ותבניות",
+      "title_en": "C++ Core: classes, lifecycle, templates",
+      "category": "C++ Core",
+      "blurb_he": "המבנה השלד שחוזר כמעט בכל שאלה: מחלקה עם בנאי/הורס, כלל השלוש/החמש, הפעלת יתר על אופרטורים, ותבניות גנריות.",
+      "items": [
+        {
+          "label_he": "class מול struct",
+          "detail_he": "ההבדל היחיד הוא ברירת הגישה: class ברירת מחדל private, struct ברירת מחדל public. לעולם אין להשאיר שדה חבר public במחלקת נתונים אמיתית.",
+          "code": "class Set { int* data; public: Set(int cap); };"
+        },
+        {
+          "label_he": "רשימת אתחול (initialization list)",
+          "detail_he": "אתחול שדות לפני גוף הבנאי; חובה לשדות const, רפרנסים, ולשדות ללא בנאי ברירת מחדל. הסדר בפועל הוא לפי סדר ההצהרה במחלקה, לא סדר הרשימה.",
+          "code": "Array::Array(int n) : data(new int[n]), size(n) {}"
+        },
+        {
+          "label_he": "כלל השלוש (Rule of Three)",
+          "detail_he": "בנאי העתקה, הורס ואופרטור השמה קשורים זה בזה: אם המחלקה מנהלת משאב (מצביע גולמי, קובץ) יש לממש את כל השלושה. אופרטור= תקין: בודק self-assignment, מקצה חדש לפני מחיקת ישן (בטיחות מפני חריגות), מחזיר *this.",
+          "code": "Set& Set::operator=(const Set& s) {\n  if (this == &s) return *this;\n  int* tmp = new int[s.size];\n  std::copy(s.data, s.data+s.size, tmp);\n  delete[] data; data = tmp; size = s.size;\n  return *this;\n}"
+        },
+        {
+          "label_he": "כלל החמש (Rule of Five) וסמנטיקת מעבר",
+          "detail_he": "בנוסף לשלוש: בנאי מעבר (T&&) ואופרטור השמת מעבר. בנאי מעבר 'גונב' משאבים ומאפס את המקור. std::move כופה בחירת גרסת המעבר; unique_ptr הוא move-only (copy = delete).",
+          "code": "Set::Set(Set&& o) : data(o.data), size(o.size) {\n  o.data = nullptr; o.size = 0;\n}\nauto p2 = std::move(p1);"
+        },
+        {
+          "label_he": "העמסת אופרטורים - עקרון + מ-+=",
+          "detail_he": "operator+= הוא מתודה שמשנה ומחזירה *this&; operator+ עדיף כפונקציה חופשית (non-member) כדי לאפשר המרה גם באגף שמאל, מיושם באמצעות +=. אופרטור= , [] , () , -> חייבים להיות מתודות.",
+          "code": "Rational operator+(Rational a, const Rational& b) { a += b; return a; }"
+        },
+        {
+          "label_he": "פולימורפיזם: virtual, הורס וירטואלי",
+          "detail_he": "מתודה virtual נבחרת בזמן ריצה לפי הטיפוס האמיתי של האובייקט, גם דרך מצביע/רפרנס לבסיס. חובה הורס virtual בכל מחלקת בסיס פולימורפית, אחרת מחיקה דרך מצביע בסיס לא תקרא להורס הנגזר.",
+          "code": "class Shape { public: virtual double area() const = 0; virtual ~Shape() = default; };"
+        },
+        {
+          "label_he": "תבנית מחלקה גנרית (template)",
+          "detail_he": "template<class T> יוצר קוד לכל T בזמן קומפילציה; יש לכתוב תבניות בקובצי .h בלבד (הידור דו-שלבי). ל-class template אין הסקת טיפוס - יש לציין במפורש (Set<int>). typename נדרש לפני טיפוס תלוי מקונן.",
+          "code": "template<class T> class Set {\n  public: typename Set<T>::Iterator begin() const;\n};\nSet<int> s;"
+        }
+      ]
+    },
+    {
+      "id": "classes-core",
+      "title_he": "מחלקות: מבנה, בנאים והרס",
+      "title_en": "Classes: Structure, Constructors & Destructors",
+      "category": "Classes & Operators",
+      "blurb_he": "היסודות של ADT ב-C++: הפרדת ממשק/מימוש, מחזור חיים של אובייקט וניהול משאבים.",
+      "items": [
+        {
+          "label_he": "class מול struct",
+          "detail_he": "ההבדל היחיד הוא ברירת הגישה: class פרטי כברירת מחדל, struct ציבורי. אף פעם אל תחשפו שדה כ-public במחלקת נתונים אמיתית.",
+          "code": "class C { int x; public: int get() const; };"
+        },
+        {
+          "label_he": "רשימת אתחול (init list)",
+          "detail_he": "מאתחלת שדות לפני גוף הבנאי, לפי סדר ההצהרה בכיתה (לא סדר הרשימה!); חובה לשדות const ולרפרנסים.",
+          "code": "Array::Array(int n) : data(new int[n]), size(n) {}"
+        },
+        {
+          "label_he": "הרסן (destructor)",
+          "detail_he": "~ClassName() ללא פרמטרים, אחד בלבד למחלקה, נקרא אוטומטית ביציאה מהיקף/מחיקה; משחרר משאבים שנרכשו בבנאי. אם בנאי זורק חריגה - ההרסן לא נקרא, יש לשחרר ידנית.",
+          "code": "Array::~Array() { delete[] data; }"
+        },
+        {
+          "label_he": "בנאי העתקה (copy c'tor)",
+          "detail_he": "מתקבל אוטומטית ע\"י המהדר (העתקה שדה-שדה) גם אם הוגדרו בנאים אחרים; חובה לכתוב בעצמכם כשיש מצביע בבעלות המחלקה (heap).",
+          "code": "Array::Array(const Array& a) : data(new int[a.size]), size(a.size) { for(int i=0;i<size;++i) data[i]=a.data[i]; }"
+        },
+        {
+          "label_he": "כלל השלושה (Rule of Three)",
+          "detail_he": "בנאי העתקה, הרסן ואופרטור ההשמה קשורים זה בזה: אם צריך לכתוב אחד, כנראה צריך את שלושתם (רלוונטי כשיש מצביע/משאב בבעלות).",
+          "code": "// need: T(const T&); ~T(); T& operator=(const T&);"
+        },
+        {
+          "label_he": "=default / =delete",
+          "detail_he": "=default מבקש מהמהדר לייצר גרסת ברירת מחדל (גם אחרי שהוגדר בנאי אחר); =delete אוסר שימוש (למשל למניעת העתקה).",
+          "code": "Person() = default; C(const C&) = delete;"
+        },
+        {
+          "label_he": "static members",
+          "detail_he": "משתנה static שייך למחלקה ולא לאובייקט - עותק יחיד לכל התוכנית; פונקציית static נקראת בלי אובייקט (Class::func()) וללא this. הגדרה בקובץ .cpp.",
+          "code": "int C::counter = 0; // definition in .cpp"
+        },
+        {
+          "label_he": "שרשור מתודות (method chaining)",
+          "detail_he": "החזרת *this כרפרנס מאפשרת קריאה שרשורית a.add(b).add(c); שימושי גם ל-operator+= .",
+          "code": "Complex& Complex::add(Complex c) { re+=c.re; im+=c.im; return *this; }"
+        }
+      ]
+    },
+    {
+      "id": "operator-overloading",
+      "title_he": "העמסת אופרטורים",
+      "title_en": "Operator Overloading",
+      "category": "Classes & Operators",
+      "blurb_he": "כללים לבחירת חבר/לא-חבר, מימוש נכון של +=/+, השמה בטוחה, אינדוקס ואיטרטורים.",
+      "items": [
+        {
+          "label_he": "חבר מול לא-חבר",
+          "detail_he": "אופרטור בינארי כחבר לוקח ארגומנט אחד, כלא-חבר לוקח שניים; =, [], (), -> חייבים להיות חברים. לא-חבר מאפשר המרה גם באגף שמאל (3 + r).",
+          "code": "Rational operator+(const Rational& a, const Rational& b);"
+        },
+        {
+          "label_he": "מימוש + דרך +=",
+          "detail_he": "כדי למנוע כפילות: operator+ מעתיק את this ומפעיל עליו +=, ומחזיר עותק חדש; operator+= מחזיר רפרנס ל-*this.",
+          "code": "Rational Rational::operator+(const Rational& r) const { Rational t(*this); t+=r; return t; }"
+        },
+        {
+          "label_he": "operator= בטוח",
+          "detail_he": "בודק self-assignment, משחרר משאב ישן, מקצה/מעתיק חדש, ומחזיר *this; אידיאום copy-and-swap הוא חלופה נקייה ובטוחה.",
+          "code": "Set& Set::operator=(const Set& s){ if(this==&s) return *this; delete[] data; data=new int[s.size]; ...; return *this; }"
+        },
+        {
+          "label_he": "conversion + explicit",
+          "detail_he": "המרה מוגדרת ע\"י בנאי חד-ארגומנטי (אל המחלקה) או operator T() (מהמחלקה); explicit מונע המרה משתמעת בלתי רצויה.",
+          "code": "explicit Rational(int n); explicit operator double() const;"
+        },
+        {
+          "label_he": "operator[] קבוע ולא-קבוע",
+          "detail_he": "יש לספק שתי גרסאות: לא-const מחזירה T& לשינוי, const מחזירה const T& לאובייקטים קבועים; שתיהן צריכות לבדוק גבולות.",
+          "code": "T& operator[](int i); const T& operator[](int i) const;"
+        },
+        {
+          "label_he": "friend",
+          "detail_he": "מעניק לפונקציה חיצונית גישה לחלק הפרטי; נחוץ ל-operator<< />> (הארגומנט הראשון הוא הזרם, לא האובייקט) ולאופרטורים סימטריים.",
+          "code": "friend ostream& operator<<(ostream& os, const Rational& r);"
+        },
+        {
+          "label_he": "operator<< / >>",
+          "detail_he": "תמיד לא-חברים (הארגומנט הראשון הוא הסטרים), מחזירים רפרנס לסטרים לצורך שרשור.",
+          "code": "ostream& operator<<(ostream& os, const C& c) { return os << c.val; }"
+        },
+        {
+          "label_he": "iterator מינימלי",
+          "detail_he": "כדי לתמוך ב-range-based for נדרשים operator*, operator++ (prefix), operator!=; begin()/end() מחזירים איטרטור, כש-end() לא מצביע לאיבר תקין.",
+          "code": "T& operator*(); Iterator& operator++(); bool operator!=(const Iterator&) const;"
+        },
+        {
+          "label_he": "פרפיקס מול פוסטפיקס ++",
+          "detail_he": "operator++() הוא prefix ומחזיר Iterator&; operator++(int) הוא postfix עם פרמטר int דמה, שומר עותק, מקדם ומחזיר את העותק הישן.",
+          "code": "Iterator Iterator::operator++(int) { Iterator tmp(*this); ++(*this); return tmp; }"
+        }
+      ]
+    },
+    {
+      "id": "templates-basics",
+      "title_he": "תבניות (Templates) - יסודות",
+      "category": "Templates",
+      "title_en": "Templates Basics",
+      "blurb_he": "תבניות מאפשרות למהדר לייצר קוד גנרי לפי טיפוס בזמן קומפילציה - type-safe, ללא עלות ריצה.",
+      "items": [
+        {
+          "label_he": "Function template",
+          "detail_he": "פונקציה גנרית מפרמטר T; ניתן לקרוא עם ארגומנט מפורש או להסתמך על הסקה (deduction) מתוך הארגומנטים בפועל.",
+          "code": "template<class T> T max(const T& a, const T& b) { return a > b ? a : b; }\ncout << max<int>(n1,n2); // explicit\ncout << max(n1,n2); // deduced"
+        },
+        {
+          "label_he": "כללי הסקה (deduction)",
+          "detail_he": "המהדר מסיק טיפוסים רק מפרמטרים של הפונקציה, לעולם לא מפעיל המרות טיפוס בזמן הסקה; אם אי אפשר להסיק - חובה לציין במפורש.",
+          "code": "max(n1, d1); // FAILS - no implicit conversion int->double"
+        },
+        {
+          "label_he": "סדר עדיפויות בבחירת overload",
+          "detail_he": "1) פונקציה רגילה עם התאמה מדויקת 2) תבנית ללא המרות 3) פונקציה רגילה עם המרה אוטומטית. תבנית לעולם לא מקבלת המרה אוטומטית."
+        },
+        {
+          "label_he": "Class template",
+          "detail_he": "מחלקה גנרית; בניגוד לפונקציות, כמעט ואין הסקה - יש לציין את הטיפוס בפירוש ביצירת אובייקט. Array<int> ו-Array<double> הם טיפוסים שונים לגמרי, לא קשורים.",
+          "code": "template<class T> class Array { T* data; int size; public: T& operator[](int i); };\nArray<int> a1; Array<double> a2; // unrelated types"
+        },
+        {
+          "label_he": "הגדרת method של class template",
+          "detail_he": "מחוץ למחלקה יש לחזור על template<class T> ולציין Class<T>:: לפני שם המתודה.",
+          "code": "template<class T> T& Array<T>::operator[](int index) { return data[index]; }"
+        },
+        {
+          "label_he": "קומפילציה דו-שלבית",
+          "detail_he": "בשלב קריאת התבנית המהדר בודק תחביר בלבד; הקומפילציה האמיתית קורית רק ב-instantiation עם טיפוס קונקרטי, ואז נבדק שהטיפוס עומד בדרישות הקוד. שגיאות מופיעות רק אז, בהודעות ארוכות."
+        },
+        {
+          "label_he": "typename לטיפוס תלוי",
+          "detail_he": "יש לציין typename לפני טיפוס מקונן שתלוי בפרמטר תבנית (למשל Iterator מתוך Set<T>), כדי להבהיר למהדר שמדובר בטיפוס ולא בערך.",
+          "code": "typename Set<T>::Iterator Set<T>::begin() const { return Iterator(this,0); }"
+        },
+        {
+          "label_he": "דרישות על T (requirements)",
+          "detail_he": "T חייב לתמוך בכל פעולה שהקוד המשומש בפועל דורש ממנו (למשל copy c'tor, operator==, operator<). רק פונקציות תבנית שנקראות בפועל מתורגמות, כך ש-T לא חייב לעמוד בכל הדרישות של כל המחלקה."
+        }
+      ]
+    },
+    {
+      "id": "templates-advanced",
+      "title_he": "תבניות - נושאים מתקדמים",
+      "category": "Templates",
+      "title_en": "Advanced Templates",
+      "blurb_he": "פרמטרים מרובים/לא-טיפוסיים, functors, למבדות, ואיטרטור מתוך תבנית - נפוצים מאוד במבחנים.",
+      "items": [
+        {
+          "label_he": "פרמטרים מרובים",
+          "detail_he": "תבנית יכולה לקבל כמה פרמטרי טיפוס (כמו std::pair).",
+          "code": "template<class T, class S> struct Pair { T first; S second; };"
+        },
+        {
+          "label_he": "פרמטר לא-טיפוסי (non-type)",
+          "detail_he": "תבנית יכולה לקבל קבוע (למשל int N) הנקבע בזמן קומפילציה; כל ערך N יוצר טיפוס שונה, אי אפשר לערבב.",
+          "code": "template<class T, int N> class Vector { T data[N]; };\nVector<int,3> v3; Vector<int,5> v5; // v3+v5 won't compile - different types"
+        },
+        {
+          "label_he": "Functor (function object)",
+          "detail_he": "מחלקה שמעמיסה operator() כך שאובייקט שלה נקרא כמו פונקציה; בניגוד לפונקציה רגילה יכול להחזיק state כשדות.",
+          "code": "class DividesBy { int n; public: DividesBy(int n):n(n){} bool operator()(int x) const { return x % n == 0; } };"
+        },
+        {
+          "label_he": "העברת functor לתבנית",
+          "detail_he": "מתודת תבנית יכולה לקבל Condition כפרמטר תבנית ולהפעיל עליו operator() - מאפשר קוד גנרי לפי תנאי.",
+          "code": "template<class Condition> Set filter(const Condition& c) const;\ns.filter([](int i){ return i % 2 == 0; }); // lambda as functor"
+        },
+        {
+          "label_he": "Lambda expression",
+          "detail_he": "פונקציה אנונימית עם רשימת capture; [=] לפי ערך, [&] לפי רפרנס, [x]/[&x] ספציפי, [this] לגישה לשדות מחלקה.",
+          "code": "int thresh=5; auto f = [thresh](int i){ return i>thresh; };\nint sum=0; auto g = [&sum](int n){ sum += n; };"
+        },
+        {
+          "label_he": "operator-> בתבנית",
+          "detail_he": "לא מקבל ארגומנטים בפועל; המהדר מפעיל -> שוב על הערך המוחזר, לכן חייב להחזיר משהו שניתן להפעיל עליו -> (מצביע/אובייקט).",
+          "code": "const T* operator->() const; // it->x becomes it.operator->()->x"
+        },
+        {
+          "label_he": "Rule of 3/5 בתוך template class",
+          "detail_he": "מחלקת תבנית שמנהלת משאב (מצביע גולמי) חייבת copy c'tor, destructor, ו-operator= (ואופציונלית move) בגלל אותם כללים כמו מחלקה רגילה - Rule of Three/Five חל גם על תבניות.",
+          "code": "template<class T> Set<T>::Set(const Set<T>& s) : data(new T[s.size]), size(s.size) { try { for(int i=0;i<size;i++) data[i]=s.data[i]; } catch(...) { delete[] data; throw; } }"
+        },
+        {
+          "label_he": "רק שימוש בפועל מתורגם",
+          "detail_he": "אם מתודה של template class לא נקראת בפועל עבור טיפוס ספציפי, היא לא מתורגמת - כך T לא חייב לתמוך בכל הפעולות של כל method במחלקה, רק באלה שבשימוש."
+        }
+      ]
+    },
+    {
+      "id": "exceptions-core",
+      "title_he": "חריגות – מנגנון בסיסי",
+      "title_en": "Exceptions - Core Mechanism",
+      "category": "Exceptions",
+      "blurb_he": "throw/try/catch, פרימת מחסנית והחלטה מתי לזרוק",
+      "items": [
+        {
+          "label_he": "throw",
+          "detail_he": "זריקת חריגה מיידית - הפונקציה הזורקת מפסיקה מיד ולא מחזירה ערך; השליטה עוברת לקורא. ניתן לזרוק כל טיפוס (int, string, מחלקה מוגדרת).",
+          "code": "throw DivisionByZero(); // throw -1; throw string(\"err\");"
+        },
+        {
+          "label_he": "try/catch",
+          "detail_he": "try עוטף קוד שעלול לזרוק; catch מיד אחריו תופס טיפוס ספציפי. אם אין catch מתאים, החריגה ממשיכה לעלות במחסנית; אם מגיעה מעל main - התכנית מסתיימת.",
+          "code": "try { f(); } catch (const MyExc& e) { cerr << e.what(); }"
+        },
+        {
+          "label_he": "catch מרובה / catch(...)",
+          "detail_he": "אפשר כמה בלוקי catch לפי סוגי חריגה שונים ברצף; catch(...) תופס כל חריגה (elipsis). התאמה נבדקת לפי הסדר - שים סוג ספציפי לפני בסיס.",
+          "code": "catch (int n){...} catch (const string&){...} catch(...){cerr<<\"unknown\";}"
+        },
+        {
+          "label_he": "catch by reference",
+          "detail_he": "יש לתפוס חריגות מסוג class/struct ע\"י const& ולא by value - נמנעים מהעתקה מיותרת ומ-slicing (חיתוך) בהיררכיית חריגות פולימורפית.",
+          "code": "catch (const std::exception& e) { cerr << e.what(); }"
+        },
+        {
+          "label_he": "פרימת מחסנית (stack unwinding)",
+          "detail_he": "בעת זריקה, כל פונקציה שיוצאים ממנה בדרך ל-catch המתאים - האובייקטים המקומיים שלה נהרסים (הדסטרקטורים שלהם נקראים) בדיוק כמו בחזרה רגילה, כך שמשאבים משתחררים אוטומטית."
+        },
+        {
+          "label_he": "מחלקת חריגה",
+          "detail_he": "מגדירים מחלקה ייעודית לכל סוג שגיאה (כי תופסים לפי טיפוס); לרוב עדיף לרשת מ-std::exception / std::logic_error / std::runtime_error ולממש what().",
+          "code": "class BadInput : public std::runtime_error { public: BadInput(const string& w): runtime_error(w){} };"
+        },
+        {
+          "label_he": "מתי לזרוק",
+          "detail_he": "זרוק כשהפונקציה נתקלת בבעיה שמונעת ממנה לבצע את תפקידה (קלט לא חוקי, מצב לא חוקי) ואינה יכולה להחזיר ערך שגיאה (בעיקר בבנאים ואופרטורים). אל תשתמש בחריגות כתחליף רגיל לערך החזרה - זה מסבך את קוד הלקוח."
+        }
+      ]
+    },
+    {
+      "id": "exceptions-advanced",
+      "title_he": "חריגות – בנאים, דסטרקטורים ותרגול",
+      "title_en": "Exceptions - Constructors, Destructors & Best Practices",
+      "category": "Exceptions",
+      "blurb_he": "זריקה מבנאים/אופרטורים, איסור זריקה מדסטרקטור, ניקוי משאבים ובטיחות חריגות",
+      "items": [
+        {
+          "label_he": "זריקה מבנאי",
+          "detail_he": "בנאים ואופרטורים הם מקום טבעי לזרוק כי אין להם דרך אחרת להחזיר שגיאה. אם בנאי זורק - האובייקט לא נבנה במלואו והדסטרקטור שלו לא ייקרא; יש לשחרר ידנית כל מה שהוקצה קודם (לרוב עם try/catch ואז throw;).",
+          "code": "Map::Map(){ cities=new City[N]; try{ roads=new Road[M]; } catch(const bad_alloc&){ delete[] cities; throw; } }"
+        },
+        {
+          "label_he": "איסור זריקה מדסטרקטור",
+          "detail_he": "דסטרקטור רץ לעיתים תוך כדי פרימת מחסנית כאשר כבר קיימת חריגה פעילה; אי אפשר שתי חריגות פעילות בו-זמנית, אז זריקה מדסטרקטור גורמת לקריסת התכנית (terminate). לעולם אל תזרוק מדסטרקטור."
+        },
+        {
+          "label_he": "std::bad_alloc",
+          "detail_he": "כשל של new זורק std::bad_alloc; זוהי דוגמה קלאסית לחריגה - הפונקציה המקצה בד\"כ לא יכולה לטפל בכישלון ומעבירה אותה למעלה.",
+          "code": "catch (const std::bad_alloc& e) { cerr << e.what(); }"
+        },
+        {
+          "label_he": "סדר בטוח: הקצה לפני שמוחקים",
+          "detail_he": "כאשר קוד גם מקצה וגם משחרר (למשל בהעתקת מבנה נתונים), יש לבצע קודם את הפעולה המסוכנת (שעלולה לזרוק) לתוך משתנה זמני, ורק אז לשחרר את הישן - כדי שזריקה לא תשאיר מצב פגום.",
+          "code": "T* tmp = new T[n]; /* copy into tmp, may throw */ delete[] data; data = tmp;"
+        },
+        {
+          "label_he": "Rule of Three וחריגות",
+          "detail_he": "אם בנאי העתקה/אופרטור השמה מבצעים לולאת העתקה של טיפוס גנרי T שעלול לזרוק, יש לעטוף בלולאת try/catch(...) שמשחררת את מה שהוקצה ומזרוקה מחדש (throw;) כדי לא לדלוף זיכרון.",
+          "code": "try { for(int i=0;i<n;i++) data[i]=other.data[i]; } catch(...) { delete[] data; throw; }"
+        },
+        {
+          "label_he": "בדיקה פשוטה עדיפה על try/catch",
+          "detail_he": "אם ניתן למנוע את החריגה בבדיקה פשוטה מראש (isEmpty/isFull), עדיף על שימוש בזרימת בקרה מבוססת חריגות - הקוד ברור וקריא יותר.",
+          "code": "if (!s.isEmpty()) { s.pop(); } // preferred over try{s.pop();}catch(Empty){}"
+        }
+      ]
+    },
+    {
+      "id": "smart-pointers",
+      "title_he": "מצביעים חכמים (Smart Pointers)",
+      "title_en": "Smart Pointers",
+      "category": "STL & Smart Pointers",
+      "blurb_he": "עוטפים מצביע גולמי ומנהלים אוטומטית את שחרור הזיכרון בהתאם לבעלות (ownership).",
+      "items": [
+        {
+          "label_he": "unique_ptr - בעלות בלעדית",
+          "detail_he": "מחזיק בעלות יחידה על אובייקט; ה-copy c'tor וה-operator= מבוטלים (=delete), רק move מותר. הרס האובייקט האחוז קורה אוטומטית ב-destructor.",
+          "code": "unique_ptr<T> p = make_unique<T>(args);\nunique_ptr<T> p2 = std::move(p); // p == nullptr"
+        },
+        {
+          "label_he": "unique_ptr - העברת בעלות",
+          "detail_he": "יש להשתמש ב-std::move כדי להעביר בעלות (לפונקציה/משתנה אחר); לאחר ההעברה אסור להשתמש במקור. מ-return של ערך מקומי לא צריך move (elision אוטומטי).",
+          "code": "void take(unique_ptr<T> p);\ntake(std::move(myPtr));"
+        },
+        {
+          "label_he": "shared_ptr - בעלות משותפת",
+          "detail_he": "מונה אזכורים (reference count) משותף; מועתק חופשי, מוגדל בהעתקה ומוקטן בהרס; הזיכרון משוחרר כשהמונה מגיע ל-0. בעייתי במבנים מעגליים (reference cycle) - לא משתחרר לעולם.",
+          "code": "auto sp = make_shared<T>(args);\nauto sp2 = sp; // count++"
+        },
+        {
+          "label_he": "make_unique / make_shared",
+          "detail_he": "הדרך המומלצת ליצירת מצביעים חכמים - בטוחה יותר מ-new (מונעת דליפה אם קונסטרוקטור אחר זורק), מקבלת את פרמטרי בנאי האובייקט.",
+          "code": "auto p = make_unique<Circle>(5.0);\nauto sp = make_shared<Circle>(7.0);"
+        },
+        {
+          "label_he": "מצביע גולמי (raw) - מתי בכל זאת",
+          "detail_he": "מצביע רגיל (לא-בעלים) משמש כשרוצים גישה בלבד בלי אחריות לשחרור (למשל אובייקט Action שרק ניגש ל-Account); הבעלים האמיתי מוחזק ב-unique_ptr/shared_ptr."
+        },
+        {
+          "label_he": "גישה דרך smart pointer",
+          "detail_he": "operator* ו-operator-> מוגדרים כדי לאפשר שימוש כמו במצביע רגיל, בעוד ה-destructor מבצע delete על האובייקט הפנימי בעת השמדת העוטף."
+        }
+      ]
+    },
+    {
+      "id": "stl-containers-iterators",
+      "title_he": "מכולות STL ואיטרטורים",
+      "title_en": "STL Containers & Iterators",
+      "category": "STL & Smart Pointers",
+      "blurb_he": "בחירת המכולה הנכונה לפי דפוס הגישה, ושימוש נכון באיטרטורים ואלגוריתמים גנריים.",
+      "items": [
+        {
+          "label_he": "vector",
+          "detail_he": "מערך דינמי רציף בזיכרון; גישה אקראית מהירה ([] ללא בדיקה, at() זורק out_of_range), הוספה/הסרה מהירה רק בסוף. מכולת ברירת המחדל המומלצת.",
+          "code": "vector<int> v; v.push_back(x); v.at(i);"
+        },
+        {
+          "label_he": "list / deque",
+          "detail_he": "list - רשימה דו-כיוונית, הכנסה/הסרה מהירה בכל מקום אך גישה סדרתית בלבד (איטרטור bidirectional). deque - כמו vector אך עם הכנסה/הסרה מהירה בשני הקצוות (push_front/push_back).",
+          "code": "list<int> l; l.push_front(x);\ndeque<int> d; d.push_front(x); d.push_back(y);"
+        },
+        {
+          "label_he": "set / map",
+          "detail_he": "set שומר איברים ייחודיים וממוינים לפי operator<. map ממפה מפתח לערך (עותק יחיד למפתח); operator[] ניגש/יוצר ברירת מחדל אם המפתח חסר, find(key) מחזיר איטרטור או end() אם אינו קיים.",
+          "code": "map<string,int> m; m[\"a\"]=1;\nif (m.find(\"a\") != m.end()) {...}"
+        },
+        {
+          "label_he": "בחירת מכולה נכונה (למבחן)",
+          "detail_he": "map לחיפוש לפי שם/מפתח; list לתור עדיפויות עם הכנסה O(1); map<T,int> לספירת ריבוי (multiset); map<int,set<T>> לקיבוץ (group-by).",
+          "code": "map<int, set<string>> groups;"
+        },
+        {
+          "label_he": "איטרטור מינימלי (custom)",
+          "detail_he": "כדי לתמוך ב-range-based for יש להגדיר begin()/end() (וגם גרסאות const) ומחלקה מקוננת עם operator++ (prefix), operator* (מחזיר הפניה), ו-operator!=. end() אינו מצביע לאיבר תקין - רק sentinel.",
+          "code": "for (auto it = c.begin(); it != c.end(); ++it) { *it; }\nfor (auto& x : c) { ... } // שקול"
+        },
+        {
+          "label_he": "const_iterator ותקינות const",
+          "detail_he": "begin/end צריכות גרסת const (cbegin/cend) כדי לתמוך באיטרציה על אובייקט const מבלי לאפשר שינוי; אחרת operator* לא-const יאפשר לעקוף const.",
+          "code": "const T& operator*() const; // const_iterator: dereference yields the element\nauto it = c.cbegin();"
+        },
+        {
+          "label_he": "אלגוריתמים גנריים <algorithm>",
+          "detail_he": "פועלים על טווח איטרטורים; חלקם דורשים random-access (sort, binary_search יעיל רק על vector). count, any_of מקבלים predicate/functor.",
+          "code": "sort(v.begin(), v.end());\ncount(v.begin(), v.end(), 5);\nany_of(v.begin(), v.end(), pred);"
+        },
+        {
+          "label_he": "פסילת איטרטורים (invalidation)",
+          "detail_he": "שינוי מבנה המכולה (הוספה/הסרה) עשוי לפסול איטרטורים קיימים; שימוש באיטרטור פסול הוא התנהגות לא מוגדרת (UB) - באחריות המתכנת."
+        }
+      ]
+    },
+    {
+      "id": "inheritance-basics",
+      "title_he": "ירושה: תחביר, גישה וסדר בנייה",
+      "title_en": "Inheritance Basics",
+      "category": "Inheritance & Polymorphism",
+      "items": [
+        {
+          "label_he": "תחביר ירושה ו-subtyping",
+          "detail_he": "class B : public A {}; מגדיר ש-B יורש מ-A (is-a). ניתן להשתמש ב-B* במקום A* וב-B& במקום A& (upcast מותר תמיד, downcast דורש cast מפורש). הירושה מספקת שדות/מתודות של הבסיס בלי שכפול קוד.",
+          "code": "class Engineer : public Employee { ... };\nEmployee* p = &eng; // upcast OK"
+        },
+        {
+          "label_he": "protected מול private",
+          "detail_he": "protected נגיש למחלקה עצמה ולכל מחלקה יורשת, אך לא מבחוץ. private לא נגיש אפילו למחלקה יורשת (אם כי קיים בזיכרון האובייקט). כלל: שדות תמיד private/protected, לעולם לא public."
+        },
+        {
+          "label_he": "בנאים לא עוברים בירושה",
+          "detail_he": "מחלקה יורשת חייבת להגדיר בעצמה כל בנאי שהיא צריכה; אפשר להעביר פרמטרים לבנאי הבסיס דרך רשימת האתחול. חלופה: using Base::Base; יורש את כל בנאי הבסיס.",
+          "code": "Manager(string n) : Employee(n), staff() {}\nusing Webcam::Webcam; // inherit all base c'tors"
+        },
+        {
+          "label_he": "סדר בנייה והריסה",
+          "detail_he": "בנייה: קודם שדות הבסיס, אח\"כ גוף בנאי הבסיס, אח\"כ שדות הנגזרת, ולבסוף גוף בנאי הנגזרת. הריסה: סדר הפוך - קודם גוף ההורס של הנגזרת, אח\"כ שדותיה, אח\"כ הורס הבסיס."
+        },
+        {
+          "label_he": "העלמה (overriding) מול הסתרה",
+          "detail_he": "מחלקה יורשת יכולה להגדיר מחדש (override) פונקציה של הבסיס עם אותה חתימה; שדות אי אפשר לדרוס. אפשר לקרוא לגרסת הבסיס במפורש עם Base::func(...)."
+        },
+        {
+          "label_he": "אי אפשר לדרוס משתני חבר",
+          "detail_he": "רק פונקציות ניתנות ל-override; משתנה חבר עם אותו שם במחלקה יורשת פשוט מסתיר (shadow) את של הבסיס - לא מומלץ ומקור לבאגים."
+        }
+      ]
+    },
+    {
+      "id": "virtual-polymorphism",
+      "title_he": "פונקציות וירטואליות, פולימורפיזם ו-casting",
+      "title_en": "Virtual Functions, Polymorphism & Casting",
+      "category": "Inheritance & Polymorphism",
+      "items": [
+        {
+          "label_he": "פונקציה וירטואלית ו-dynamic dispatch",
+          "detail_he": "virtual בבסיס גורם לכך שהקריאה בפועל (גם דרך מצביע/רפרנס לבסיס) תיקבע לפי הטיפוס האמיתי של האובייקט בזמן ריצה (dynamic binding), ולא לפי טיפוס המצביע הסטטי.",
+          "code": "virtual void giveRaise(int amount);\nvoid giveRaise(int amount) override; // בנגזרת"
+        },
+        {
+          "label_he": "פונקציה וירטואלית טהורה ומחלקה מופשטת",
+          "detail_he": "virtual func() = 0; הופכת את המחלקה למופשטת (abstract) - אי אפשר ליצור ממנה מופע ישירות (אך כן מצביעים/רפרנסים אליה). מחלקה עם רק פונקציות טהורות = interface.",
+          "code": "virtual double area() const = 0; // abstract"
+        },
+        {
+          "label_he": "הורס וירטואלי - חובה!",
+          "detail_he": "כל מחלקה המשמשת כבסיס לירושה עם פולימורפיזם חייבת הורס וירטואלי, אחרת delete דרך מצביע לבסיס יקרא רק להורס הבסיס ולא לזה של הנגזרת (undefined behavior/leak). בנאים לעולם אינם וירטואליים.",
+          "code": "virtual ~Employee() {}"
+        },
+        {
+          "label_he": "Object slicing",
+          "detail_he": "פולימורפיזם עובד רק דרך מצביעים/רפרנסים. Employee emp = eng; מעתיק רק את חלק הבסיס ('חותך' את הנגזרת) - אין polymorphism, ה-vtable משתנה. יש לאחסן אובייקטים פולימורפיים ב-container של מצביעים בלבד."
+        },
+        {
+          "label_he": "static_cast מול dynamic_cast",
+          "detail_he": "static_cast: נבדק בזמן קומפילציה, לא בטוח לירידה בהיררכיה (חובת האחראיות על המתכנת), לא מסיר const. dynamic_cast: נבדק בזמן ריצה, מחזיר nullptr אם ההמרה לא חוקית; דורש בסיס פולימורפי (יש בו לפחות פונקציה וירטואלית אחת).",
+          "code": "static_cast<Manager*>(ptr)->giveRaise(5);\nauto* e = dynamic_cast<Engineer*>(ptr); if(e){...}"
+        },
+        {
+          "label_he": "virtual clone() - 'בנאי העתקה וירטואלי'",
+          "detail_he": "פונקציה וירטואלית בבסיס, נדרסת בכל נגזרת, מחזירה עותק חדש מהטיפוס האמיתי (new Derived(*this)); מאפשרת להעתיק אובייקט דרך מצביע לבסיס בלי if/else על הטיפוס.",
+          "code": "virtual Shape* clone() const = 0;\nShape* Circle::clone() const { return new Circle(*this); }"
+        },
+        {
+          "label_he": "is-a מול has-a: בחירת ירושה נכונה",
+          "detail_he": "משתמשים בירושה רק כאשר יש יחס is-a אמיתי (מבחן ההחלפה - substitution test: כל שימוש בבסיס תקין גם בנגזרת). אחרת - קומפוזיציה: להחזיק אובייקט קיים כשדה private (has-a).",
+          "code": "class SortedList { List elements; ... }; // composition, not : public List"
+        },
+        {
+          "label_he": "היררכיית חריגות עם std::exception",
+          "detail_he": "עדיף לרשת מ-std::logic_error (טעות שהקורא יכול היה למנוע) או std::runtime_error (שגיאת ריצה), שניהם תחת std::exception עם what() וירטואלי; מאפשר לתפוס כמה חריגות דרך catch של הבסיס.",
+          "code": "class MyErr : public std::runtime_error {\npublic: MyErr(const string& m):runtime_error(m){} };"
+        }
+      ]
+    },
+    {
+      "id": "design-patterns-triggers",
+      "title_he": "דפוסי עיצוב - משפט טריגר לזיהוי",
+      "title_en": "Design Patterns - Trigger Phrases",
+      "category": "Design Patterns",
+      "blurb_he": "כשבשאלת עיצוב (Q1) מופיע ניסוח מסוים - הוא רומז לדפוס עיצוב ספציפי. תמיד לנמק מול האלטרנטיבה השגויה.",
+      "items": [
+        {
+          "label_he": "Strategy - 'להחליף אלגוריתם/התנהגות בזמן ריצה'",
+          "detail_he": "כשגוף אחד יכול לפעול לפי כמה 'שיטות'/'התנהגויות' חלופיות שניתן להחליף דינמית (למשל סוגי שחקן, סוגי מיון) - הפרד את ההתנהגות למחלקת בסיס מופשטת עם מתודה וירטואלית, החזק מצביע/unique_ptr אליה בעצם המכיל, והאציל את הקריאה. המלכודת: לא Command כי אין 'פעולה בודדת להפעיל ולבטל' אלא 'איך לנהוג' באופן כללי.",
+          "code": "class Behaviour { virtual void makeMove(Game&) = 0; };\nvoid setBehaviour(unique_ptr<Behaviour> b);"
+        },
+        {
+          "label_he": "Command - 'פעולה הפיכה / undo / לתעד היסטוריה'",
+          "detail_he": "כשצריך לבצע פעולה ניתנת לביטול (undo) או לשמור רשימת פעולות/מהלכים - הפוך כל פעולה למחלקה עם apply()/undo() וכל הנתונים הדרושים לביצוע/ביטול, ונהל ב-vector<unique_ptr<Action>>. המלכודת: לא Strategy - כאן יש 'פעולה בודדת' ולא 'אופן פעולה כללי'.",
+          "code": "class Action { virtual void apply(Account&)=0; virtual void undo(Account&)=0; };\nclass Transfer : public Action { Account* target; int amount; ... };"
+        },
+        {
+          "label_he": "Composite - 'עץ/מבנה מקונן של אותו טיפוס, פעולה קבוצתית'",
+          "detail_he": "כשאובייקטים מורכבים מתת-אובייקטים מאותו טיפוס בסיס (תיקיה שמכילה קבצים ותיקיות, צורה שמכילה צורות) ורוצים להפעיל פעולה אחידה על העץ כולו - מחלקת Composite יורשת מאותה מחלקת בסיס ומחזיקה אוסף של מצביעים לאותה בסיס.",
+          "code": "class Shape { virtual double area() const = 0; };\nclass Group : public Shape { vector<unique_ptr<Shape>> children; double area() const override { sum...; } };"
+        },
+        {
+          "label_he": "Decorator - 'הוספת יכולת/עיטור שניתן לערום, סדר משנה תוצאה'",
+          "detail_he": "כשרוצים להוסיף התנהגות/מאפיין קיים באופן מודולרי וניתן לערימה (למשל Shiny Pokemon, חלון עם אנימציה+סטטיסטיקה) בלי לרבות תת-מחלקות - מחלקה שיורשת מאותה בסיס, עוטפת מופע קיים (או יורשת ממנו templated) ומוסיפה/משנה התנהגות תוך האצלה. המלכודת: אם הפעולה היא חד-פעמית/הפיכה זה Command, לא Decorator.",
+          "code": "template<class P> class Shiny : public P { Image getPicture() const override { return P::getPicture(true); } };"
+        },
+        {
+          "label_he": "Adapter - 'לשלב ספריה/API חיצוני שלא תואם לממשק שלנו'",
+          "detail_he": "כשיש מחלקה/ספריה קיימת עם ממשק שונה מהנדרש, ורוצים להשתמש בה במקום שבו מצופה הממשק שלנו בלי לשנות קוד קיים - מחלקת Adapter יורשת מהממשק המצופה, מחזיקה מופע של המחלקה הזרה ומתרגמת קריאות.",
+          "code": "class ProviderAdapter : public InfoProvider { NextGenProvider m_np; string getPokemonPicture() override { return m_np.getPokePic(); } };"
+        },
+        {
+          "label_he": "Factory / Abstract Factory - 'יצירת אובייקט לפי סוג/שם, בלי לחשוף מחלקה קונקרטית'",
+          "detail_he": "כשצריך ליצור אובייקט ממשפחת טיפוסים לפי פרמטר (שם/enum/הגדרה חיצונית) בלי if/switch מפוזר בקוד הלקוח - מחלקת Factory מופשטת עם create() וירטואלי, ומימושים קונקרטיים בוחרים את התת-מחלקה.",
+          "code": "class MessageFactory { virtual unique_ptr<Message> create() const = 0; };\nclass CryptoMessageFactory : public MessageFactory { ... };"
+        },
+        {
+          "label_he": "Singleton - 'מופע יחיד גלובלי במערכת'",
+          "detail_he": "כשיש בדיוק עצם אחד מסוג מסוים בכל המערכת (Game/Logger יחיד) עם גישה גלובלית - קונסטרוקטור פרטי, getInstance() סטטי עם static local, ומחיקת קונסטרוקטור העתקה/operator=.",
+          "code": "static Game& getInstance() { static Game inst; return inst; }\nGame(const Game&) = delete;"
+        },
+        {
+          "label_he": "Virtual Clone (Prototype) - 'להעתיק עצם דרך מצביע לבסיס בלי לדעת טיפוס אמיתי'",
+          "detail_he": "כשיש מחלקת בסיס פולימורפית ומחזיקים אוסף מצביעים אליה, וצריך ליצור עותק אמיתי (deep copy) של כל עצם בלי if/switch על הטיפוס - הוסף virtual clone() const בבסיס, וכל תת-מחלקה מממשת return new Derived(*this).",
+          "code": "virtual unique_ptr<Shape> clone() const = 0;\nunique_ptr<Shape> Circle::clone() const override { return make_unique<Circle>(*this); }"
+        }
+      ]
+    },
+    {
+      "id": "design-patterns-checklist",
+      "title_he": "דפוסי עיצוב - רשימת בדיקה ליישום",
+      "title_en": "Design Patterns - Implementation Checklist",
+      "category": "Design Patterns",
+      "blurb_he": "נקודות שנבדקות בציון עבור מימוש נכון של דפוס עיצוב בשאלת עיצוב.",
+      "items": [
+        {
+          "label_he": "בסיס מופשט תמיד עם הרסן וירטואלי",
+          "detail_he": "בכל היררכיה פולימורפית (Strategy/Command/Composite/Decorator) חובה virtual ~Base(){} אחרת מחיקה דרך מצביע לבסיס = UB. שכחה זו נקודת ניכוי קבועה."
+        },
+        {
+          "label_he": "בעלות (ownership) - unique_ptr לבעלות בלעדית, מצביע רגיל לגישה בלבד",
+          "detail_he": "המחלקה שיוצרת/אחראית על שחרור מחזיקה unique_ptr<Base>; אובייקטים שרק ניגשים (כמו Action שניגש ל-Account) מחזיקים מצביע רגיל לא-בעל. shared_ptr רק כשלא ברור מי הבעלים היחיד."
+        },
+        {
+          "label_he": "נמק מול המלכודת",
+          "detail_he": "בכל תשובת 'איזה דפוס' - נמק במשפט אחד מדוע לא הדפוס השני הסביר (לדוגמה: 'לא Decorator כי הפעולה חד-פעמית וניתנת לביטול - Command')."
+        },
+        {
+          "label_he": "מחלקה מנהלת + חריגה מותאמת אישית",
+          "detail_he": "כמעט תמיד יש מחלקה מנהלת (Container/System) שמחזיקה את עצי הבסיס ב-map/vector של unique_ptr, וזורקת exception מותאם היורש מ-std::exception עם what() כשמבוקש פריט לא קיים/כפול."
+        },
+        {
+          "label_he": "UML כשלב ראשון",
+          "detail_he": "כדאי לשרטט UML קצר לפני קוד: קלאסים, יחסי is-a (חץ ריק) מול has-a (יהלום/חץ), וריבוי (multiplicity) בין המחלקה המנהלת לאובייקטים."
+        },
+        {
+          "label_he": "קרא את כל תתי-הסעיפים לפני התכנון",
+          "detail_he": "סעיף מאוחר בשאלה לרוב מכתיב מה חייב הבסיס לחשוף (מתודה וירטואלית נוספת) - קריאה מוקדמת חוסכת עיצוב מחדש."
+        }
+      ]
+    },
+    {
+      "id": "py-basics",
+      "title_he": "פייתון: יסודות, מבני נתונים ותחביר",
+      "title_en": "Python Basics & Data Structures",
+      "category": "Python",
+      "items": [
+        {
+          "label_he": "טיפוסים דינמיים",
+          "detail_he": "אין הצהרת טיפוס; המשתנה מקבל טיפוס לפי הערך. type(x) מחזיר את הטיפוס. אין העמסת פונקציות (overloading) בפייתון.",
+          "code": "x = 7\ntype(x)  # <class 'int'>"
+        },
+        {
+          "label_he": "מחרוזות (str) - immutable",
+          "detail_he": "לא ניתן לשנות תו במחרוזת; כל פעולה מחזירה מחרוזת חדשה. אינדקס שלילי סופר מהסוף. פרוסה (slice) עם צעד: s[start:end:step].",
+          "code": "s = 'Hello'\ns[-1]      # 'o'\ns[1:4]     # 'ell'\nf'{x} sq={x**2}'"
+        },
+        {
+          "label_he": "רשימות (list) - mutable",
+          "detail_he": "רצף מסודר הניתן לשינוי. append/insert/extend/remove/pop/del. sort()/reverse() משנים במקום; sorted()/reversed() מחזירים עותק.",
+          "code": "lst = [1,2,3]\nlst.append(4)\nlst[0] = 9"
+        },
+        {
+          "label_he": "עותק (copy) מול הפניה",
+          "detail_he": "b = a יוצר הפניה משותפת (שינוי דרך b משפיע על a). a.copy() - עותק שטחי (רמה עליונה בלבד); copy.deepcopy(a) - עותק מלא כולל רשימות מקוננות.",
+          "code": "from copy import deepcopy\nb = a.copy()      # shallow\nc = deepcopy(a)   # deep"
+        },
+        {
+          "label_he": "is לעומת ==",
+          "detail_he": "is בודק זהות (אותו אובייקט בזיכרון), == בודק שוויון ערכים. לא לסמוך על is עם int/str קטנים (אופטימיזציית מימוש)."
+        },
+        {
+          "label_he": "tuple - רשימה בלתי ניתנת לשינוי",
+          "detail_he": "נוצר עם (); טאפל של איבר יחיד דורש פסיק: (x,). שימושי כאשר רוצים לערוב לאי-שינוי, וכי tuple יכול להיכנס ל-set בעוד list לא."
+        },
+        {
+          "label_he": "פירוק (unpacking) ו-*",
+          "detail_he": "פירוק ערכי רצף למשתנים; _ לדילוג על ערך; * לפריסת רצף לרשימת ארגומנטים.",
+          "code": "a, _, b = my_tuple\nprint(*mytuple)"
+        },
+        {
+          "label_he": "תנאים ולולאת while",
+          "detail_he": "אין סוגריים מסולסלות - הבלוק מוגדר על ידי הזחה עקבית (טאב או 4 רווחים). ביטוי תנאי מקוצר (ternary): X if cond else Y.",
+          "code": "while x > 0:\n    x -= 1\ny = 'pos' if x > 0 else 'neg'"
+        }
+      ]
+    },
+    {
+      "id": "py-comprehensions-functions",
+      "title_he": "פייתון: לולאות, קומפריהנשן, מילונים ופונקציות",
+      "title_en": "Python Loops, Comprehensions, Dicts & Functions",
+      "category": "Python",
+      "items": [
+        {
+          "label_he": "list comprehension (במקום לולאה מפורשת)",
+          "detail_he": "תחביר [expr for var in iterable if cond] בונה רשימה חדשה ללא שימוש בלולאת for/while מפורשת - נדרש לפי הנחיות הקורס.",
+          "code": "squares = [x**2 for x in lst if isinstance(x, int)]"
+        },
+        {
+          "label_he": "dict comprehension",
+          "detail_he": "תחביר {key: value for var in iterable if cond}; ניתן לבנות מתוך items() של מילון קיים.",
+          "code": "d2 = {k: v.lower() for k, v in d.items() if len(v) >= 5}"
+        },
+        {
+          "label_he": "שיטוח רשימה של רשימות ללא לולאה",
+          "detail_he": "sum(list_of_lists, []) משטח רשימה דו-ממדית לחד-ממדית ללא כתיבת לולאה מפורשת.",
+          "code": "flat = sum(lists, [])"
+        },
+        {
+          "label_he": "enumerate ו-zip",
+          "detail_he": "enumerate(it) מייצר זוגות (index, element); zip(l1, l2) מאחד שני איטרבלים במקביל לזוגות - שימושי בתוך comprehension.",
+          "code": "[f'{i}:{e}' for i, e in enumerate(lst)]\n[a+b for a, b in zip(l1, l2)]"
+        },
+        {
+          "label_he": "dict - מילון",
+          "detail_he": "מפתחות חייבים להיות immutable (לא list). גישה/הכנסה/מחיקה עם [], del; d.get(k, default) נמנע מ-KeyError; keys()/values()/items() לאיטרציה.",
+          "code": "d = {'a': 1}\nd['b'] = 2\nfor k, v in d.items(): ..."
+        },
+        {
+          "label_he": "פונקציות ופרמטרים",
+          "detail_he": "def בלי טיפוסים; ברירת מחדל רק לפרמטרים אחרונים; ניתן לקרוא בשם (keyword args); פונקציה ללא return מחזירה None.",
+          "code": "def student(name, grade=100): ...\nstudent(name='Alice', grade=90)"
+        },
+        {
+          "label_he": "ארגומנטים משתנים *args/**kwargs",
+          "detail_he": "*args אוסף ארגומנטים פוזיציוניים לרשימה (tuple); **kwargs אוסף ארגומנטים בשם למילון.",
+          "code": "def f(*nums, **named):\n    for k, v in named.items(): ..."
+        },
+        {
+          "label_he": "מודול ראשי __main__",
+          "detail_he": "if __name__ == '__main__': מריץ קוד רק כשהקובץ מורץ ישירות ולא כשהוא מיובא - שימושי לסקריפט הרצה עם sys.argv/sys.exit/sys.stderr.",
+          "code": "if __name__ == '__main__':\n    import sys\n    if len(sys.argv) < 2:\n        print('usage', file=sys.stderr)\n        sys.exit(1)"
+        }
+      ]
+    },
+    {
+      "id": "unix-basics",
+      "title_he": "יוניקס: קבצים, הרשאות והפניות",
+      "title_en": "Unix Basics: Files, Permissions, Redirection",
+      "category": "Unix & Git",
+      "blurb_he": "פקודות יסוד לניווט במערכת הקבצים, הרשאות הרצה, וניתוב קלט/פלט.",
+      "items": [
+        {
+          "label_he": "ניווט וקבצים",
+          "detail_he": "pwd מציג נתיב נוכחי; cd משנה תיקייה (~ בית, .. הורה, . נוכחית); ls -al מציג רשימה מלאה כולל קבצים מוסתרים.",
+          "code": "cd ..; ls -al; mkdir dir; rmdir dir"
+        },
+        {
+          "label_he": "העתקה/העברה/מחיקה",
+          "detail_he": "cp מעתיק, mv מעביר/משנה שם, rm מוחק (-r רקורסיבי, -f בכפייה, -i אישור); rm על תיקייה דורש -r.",
+          "code": "cp -i a.c b.c; mv b.c dir/; rm -rf tmp/"
+        },
+        {
+          "label_he": "הרשאות והרצה",
+          "detail_he": "כל קובץ: הרשאות Owner/Group/Other x Read/Write/Execute. יש להוסיף הרשאת הרצה לפני ./prog; קובץ מקור לא־מקומפל אינו קובץ הרצה.",
+          "code": "chmod u+x prog; ./prog"
+        },
+        {
+          "label_he": "ניתוב קלט/פלט",
+          "detail_he": "> מפנה stdout לקובץ (דריסה), >> מוסיף בסוף, < נותן stdin מקובץ, 2> מפנה stderr, 2>&1 מאחד stderr ל-stdout.",
+          "code": "cmd > out.txt 2> err.txt; sort < in.txt >> out.txt"
+        },
+        {
+          "label_he": "צנרת (pipe)",
+          "detail_he": "| מחבר stdout של פקודה אחת ל-stdin של הבאה, ללא קובץ ביניים; מאפשר שרשור מסננים.",
+          "code": "ls -l | grep test | less"
+        },
+        {
+          "label_he": "השוואת קבצים וקלט",
+          "detail_he": "diff f1 f2 מציג הבדלים שורה-שורה עם מספרי שורה; cat מציג/משרשר/יוצר קבצים; less לדפדוף נוח בקובץ ארוך.",
+          "code": "diff f1.txt f2.txt; cat a b > c; less c"
+        },
+        {
+          "label_he": "משתנים ו-PATH",
+          "detail_he": "x=val (ללא רווחים) מגדיר משתנה shell מקומי; $x לקריאה; PATH הוא רשימת תיקיות (מופרדות ב-:) לחיפוש פקודות חיצוניות; which מאתר מיקום פקודה.",
+          "code": "x=7; echo $x; which gcc"
+        },
+        {
+          "label_he": "קומפילציה והרצה",
+          "detail_he": "gcc/g++ מקמפל קובץ מקור לקובץ הרצה; יש להריץ עם ./ כי התיקייה הנוכחית אינה ב-PATH כברירת מחדל.",
+          "code": "g++ -std=c++17 -Wall main.cpp -o prog; ./prog"
+        }
+      ]
+    },
+    {
+      "id": "git-basics",
+      "title_he": "Git: מחסן, קומיטים וענפים",
+      "title_en": "Git: Repository, Commits, Branches",
+      "category": "Unix & Git",
+      "blurb_he": "פעולות היסוד בגיט: מעקב אחר שינויים, ענפים, מיזוג/רבייס ועבודה מול שרת מרוחק.",
+      "items": [
+        {
+          "label_he": "מחזור עבודה בסיסי",
+          "detail_he": "add מעביר קבצים למצב Staged; commit שומר גרסה חדשה עם הודעה; status מציג מצב קבצים; diff מציג שינויים לא-מבוימים (--staged למבוימים).",
+          "code": "git add f.cpp; git commit -m \"msg\"; git status; git diff"
+        },
+        {
+          "label_he": "ענפים (branch)",
+          "detail_he": "branch יוצר שם לקומיט; checkout -b יוצר ועובר לענף חדש; ה'ענף הנוכחי' מקבל קומיטים חדשים.",
+          "code": "git branch feat; git checkout -b feat"
+        },
+        {
+          "label_he": "merge לעומת rebase",
+          "detail_he": "merge מריץ מהענף היעד ומכניס commit את הענף המקור (יוצר merge commit, אלא אם Fast-Forward); rebase מריץ מהענף המקור ומעביר את הקומיטים שלו מעל היעד (מריץ מהמקור, שם היעד).",
+          "code": "git checkout master; git merge feat\ngit checkout feat; git rebase master"
+        },
+        {
+          "label_he": "עבודה מול remote",
+          "detail_he": "clone משכפל מחסן; fetch מביא עדכוני שרת בלי לגעת בענפים המקומיים; pull = fetch+merge (או --rebase); push שולח את הענף הנוכחי לשרת.",
+          "code": "git clone <url>; git pull --rebase; git push"
+        },
+        {
+          "label_he": "פתרון קונפליקטים",
+          "detail_he": "בקונפליקט git מסמן בקובץ את שתי הגרסאות; יש לערוך ידנית, ואז add + commit (במיזוג) או add + rebase --continue (ברבייס).",
+          "code": "# edit conflict markers\ngit add f.cpp; git rebase --continue"
+        },
+        {
+          "label_he": "ביטול פעולות",
+          "detail_he": "revert <id> יוצר קומיט חדש שמבטל קומיט קודם; commit --amend משנה את הקומיט האחרון; merge/rebase --abort מבטל תהליך מיזוג/רבייס באמצע.",
+          "code": "git revert 1234abcd; git commit --amend"
+        },
+        {
+          "label_he": "היסטוריה וקבצים מתעלמים",
+          "detail_he": "log --all --graph --oneline מציג עץ קומיטים תמציתי; .gitignore מציין קבצים שגיט יתעלם מהם (למשל קבצי בינארי).",
+          "code": "git log --all --graph --oneline"
+        }
+      ]
+    },
+    {
+      "id": "exam-strategy-format",
+      "title_he": "מבנה המבחן ותקצוב זמן",
+      "title_en": "Exam Format & Time Budgeting",
+      "category": "Exam Strategy",
+      "blurb_he": "המבחן קבוע במבנה: 3 שאלות, 100 נק', 3 שעות, חומר פתוח. אין רב-ברירה ואין 'מצא את הבאג' — הכל כתיבת קוד ועיצוב.",
+      "items": [
+        {
+          "label_he": "Q1 - עיצוב מונחה-עצמים (~43-50 נק')",
+          "detail_he": "תרחיש מסופר: UML + היררכיית מחלקות מופשטות + מחלקה מנהלת עם חריגות מותאמות + חלק 'תכנני מחדש לפי תכונה חדשה - זהו תבנית עיצוב'. קראו את כל תתי-הסעיפים לפני שמתחילים - הסעיפים המאוחרים מכתיבים מה ה-base class חייב לחשוף."
+        },
+        {
+          "label_he": "Q2 - מיכל/אלגוריתם גנרי (~27-31 נק')",
+          "detail_he": "כתיבת template מאפס: מיכל גנרי, Rule of Three או smart pointers, העמסת אופרטורים, לעיתים איטרטור מותאם. בדקו קודם אם STL מותר: אסור=>Rule of Three מלא + בטיחות חריגות; מותר=>ברירות המחדל נכונות - ציינו זאת במפורש."
+        },
+        {
+          "label_he": "Q3 - פייתון (~20-26 נק')",
+          "detail_he": "מחלקות, קבצים/JSON, קומפרהנשן (לרוב באילוץ 'ללא for/while'), סקריפט הרץ עם __main__/argv/stderr. לפעמים גם חלק קטן וקל של Git/Unix."
+        },
+        {
+          "label_he": "תקצוב 3 השעות",
+          "detail_he": "כ-80 דק' ל-Q1, כ-55 דק' ל-Q2, כ-40 דק' ל-Q3. אל תשקיעו יותר מדי בסעיף אחד על חשבון השארה ריקה של סעיף אחר."
+        },
+        {
+          "label_he": "Mo'ed A מול Mo'ed B",
+          "detail_he": "כמעט זהים במבנה, במשקל ובקושי - רק תרחיש שונה. אין חלוקה של 'A=תיאוריה, B=קוד'; כל מבחן ישן מהעבר הוא תרגול טוב."
+        },
+        {
+          "label_he": "כלל אצבע ל-Q1",
+          "detail_he": "abstract base + virtual destructor + פונקציה וירטואלית טהורה אחת לפחות; 2-4 מחלקות יורשות; מחלקה מנהלת שמחזיקה אובייקטים ב-unique_ptr/shared_ptr וזורקת חריגה מותאמת."
+        }
+      ]
+    },
+    {
+      "id": "exam-strategy-points",
+      "title_he": "ליקוט נקודות זולות ועקרונות שנבדקים בכל מקום",
+      "title_en": "Cheap Points & Pervasive Grading Criteria",
+      "category": "Exam Strategy",
+      "blurb_he": "חלק מהנקודות קלות וזריזות לקטיף; חלק מהעקרונות (כמו const-correctness) נבדקים לאורך כל המבחן ולא רק בסעיף ייעודי.",
+      "items": [
+        {
+          "label_he": "ליקטו קודם את הנקודות הזולות",
+          "detail_he": "סקיצת UML, חלקי תיאוריה קצרים ('האם צריך copy ctor?', 'מה הדרישות על T?', 'זהו את התבנית'), ושאלת Git/Unix - כולם מהירים ומשתלמים. לעולם אל תשאירו סעיף שלם ריק כדי לשפר תת-סעיף אחר."
+        },
+        {
+          "label_he": "const-correctness נבדק בכל מקום",
+          "detail_he": "העברת פרמטרים ב-const&, סימון מתודות const, זוג עמוס const/non-const ל-operator[]/operator*, אין להחזיר רפרנס תלוי (dangling). זו קטגוריית 'עקרונות תכנות נכונים' שנבדקת על פני כל המבחן, לא רק ב-Q2."
+        },
+        {
+          "label_he": "כלל Rule of Three - מבחן זריז",
+          "detail_he": "מצביע גולמי בבעלות (T*) => חובה לכתוב copy ctor + destructor + operator=; חברים מסוג STL/smart pointer בלבד => ברירות המחדל מספיקות. אמרו זאת במשפט אחד בתשובה התיאורטית."
+        },
+        {
+          "label_he": "תבניות עיצוב - זהו לפי משפט הטריגר",
+          "detail_he": "החלפת אלגוריתם בזמן ריצה=>Strategy; פעולה חוזרת/נערמת עם undo=>Command; תוספת מדורגת/תלוית-סדר על ערך מחושב=>Decorator; יצירה לפי שם=>Factory; עטיפת ממשק לא תואם=>Adapter; העתקה דרך מצביע בסיס=>virtual clone; מופע יחיד גלובלי=>Singleton."
+        },
+        {
+          "label_he": "בחירת מיכל STL נכונה",
+          "detail_he": "map לחיפוש לפי שם/מפתח, list להכנסה מהירה בעדיפות, map<T,int> לספירת ריבוי (multiset), map<int,set<T>> לקיבוץ (group-by). בחירה שגויה מורידה נקודות גם אם הלוגיקה נכונה."
+        },
+        {
+          "label_he": "פייתון תחת אילוצים",
+          "detail_he": "קומפרהנשן במקום for/while; שיטוח רשימות עם sum(lists, []); group-by בשני מעברים; פענוח מחרוזות עם split/find במקום re; תבנית קבועה: if __name__=='__main__': try/except -> sys.stderr + sys.exit(1)."
+        },
+        {
+          "label_he": "מלכודות בפתרונות רשמיים",
+          "detail_he": "שימו לב לבאגים נפוצים שנראים במפתחות פתרון: map::operator[] בתוך מתודת const, dynamic_cast על איטרטור במקום על *it, החלפת ארגומנטים ב-json.dump, איטרציה על מפתחות dict במקום .values() - אל תחזרו על טעויות אלו."
+        },
+        {
+          "label_he": "וירטואלי - אל תשכחו",
+          "detail_he": "חוסר ב-virtual ~Base() בהיררכיה פולימורפית הוא טעות שכיחה שנגרעת ניקוד; ודאו גם ש-override מוצהר בפועל עם virtual בבסיס."
+        }
+      ]
+    }
+  ]
+}

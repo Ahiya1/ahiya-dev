@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Markdown from "./Markdown";
 
 type Msg = { role: "user" | "assistant"; content: string };
@@ -16,20 +14,17 @@ const STARTERS = [
 
 export default function TutorChat({
   courseId,
-  number,
-  nameHe,
+  seed,
 }: {
   courseId: string;
-  number: string;
-  nameHe: string;
-  nameEn: string;
+  seed?: string;
 }) {
-  const router = useRouter();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const taRef = useRef<HTMLTextAreaElement>(null);
+  const seededRef = useRef(false);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({
@@ -37,6 +32,15 @@ export default function TutorChat({
       behavior: "smooth",
     });
   }, [messages, streaming]);
+
+  // Auto-send a seeded question (e.g. "explain this" from a lesson).
+  useEffect(() => {
+    if (seed && !seededRef.current) {
+      seededRef.current = true;
+      send(seed);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seed]);
 
   async function send(text: string) {
     const content = text.trim();
@@ -93,11 +97,6 @@ export default function TutorChat({
     }
   }
 
-  async function logout() {
-    await fetch("/api/tutor/logout", { method: "POST" });
-    router.replace("/tutor");
-  }
-
   function onKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -110,37 +109,10 @@ export default function TutorChat({
   return (
     <div
       dir="rtl"
-      className="flex flex-col h-screen"
+      className="flex flex-col h-full"
       style={{ fontFamily: "var(--font-sans)", background: "var(--color-paper)" }}
     >
-      {/* header */}
-      <header
-        className="flex items-center justify-between px-5 sm:px-8 py-4 border-b"
-        style={{ borderColor: "var(--color-rule)" }}
-      >
-        <div>
-          <span
-            className="block text-lg leading-tight"
-            style={{ fontFamily: "var(--font-display)", color: "var(--color-ink)" }}
-          >
-            {nameHe}
-          </span>
-          <span
-            className="block text-xs"
-            style={{ color: "var(--color-muted)", fontFamily: "var(--font-mono)" }}
-          >
-            {number} · מורה פרטי
-          </span>
-        </div>
-        <div className="flex items-center gap-4 text-sm">
-          <Link href="/tutor" className="link">
-            קורסים
-          </Link>
-          <button onClick={logout} className="link">
-            יציאה
-          </button>
-        </div>
-      </header>
+      {/* nav + logout live in the workspace rail */}
 
       {/* messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto">
