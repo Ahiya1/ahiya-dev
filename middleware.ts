@@ -23,6 +23,19 @@ function isPublic(pathname: string): boolean {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  // Canonicalize the bare apex to www so auth + cookies live on ONE origin.
+  // Without this, a request that starts on ahiya.dev gets trapped on apex by
+  // the redirects below, and its login fetch hits a cross-origin apex->www
+  // redirect the browser can't complete (spinner hangs forever).
+  const host = req.headers.get("host") || "";
+  if (host === "ahiya.dev") {
+    const url = req.nextUrl.clone();
+    url.hostname = "www.ahiya.dev";
+    url.port = "";
+    return NextResponse.redirect(url, 308);
+  }
+
   if (isPublic(pathname)) return NextResponse.next();
 
   const expected = await expectedToken();

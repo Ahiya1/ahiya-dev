@@ -22,11 +22,16 @@ export async function POST(req: Request) {
   }
   const token = await computeToken(password);
   const res = NextResponse.json({ ok: true });
+  // Scope the cookie to the registrable domain so it is valid on both the apex
+  // and www hosts (host-only on preview *.vercel.app deployments).
+  const host = (req.headers.get("host") || "").split(":")[0];
+  const domain = host.endsWith("ahiya.dev") ? ".ahiya.dev" : undefined;
   res.cookies.set(TUTOR_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
+    domain,
     maxAge: 60 * 60 * 24 * 30, // 30 days
   });
   return res;
