@@ -245,10 +245,10 @@
 @keyframes glyph-breathe {
   0%,
   100% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
   50% {
-    opacity: 0.95;
+    opacity: 1;
   }
 }
 

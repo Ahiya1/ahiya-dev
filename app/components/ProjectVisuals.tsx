@@ -25,19 +25,28 @@ function FrameBase({
 }
 
 /* ─────────── StatViz ─────────── */
-/* The sealed path — the pipeline's actual architecture. Raw data on
-   the left; a sealed registry function in the middle; a Hebrew RTL
-   report on the right. Above the registry, the agents: one writes
-   the analysis plan, an independent critic must approve it — only
-   then does the datum enter and the validated function compute (the
-   model never does). F = 12.34 emerges and lands in the report line,
-   verified. The real system calls this "the only sanctioned path
-   from data to a reported number." Hover holds the path still.     */
+/* The sealed path, in 2L's language — because StatViz runs on the
+   same bones. The real seven-agent pipeline appears as mini-lanes
+   (ingest, explore, analyze, critique), each agent sweeping its lane
+   in sequence; critique is the gate, and only its approval lets the
+   datum leave the matrix and enter the sealed registry below. The
+   validated function computes (the model never does), and F = 12.34
+   travels out to land, verified, in a Hebrew RTL report. The real
+   system calls this "the only sanctioned path from data to a
+   reported number." Hover holds the path still.                    */
 
-const SV_CYCLE = 11;
+const SV_CYCLE = 11.8;
 
 const svEase = (k: number) =>
   k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+
+/* The agent lanes, in pipeline order. Critique is the gate. */
+const svLanes = [
+  { name: "INGEST", start: 0.2, dur: 0.9 },
+  { name: "EXPLORE", start: 1.1, dur: 0.9 },
+  { name: "ANALYZE", start: 2.0, dur: 0.9 },
+  { name: "CRITIQUE", start: 2.9, dur: 0.9, gate: true },
+];
 
 /* Report lines: [width, y-offset]; index 3 is the stat line the
    traveling number lands in. */
@@ -75,48 +84,48 @@ export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
     t <= a ? 0 : t >= b ? 1 : (t - a) / (b - a);
 
   /* End of cycle: the pass fades, the path rests, a new one begins. */
-  const fadeK = ph(10.1, 10.9);
+  const fadeK = ph(10.6, 11.4);
   const passOpacity = 1 - fadeK;
 
   /* Geometry */
-  const yMid = 52;
-  const gridCols = [14, 24, 34, 44];
-  const gridRows = [28, 40, 52, 64, 76];
+  const gridCols = [10, 20, 30, 40];
+  const gridRows = [45, 55, 65, 75];
   const boxL = 78;
   const boxR = 154;
-  const boxT = 38;
-  const boxB = 66;
+  const boxT = 58;
+  const boxB = 84;
+  const yMid = (boxT + boxB) / 2; // the datum's track
+  const laneLabelX = boxL;
+  const laneTrackL = 112;
+  const laneTrackR = boxR;
+  const laneYs = [12, 24, 36, 48];
   const repL = 196;
   const repR = 252;
-  const repT = 18;
+  const repT = 28;
+  const statY = repT + svReportLines[SV_STAT_LINE][1];
 
-  /* The agents above the registry: plan, then independent critique.
-     Only an approved plan lets the datum through. */
-  const planX = 96;
-  const critX = 136;
-  const agentY = 26;
-  const planActive = t >= 0.3 && t < 1.2 && fadeK === 0;
-  const planSent = t >= 0.3 && fadeK === 0;
-  const critActive = t >= 1.2 && t < 2.1 && fadeK === 0;
-  const critPassed = t >= 1.9 && fadeK === 0;
+  /* The gate: critique finishing approves the plan. */
+  const gateT = svLanes[3].start + svLanes[3].dur;
+  const gatePassed = t >= gateT && fadeK === 0;
 
-  /* The datum's journey — gated on the approved plan */
-  const dotK = svEase(ph(2.1, 3.3));
-  const dotX = 50 + (boxL - 50) * dotK;
-  const dotVisible = t > 2.1 && t < 3.3 && fadeK === 0;
+  /* The datum's journey — released only by the approved plan. */
+  const dotK = svEase(ph(3.9, 5.1));
+  const dotX = 44 + (boxL - 44) * dotK;
+  const dotVisible = t > 3.9 && t < 5.1 && fadeK === 0;
 
-  const computing = t >= 3.3 && t < 4.5 && fadeK === 0;
-  const pulseK = ph(4.2, 4.9);
+  const computing = t >= 5.1 && t < 6.3 && fadeK === 0;
+  const pulseK = ph(6.0, 6.7);
 
-  const chipK = svEase(ph(4.5, 6.1));
+  const chipK = svEase(ph(6.3, 7.9));
   const chipX = boxR + (repL - boxR) * chipK;
-  const chipVisible = t > 4.5 && t < 6.1 && fadeK === 0;
+  const chipY = yMid + (statY - yMid) * chipK;
+  const chipVisible = t > 6.3 && t < 7.9 && fadeK === 0;
 
-  const landed = t >= 6.1;
-  const checkK = ph(6.1, 6.6);
+  const landed = t >= 7.9;
+  const checkK = ph(7.9, 8.4);
 
   return (
-    <FrameBase ariaLabel="The StatViz sealed path: an agent writes the analysis plan, an independent critic approves it, then raw data enters a validated registry function — one-way ANOVA — which emits a provenance-stamped statistic that lands, verified, in a Hebrew report. The model plans; it never computes.">
+    <FrameBase ariaLabel="The StatViz sealed path, drawn as an agent pipeline: ingest, explore, analyze, and critique agents sweep their lanes in sequence; critique approves the plan, raw data enters a validated registry function — one-way ANOVA — and a provenance-stamped statistic lands, verified, in a Hebrew report. The model plans; it never computes.">
       <svg
         width={W}
         height={H}
@@ -126,7 +135,7 @@ export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
       >
         {/* Track: the one path, left to right */}
         <line
-          x1={50}
+          x1={44}
           x2={boxL}
           y1={yMid}
           y2={yMid}
@@ -138,10 +147,10 @@ export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
           x1={boxR}
           x2={repL}
           y1={yMid}
-          y2={yMid}
+          y2={statY}
           stroke="var(--color-rule)"
           strokeWidth={1}
-          opacity={0.5}
+          opacity={0.4}
         />
 
         {/* Data matrix — the raw spreadsheet */}
@@ -156,6 +165,91 @@ export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
               opacity={0.3 + ((ri * 7 + ci * 3) % 5) * 0.09}
             />
           ))
+        )}
+
+        {/* Agent lanes — the pipeline, in 2L's grammar. Each agent
+            sweeps its lane in sequence; critique is the gate. */}
+        {svLanes.map((lane, i) => {
+          const laneY = laneYs[i];
+          const k = svEase(ph(lane.start, lane.start + lane.dur));
+          const active = t >= lane.start && t < lane.start + lane.dur;
+          const done = t >= lane.start + lane.dur;
+          const dotPx = laneTrackL + (laneTrackR - laneTrackL) * k;
+          return (
+            <g key={lane.name}>
+              <text
+                x={laneLabelX}
+                y={laneY + 2}
+                fontSize={6}
+                fill={active ? "var(--color-ink)" : "var(--color-muted)"}
+                fontFamily="var(--font-mono)"
+                letterSpacing="0.12em"
+                opacity={active ? 1 : done && fadeK === 0 ? 0.75 : 0.5}
+                style={{ transition: "fill 250ms ease, opacity 250ms ease" }}
+              >
+                {lane.name}
+              </text>
+              <line
+                x1={laneTrackL}
+                x2={laneTrackR}
+                y1={laneY}
+                y2={laneY}
+                stroke={
+                  active && lane.gate ? "var(--color-sky)" : "var(--color-rule)"
+                }
+                strokeWidth={1}
+                opacity={active ? 0.7 : 0.35}
+                style={{ transition: "stroke 250ms ease, opacity 250ms ease" }}
+              />
+              {active && (
+                <circle
+                  cx={dotPx}
+                  cy={laneY}
+                  r={lane.gate ? 2.6 : 2.2}
+                  fill={
+                    lane.gate ? "var(--color-sky)" : "var(--color-ink-soft)"
+                  }
+                  opacity={Math.min(1, k * 8, (1 - k) * 8 + 0.4)}
+                />
+              )}
+              {/* Each finished agent rests as a quiet mark at lane end */}
+              {done && fadeK === 0 && !lane.gate && (
+                <circle
+                  cx={laneTrackR}
+                  cy={laneY}
+                  r={1.8}
+                  fill="var(--color-ink-soft)"
+                  opacity={0.55}
+                />
+              )}
+            </g>
+          );
+        })}
+
+        {/* The gate ruling: critique approves, and the plan drops into
+            the sealed registry below. */}
+        {gatePassed && (
+          <>
+            <path
+              d={`M ${laneTrackR - 7} ${laneYs[3] - 0.5} l 2.2 2.4 l 4.2 -4.8`}
+              fill="none"
+              stroke="var(--color-sky-deep)"
+              strokeWidth={1.3}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity={0.95 * passOpacity}
+            />
+            <line
+              x1={(boxL + boxR) / 2}
+              x2={(boxL + boxR) / 2}
+              y1={laneYs[3] + 4}
+              y2={boxT - 1}
+              stroke="var(--color-ink-soft)"
+              strokeWidth={1}
+              strokeDasharray="2 2"
+              opacity={0.5 * passOpacity}
+            />
+          </>
         )}
 
         {/* Sealed registry function — the only place numbers are made */}
@@ -198,98 +292,12 @@ export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
           />
         )}
 
-        {/* The agents above the registry. One writes the plan; an
-            independent critic must approve it before anything runs. */}
-        <text
-          x={planX}
-          y={17}
-          fontSize={6}
-          textAnchor="middle"
-          fill={planActive ? "var(--color-ink)" : "var(--color-muted)"}
-          fontFamily="var(--font-mono)"
-          letterSpacing="0.14em"
-          opacity={planActive ? 0.95 : 0.55}
-          style={{ transition: "fill 300ms ease, opacity 300ms ease" }}
-        >
-          PLAN
-        </text>
-        <text
-          x={critX}
-          y={17}
-          fontSize={6}
-          textAnchor="middle"
-          fill={critActive ? "var(--color-ink)" : "var(--color-muted)"}
-          fontFamily="var(--font-mono)"
-          letterSpacing="0.14em"
-          opacity={critActive ? 0.95 : 0.55}
-          style={{ transition: "fill 300ms ease, opacity 300ms ease" }}
-        >
-          CRITIQUE
-        </text>
-        <circle
-          cx={planX}
-          cy={agentY}
-          r={3.2}
-          fill={planActive ? "var(--color-sky-deep)" : "none"}
-          stroke={planActive ? "var(--color-sky-deep)" : "var(--color-ink-soft)"}
-          strokeWidth={1}
-          opacity={planActive ? 0.9 : 0.55}
-          style={{ transition: "fill 300ms ease, stroke 300ms ease" }}
-        />
-        <circle
-          cx={critX}
-          cy={agentY}
-          r={3.2}
-          fill={critActive ? "var(--color-sky-deep)" : "none"}
-          stroke={critActive ? "var(--color-sky-deep)" : "var(--color-ink-soft)"}
-          strokeWidth={1}
-          opacity={critActive ? 0.9 : 0.55}
-          style={{ transition: "fill 300ms ease, stroke 300ms ease" }}
-        />
-        {/* The plan handed down into the sealed box */}
-        {planSent && (
-          <line
-            x1={planX}
-            x2={planX}
-            y1={agentY + 4}
-            y2={boxT - 1}
-            stroke="var(--color-ink-soft)"
-            strokeWidth={1}
-            strokeDasharray="2 2"
-            opacity={0.5 * passOpacity}
-          />
-        )}
-        {/* The critic reads the plan (not the data) and rules on it */}
-        {critPassed && (
-          <>
-            <line
-              x1={critX}
-              x2={critX}
-              y1={agentY + 4}
-              y2={boxT - 1}
-              stroke="var(--color-ink-soft)"
-              strokeWidth={1}
-              strokeDasharray="2 2"
-              opacity={0.5 * passOpacity}
-            />
-            <path
-              d={`M ${critX + 5.5} ${agentY - 1} l 2 2.2 l 3.6 -4.2`}
-              fill="none"
-              stroke="var(--color-sky-deep)"
-              strokeWidth={1.2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              opacity={0.9 * passOpacity}
-            />
-          </>
-        )}
-
         {/* Report page — Hebrew RTL, lines right-aligned */}
         <rect
           x={repL}
           y={repT}
           width={repR - repL}
-          height={68}
+          height={64}
           fill="var(--color-paper-soft)"
           stroke="var(--color-ink-soft)"
           strokeWidth={0.8}
@@ -316,7 +324,7 @@ export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
         {/* Verification check beside the landed stat line */}
         {landed && (
           <path
-            d={`M ${repL + 5} ${repT + 34} l 2.2 2.4 l 4.2 -4.8`}
+            d={`M ${repL + 5} ${statY} l 2.2 2.4 l 4.2 -4.8`}
             fill="none"
             stroke="var(--color-sky-deep)"
             strokeWidth={1.3}
@@ -326,13 +334,13 @@ export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
           />
         )}
         {/* Mini findings chart rising on the page */}
-        {[8, 13, 16].map((bh, i) => {
-          const riseK = svEase(ph(6.2 + i * 0.2, 6.9 + i * 0.2));
+        {[7, 11, 14].map((bh, i) => {
+          const riseK = svEase(ph(8.0 + i * 0.2, 8.7 + i * 0.2));
           return (
             <rect
               key={i}
               x={repR - 20 - i * 9}
-              y={repT + 62 - bh * riseK}
+              y={repT + 58 - bh * riseK}
               width={5.5}
               height={bh * riseK}
               fill={i === 2 ? "var(--color-sky)" : "var(--color-ink-soft)"}
@@ -355,10 +363,10 @@ export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
         {/* The stamped number traveling toward the report */}
         {chipVisible && (
           <g opacity={Math.min(1, chipK * 6)}>
-            <circle cx={chipX} cy={yMid} r={2.5} fill="var(--color-sky-deep)" />
+            <circle cx={chipX} cy={chipY} r={2.5} fill="var(--color-sky-deep)" />
             <text
               x={Math.min(chipX, repL - 22)}
-              y={yMid - 8}
+              y={chipY - 8}
               fontSize={8}
               textAnchor="middle"
               fill="var(--color-sky-deep)"
@@ -372,7 +380,7 @@ export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
 
         {/* Element labels */}
         <text
-          x={29}
+          x={25}
           y={100}
           fontSize={7}
           textAnchor="middle"

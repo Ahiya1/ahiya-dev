@@ -9,8 +9,8 @@ function ShipGlyph() {
   return (
     <svg
       viewBox="0 0 64 24"
-      width={80}
-      height={30}
+      width={92}
+      height={34}
       aria-hidden
       className="shrink-0 glyph-breathe"
     >
@@ -27,8 +27,8 @@ function AutomationGlyph() {
   return (
     <svg
       viewBox="0 0 64 24"
-      width={80}
-      height={30}
+      width={92}
+      height={34}
       aria-hidden
       className="shrink-0 glyph-breathe"
       style={{ animationDelay: "2.2s" }}
@@ -47,8 +47,8 @@ function ResearchGlyph() {
   return (
     <svg
       viewBox="0 0 64 24"
-      width={80}
-      height={30}
+      width={92}
+      height={34}
       aria-hidden
       className="shrink-0 glyph-breathe"
       style={{ animationDelay: "4.4s" }}
