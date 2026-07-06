@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const W = 260;
 const H = 130;
@@ -25,176 +25,306 @@ function FrameBase({
 }
 
 /* ─────────── StatViz ─────────── */
-/* Real analysis: emotional burnout by seniority (Herzog College sample).
-   One-way ANOVA across three tenure groups, n=50 each.            */
+/* The sealed path — the pipeline's actual architecture. Raw data on
+   the left; a sealed registry function in the middle; a Hebrew RTL
+   report on the right. One cycle traces a single number's journey:
+   a datum leaves the matrix, the validated function computes (the
+   model never does), F = 12.34 emerges and lands in the report line,
+   verified. The real system calls this "the only sanctioned path
+   from data to a reported number." Hover holds the path still.     */
+
+const SV_CYCLE = 9.5;
+
+const svEase = (k: number) =>
+  k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+
+/* Report lines: [width, y-offset]; index 3 is the stat line the
+   traveling number lands in. */
+const svReportLines: [number, number][] = [
+  [30, 10],
+  [40, 19],
+  [36, 26],
+  [34, 34],
+  [42, 42],
+  [26, 49],
+];
+const SV_STAT_LINE = 3;
 
 export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
-  const bars = useMemo(
-    () => [
-      { label: "0–3", mean: 2.8, sd: 0.9, n: 50 },
-      { label: "4–7", mean: 3.6, sd: 0.8, n: 50 },
-      { label: "8+", mean: 4.1, sd: 1.0, n: 50 },
-    ],
-    []
-  );
-
-  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
-  const [autoIdx, setAutoIdx] = useState(0);
+  const [hover, setHover] = useState(false);
+  const [t, setT] = useState(0);
+  const elapsedRef = useRef(0);
 
   useEffect(() => {
-    if (hoverIdx !== null || quiet) return;
-    const id = setInterval(() => setAutoIdx((i) => (i + 1) % 3), 1800);
-    return () => clearInterval(id);
-  }, [hoverIdx, quiet]);
+    if (quiet || hover) return; // attention holds the path still
+    let raf = 0;
+    const start = performance.now() - elapsedRef.current * 1000;
+    const tick = (now: number) => {
+      const elapsed = (now - start) / 1000;
+      elapsedRef.current = elapsed;
+      setT(elapsed % SV_CYCLE);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [quiet, hover]);
 
-  const activeIdx = hoverIdx ?? autoIdx;
+  /* Phase progress helper. */
+  const ph = (a: number, b: number) =>
+    t <= a ? 0 : t >= b ? 1 : (t - a) / (b - a);
 
-  const maxY = 5.2;
-  const padL = 18;
-  const padR = 14;
-  const padT = 14;
-  const padB = 28;
-  const chartW = W - padL - padR;
-  const chartH = H - padT - padB;
-  const barW = 30;
-  const gap = (chartW - bars.length * barW) / (bars.length + 1);
+  /* End of cycle: the pass fades, the path rests, a new one begins. */
+  const fadeK = ph(8.6, 9.4);
+  const passOpacity = 1 - fadeK;
+
+  /* Geometry */
+  const yMid = 52;
+  const gridCols = [14, 24, 34, 44];
+  const gridRows = [28, 40, 52, 64, 76];
+  const boxL = 78;
+  const boxR = 154;
+  const boxT = 38;
+  const boxB = 66;
+  const repL = 196;
+  const repR = 252;
+  const repT = 18;
+
+  /* The datum's journey */
+  const dotK = svEase(ph(0.4, 1.6));
+  const dotX = 50 + (boxL - 50) * dotK;
+  const dotVisible = t > 0.4 && t < 1.6 && fadeK === 0;
+
+  const computing = t >= 1.6 && t < 2.8 && fadeK === 0;
+  const pulseK = ph(2.5, 3.2);
+
+  const chipK = svEase(ph(2.8, 4.4));
+  const chipX = boxR + (repL - boxR) * chipK;
+  const chipVisible = t > 2.8 && t < 4.4 && fadeK === 0;
+
+  const landed = t >= 4.4;
+  const checkK = ph(4.4, 4.9);
 
   return (
-    <FrameBase ariaLabel="Burnout score by years in role; three groups, n=50 each. F(2,147) = 12.34, p < 0.001.">
+    <FrameBase ariaLabel="The StatViz sealed path: raw data enters a validated registry function — one-way ANOVA — which emits a provenance-stamped statistic that lands, verified, in a Hebrew report. The model plans; it never computes.">
       <svg
         width={W}
         height={H}
         className="block"
-        onMouseLeave={() => setHoverIdx(null)}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
       >
-        {/* Y gridlines (Likert anchors) */}
-        {[1, 3, 5].map((tick) => {
-          const y = padT + chartH - (tick / maxY) * chartH;
+        {/* Track: the one path, left to right */}
+        <line
+          x1={50}
+          x2={boxL}
+          y1={yMid}
+          y2={yMid}
+          stroke="var(--color-rule)"
+          strokeWidth={1}
+          opacity={0.5}
+        />
+        <line
+          x1={boxR}
+          x2={repL}
+          y1={yMid}
+          y2={yMid}
+          stroke="var(--color-rule)"
+          strokeWidth={1}
+          opacity={0.5}
+        />
+
+        {/* Data matrix — the raw spreadsheet */}
+        {gridRows.map((gy, ri) =>
+          gridCols.map((gx, ci) => (
+            <circle
+              key={`${ri}-${ci}`}
+              cx={gx}
+              cy={gy}
+              r={1.7}
+              fill="var(--color-ink-soft)"
+              opacity={0.3 + ((ri * 7 + ci * 3) % 5) * 0.09}
+            />
+          ))
+        )}
+
+        {/* Sealed registry function — the only place numbers are made */}
+        <rect
+          x={boxL}
+          y={boxT}
+          width={boxR - boxL}
+          height={boxB - boxT}
+          fill="var(--color-paper-soft)"
+          stroke={computing ? "var(--color-sky-deep)" : "var(--color-ink-soft)"}
+          strokeWidth={1}
+          opacity={computing ? 1 : 0.65}
+          rx={1.5}
+          style={{ transition: "stroke 300ms ease, opacity 300ms ease" }}
+        />
+        <text
+          x={(boxL + boxR) / 2}
+          y={yMid + 2.5}
+          fontSize={7.5}
+          textAnchor="middle"
+          fill={computing ? "var(--color-ink)" : "var(--color-muted)"}
+          fontFamily="var(--font-mono)"
+          letterSpacing="0.04em"
+          style={{ transition: "fill 300ms ease" }}
+        >
+          one_way_anova()
+        </text>
+        {/* Compute pulse — the ring of a number being made, validly */}
+        {pulseK > 0 && pulseK < 1 && (
+          <rect
+            x={boxL - pulseK * 6}
+            y={boxT - pulseK * 6}
+            width={boxR - boxL + pulseK * 12}
+            height={boxB - boxT + pulseK * 12}
+            fill="none"
+            stroke="var(--color-sky)"
+            strokeWidth={1}
+            rx={2}
+            opacity={(1 - pulseK) * 0.5}
+          />
+        )}
+
+        {/* Report page — Hebrew RTL, lines right-aligned */}
+        <rect
+          x={repL}
+          y={repT}
+          width={repR - repL}
+          height={68}
+          fill="var(--color-paper-soft)"
+          stroke="var(--color-ink-soft)"
+          strokeWidth={0.8}
+          opacity={0.75}
+          rx={1}
+        />
+        {svReportLines.map(([w, dy], i) => {
+          const isStat = i === SV_STAT_LINE;
+          const lit = isStat && landed;
           return (
             <line
-              key={tick}
-              x1={padL}
-              x2={W - padR}
-              y1={y}
-              y2={y}
-              stroke="var(--color-rule)"
-              strokeWidth={0.5}
-              opacity={0.5}
+              key={i}
+              x1={repR - 6 - w}
+              x2={repR - 6}
+              y1={repT + dy}
+              y2={repT + dy}
+              stroke={lit ? "var(--color-sky-deep)" : "var(--color-rule)"}
+              strokeWidth={lit ? 1.6 : 1.2}
+              opacity={lit ? 0.4 + passOpacity * 0.55 : 0.9}
+              style={{ transition: "stroke 300ms ease" }}
             />
           );
         })}
-        {/* Baseline */}
-        <line
-          x1={padL}
-          x2={W - padR}
-          y1={padT + chartH}
-          y2={padT + chartH}
-          stroke="var(--color-rule)"
-          strokeWidth={1}
-        />
-
-        {bars.map((bar, i) => {
-          const x = padL + gap + i * (barW + gap);
-          const barH = (bar.mean / maxY) * chartH;
-          const y = padT + chartH - barH;
-          const sdPx = (bar.sd / maxY) * chartH;
-          const isActive = activeIdx === i;
+        {/* Verification check beside the landed stat line */}
+        {landed && (
+          <path
+            d={`M ${repL + 5} ${repT + 34} l 2.2 2.4 l 4.2 -4.8`}
+            fill="none"
+            stroke="var(--color-sky-deep)"
+            strokeWidth={1.3}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            opacity={checkK * passOpacity}
+          />
+        )}
+        {/* Mini findings chart rising on the page */}
+        {[8, 13, 16].map((bh, i) => {
+          const riseK = svEase(ph(4.5 + i * 0.2, 5.2 + i * 0.2));
           return (
-            <g
+            <rect
               key={i}
-              onMouseEnter={() => setHoverIdx(i)}
-              style={{ cursor: "default" }}
-            >
-              {/* Invisible larger hit area */}
-              <rect
-                x={x - 6}
-                y={padT}
-                width={barW + 12}
-                height={chartH + 10}
-                fill="transparent"
-              />
-              {/* Bar */}
-              <rect
-                x={x}
-                y={y}
-                width={barW}
-                height={barH}
-                fill={isActive ? "var(--color-sky)" : "var(--color-ink-soft)"}
-                opacity={isActive ? 0.92 : 0.5}
-                style={{
-                  transition:
-                    "fill 400ms ease, opacity 400ms ease, y 600ms cubic-bezier(0.16,1,0.3,1)",
-                }}
-              />
-              {/* Error bar (±1 SD/2 visualized) */}
-              <line
-                x1={x + barW / 2}
-                x2={x + barW / 2}
-                y1={y - sdPx / 2}
-                y2={y + sdPx / 2}
-                stroke={isActive ? "var(--color-sky-deep)" : "var(--color-ink-soft)"}
-                strokeWidth={1}
-                opacity={0.7}
-                style={{ transition: "stroke 300ms ease" }}
-              />
-              <line
-                x1={x + barW / 2 - 4}
-                x2={x + barW / 2 + 4}
-                y1={y - sdPx / 2}
-                y2={y - sdPx / 2}
-                stroke={isActive ? "var(--color-sky-deep)" : "var(--color-ink-soft)"}
-                strokeWidth={1}
-                opacity={0.7}
-              />
-              {/* Group label */}
-              <text
-                x={x + barW / 2}
-                y={padT + chartH + 12}
-                fontSize={9}
-                fill={isActive ? "var(--color-ink)" : "var(--color-muted)"}
-                fontFamily="var(--font-mono)"
-                textAnchor="middle"
-                style={{ transition: "fill 300ms ease" }}
-              >
-                {bar.label}
-              </text>
-            </g>
+              x={repR - 20 - i * 9}
+              y={repT + 62 - bh * riseK}
+              width={5.5}
+              height={bh * riseK}
+              fill={i === 2 ? "var(--color-sky)" : "var(--color-ink-soft)"}
+              opacity={(i === 2 ? 0.8 : 0.45) * passOpacity}
+            />
           );
         })}
 
-        {/* Footer line: actual ANOVA result */}
+        {/* The datum traveling toward the function */}
+        {dotVisible && (
+          <circle
+            cx={dotX}
+            cy={yMid}
+            r={3}
+            fill="var(--color-ink-soft)"
+            opacity={Math.min(1, dotK * 6, (1 - dotK) * 6 + 0.3)}
+          />
+        )}
+
+        {/* The stamped number traveling toward the report */}
+        {chipVisible && (
+          <g opacity={Math.min(1, chipK * 6)}>
+            <circle cx={chipX} cy={yMid} r={2.5} fill="var(--color-sky-deep)" />
+            <text
+              x={Math.min(chipX, repL - 22)}
+              y={yMid - 8}
+              fontSize={8}
+              textAnchor="middle"
+              fill="var(--color-sky-deep)"
+              fontFamily="var(--font-mono)"
+              letterSpacing="0.04em"
+            >
+              F = 12.34
+            </text>
+          </g>
+        )}
+
+        {/* Element labels */}
         <text
-          x={W / 2}
-          y={H - 6}
-          fontSize={9}
+          x={29}
+          y={100}
+          fontSize={7}
+          textAnchor="middle"
           fill="var(--color-muted)"
           fontFamily="var(--font-mono)"
-          textAnchor="middle"
-          letterSpacing="0.06em"
+          letterSpacing="0.16em"
+          opacity={0.75}
         >
-          F(2,147) = 12.34 · p &lt; 0.001
+          DATA
+        </text>
+        <text
+          x={(boxL + boxR) / 2}
+          y={100}
+          fontSize={7}
+          textAnchor="middle"
+          fill="var(--color-muted)"
+          fontFamily="var(--font-mono)"
+          letterSpacing="0.16em"
+          opacity={0.75}
+        >
+          SEALED REGISTRY
+        </text>
+        <text
+          x={(repL + repR) / 2}
+          y={100}
+          fontSize={7}
+          textAnchor="middle"
+          fill="var(--color-muted)"
+          fontFamily="var(--font-mono)"
+          letterSpacing="0.16em"
+          opacity={0.75}
+        >
+          REPORT
+        </text>
+
+        {/* Footer: the system's own words */}
+        <text
+          x={W / 2}
+          y={H - 5}
+          fontSize={6.5}
+          textAnchor="middle"
+          fill="var(--color-muted)"
+          fontFamily="var(--font-mono)"
+          letterSpacing="0.12em"
+          opacity={0.7}
+        >
+          THE ONLY PATH FROM DATA TO A REPORTED NUMBER
         </text>
       </svg>
-
-      {/* Tooltip */}
-      <div
-        className="pointer-events-none absolute"
-        style={{
-          top: 4,
-          right: 6,
-          opacity: activeIdx !== null ? 1 : 0,
-          transform:
-            activeIdx !== null ? "translateY(0)" : "translateY(-4px)",
-          transition: "opacity 250ms ease, transform 250ms ease",
-        }}
-      >
-        <div className="font-mono text-[9px] leading-[1.35] text-[var(--color-ink)] bg-[var(--color-paper-soft)] px-1.5 py-1 rounded-sm border border-[var(--color-rule)]">
-          <div>M = {bars[activeIdx].mean.toFixed(1)}</div>
-          <div className="text-[var(--color-muted)]">
-            SD = {bars[activeIdx].sd.toFixed(1)}
-          </div>
-        </div>
-      </div>
     </FrameBase>
   );
 }
@@ -619,28 +749,67 @@ export function TwoLVisual({ quiet = false }: { quiet?: boolean }) {
 }
 
 /* ─────────── SelahOS ─────────── */
-/* Coming back to ground. The dot is displaced (a quick tug, almost
-   imperceptible), then returns to center with intentional, effortless
-   motion (cubic ease-out). Rests at center. Cycle of three returns,
-   each from a different direction. Hover stops the cycle entirely:
-   the dot is held at center for as long as attention is held.       */
+/* The Today screen in miniature — the app's real architecture. Five
+   anchor sections (sleep, food, meds, body, ground), each anchor a
+   three-state circle: untouched ring, done, not-done. Over one cycle
+   a day quietly fills in: an anchor completes with a tree-ring that
+   etches outward and the exact time it was met blooming beside its
+   row, lingering, then fading — the app's actual completion gesture
+   (TIME_LINGER_MS = 3200 in the real code). At cycle's end the day
+   releases and begins again; the real app rolls the day at 04:00.
+   Hover holds the day still.                                        */
 
-type SelahPhase = {
-  /* start time of the displacement (the "tug") in seconds          */
-  tugAt: number;
-  /* duration of the return motion                                  */
-  returnDur: number;
-  /* (dx, dy) of the displacement in component pixels               */
-  dx: number;
-  dy: number;
+type SelahEvent = {
+  at: number; /* seconds into the cycle when the anchor is met */
+  time: string; /* time-of-day that blooms in beside the row */
+  state: "done" | "notdone";
 };
 
-const selahPhases: SelahPhase[] = [
-  { tugAt: 0.0, returnDur: 1.7, dx: 18, dy: -10 },
-  { tugAt: 2.7, returnDur: 1.6, dx: -16, dy: 12 },
-  { tugAt: 5.2, returnDur: 1.5, dx: -12, dy: -14 },
+type SelahRow = {
+  label: string;
+  events: SelahEvent[]; /* one per circle, left to right */
+};
+
+const selahRows: SelahRow[] = [
+  {
+    label: "SLEEP",
+    events: [
+      { at: 1.0, time: "07:10", state: "done" },
+      { at: 13.6, time: "23:40", state: "done" },
+    ],
+  },
+  {
+    label: "FOOD",
+    events: [
+      { at: 3.2, time: "08:05", state: "done" },
+      { at: 6.2, time: "13:10", state: "done" },
+      { at: 9.6, time: "19:45", state: "done" },
+    ],
+  },
+  {
+    label: "MEDS",
+    events: [
+      { at: 2.1, time: "07:25", state: "done" },
+      { at: 12.0, time: "21:30", state: "done" },
+    ],
+  },
+  {
+    label: "BODY",
+    events: [
+      { at: 4.4, time: "08:40", state: "done" },
+      { at: 12.8, time: "", state: "notdone" },
+    ],
+  },
+  {
+    label: "GROUND",
+    events: [{ at: 8.4, time: "18:00", state: "done" }],
+  },
 ];
-const selahCycle = 7.4;
+
+const SELAH_CYCLE = 16;
+const SELAH_RING_DUR = 1.0; /* tree-ring etch duration */
+const SELAH_LINGER = 3.2; /* the app's TIME_LINGER_MS, in seconds */
+const SELAH_RESET = 1.0; /* end-of-cycle release back to ground */
 
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
@@ -650,109 +819,194 @@ export function SelahOSVisual({ quiet = false }: { quiet?: boolean }) {
   const elapsedRef = useRef(0);
 
   useEffect(() => {
-    if (quiet) return; // held off-attention: the clock rests
+    if (quiet || hover) return; // attention holds the day still
     let raf = 0;
     const start = performance.now() - elapsedRef.current * 1000;
     const tick = (now: number) => {
       const elapsed = (now - start) / 1000;
       elapsedRef.current = elapsed;
-      setT(elapsed % selahCycle);
+      setT(elapsed % SELAH_CYCLE);
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [quiet]);
+  }, [quiet, hover]);
 
-  /* Hover or attention-elsewhere both bring the dot home to ground. */
-  const settled = hover || quiet;
+  /* End of cycle: the day's marks release back to untouched ground. */
+  const resetK =
+    t > SELAH_CYCLE - SELAH_RESET
+      ? (t - (SELAH_CYCLE - SELAH_RESET)) / SELAH_RESET
+      : 0;
+  const dayOpacity = 1 - resetK;
 
-  /* Compute current displacement from center. */
-  let dx = 0;
-  let dy = 0;
-  if (!settled) {
-    /* Find the most recent tug at or before t. */
-    const active = [...selahPhases]
-      .reverse()
-      .find((p) => t >= p.tugAt) ?? selahPhases[selahPhases.length - 1];
-    const since = t - active.tugAt;
-    if (since >= 0 && since < active.returnDur) {
-      const k = 1 - easeOutCubic(since / active.returnDur);
-      dx = active.dx * k;
-      dy = active.dy * k;
-    }
-  }
+  const padT = 8;
+  const padB = 20;
+  const rowH = (H - padT - padB) / selahRows.length;
+  const circleX0 = 66;
+  const circleGap = 24;
+  const r = 5;
 
   return (
-    <FrameBase ariaLabel="A dot displaced from ground, returning to center; an intentional, effortless homecoming.">
-      <div
-        className="absolute inset-0 flex items-center justify-center"
+    <FrameBase ariaLabel="SelahOS Today screen in miniature: anchors for sleep, food, meds, body and ground filling in through one day as three-state circles, each completion etching a tree-ring and blooming the time it was met.">
+      <svg
+        width={W}
+        height={H}
+        className="block"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
       >
-        <div
-          className="relative"
-          style={{ width: 120, height: 120 }}
+        {selahRows.map((row, ri) => {
+          const cy = padT + rowH * ri + rowH / 2;
+
+          /* The row's currently-lingering time label, if any. */
+          const active = row.events.find(
+            (e) =>
+              e.time &&
+              t >= e.at &&
+              t <= e.at + SELAH_LINGER + 0.6 &&
+              resetK === 0
+          );
+          let timeOpacity = 0;
+          if (active) {
+            const since = t - active.at;
+            if (since < 0.25) timeOpacity = since / 0.25;
+            else if (since > SELAH_LINGER) {
+              timeOpacity = Math.max(0, 1 - (since - SELAH_LINGER) / 0.6);
+            } else timeOpacity = 1;
+          }
+
+          return (
+            <g key={row.label}>
+              {/* Section label — the app's real groupings */}
+              <text
+                x={0}
+                y={cy + 2.5}
+                fontSize={8}
+                letterSpacing="0.14em"
+                fill="var(--color-muted)"
+                fontFamily="var(--font-mono)"
+                opacity={0.75}
+              >
+                {row.label}
+              </text>
+
+              {row.events.map((e, ci) => {
+                const cx = circleX0 + ci * circleGap;
+                const met = t >= e.at && resetK < 1;
+                const since = t - e.at;
+
+                /* Pop-in: the mark sets with a small ease, like a
+                   stamp landing. */
+                const popK = met ? Math.min(1, since / 0.3) : 0;
+                const scale = 0.6 + 0.4 * easeOutCubic(popK);
+
+                return (
+                  <g key={ci}>
+                    {/* Untouched ring — always present, the ground state */}
+                    <circle
+                      cx={cx}
+                      cy={cy}
+                      r={r}
+                      fill="none"
+                      stroke="var(--color-rule)"
+                      strokeWidth={1}
+                      opacity={0.8}
+                    />
+
+                    {/* Tree-ring etch on completion */}
+                    {met && since < SELAH_RING_DUR && (
+                      <circle
+                        cx={cx}
+                        cy={cy}
+                        r={r + (since / SELAH_RING_DUR) * 9}
+                        fill="none"
+                        stroke="var(--color-sky)"
+                        strokeWidth={1}
+                        opacity={(1 - since / SELAH_RING_DUR) * 0.55}
+                      />
+                    )}
+
+                    {/* The mark itself */}
+                    {met && (
+                      <g
+                        transform={`translate(${cx}, ${cy}) scale(${scale})`}
+                        opacity={dayOpacity}
+                      >
+                        {e.state === "done" ? (
+                          <>
+                            <circle
+                              r={r}
+                              fill="var(--color-sky-deep)"
+                              opacity={0.92}
+                            />
+                            <path
+                              d="M -2.2 0.2 L -0.6 1.8 L 2.4 -1.8"
+                              fill="none"
+                              stroke="var(--color-paper)"
+                              strokeWidth={1.2}
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <circle
+                              r={r}
+                              fill="none"
+                              stroke="var(--color-muted)"
+                              strokeWidth={1}
+                            />
+                            <line
+                              x1={-2.4}
+                              x2={2.4}
+                              y1={0}
+                              y2={0}
+                              stroke="var(--color-muted)"
+                              strokeWidth={1.2}
+                              strokeLinecap="round"
+                            />
+                          </>
+                        )}
+                      </g>
+                    )}
+                  </g>
+                );
+              })}
+
+              {/* The met time blooms in beside the row, lingers, fades —
+                  the app's signature gesture. */}
+              {active && (
+                <text
+                  x={W - 4}
+                  y={cy + 2.5}
+                  fontSize={8.5}
+                  textAnchor="end"
+                  fill="var(--color-ink)"
+                  fontFamily="var(--font-mono)"
+                  letterSpacing="0.08em"
+                  opacity={timeOpacity * 0.9}
+                >
+                  {active.time}
+                </text>
+              )}
+            </g>
+          );
+        })}
+
+        {/* Footer: the app's real day boundary */}
+        <text
+          x={W / 2}
+          y={H - 5}
+          fontSize={7.5}
+          textAnchor="middle"
+          fill="var(--color-muted)"
+          fontFamily="var(--font-mono)"
+          letterSpacing="0.18em"
+          opacity={0.7}
         >
-          {/* The ground: a faint, fixed cross at center */}
-          <span
-            className="absolute"
-            style={{
-              left: 60 - 4,
-              top: 60,
-              width: 8,
-              height: 1,
-              background: "var(--color-rule)",
-              opacity: 0.7,
-            }}
-          />
-          <span
-            className="absolute"
-            style={{
-              left: 60,
-              top: 60 - 4,
-              width: 1,
-              height: 8,
-              background: "var(--color-rule)",
-              opacity: 0.7,
-            }}
-          />
-          {/* Faint trail from current position toward ground */}
-          {(dx !== 0 || dy !== 0) && (
-            <svg
-              className="absolute inset-0 pointer-events-none"
-              width={120}
-              height={120}
-            >
-              <line
-                x1={60}
-                y1={60}
-                x2={60 + dx}
-                y2={60 + dy}
-                stroke="var(--color-sky)"
-                strokeWidth={1}
-                opacity={0.22}
-              />
-            </svg>
-          )}
-          {/* The returning dot */}
-          <span
-            className="absolute rounded-full"
-            style={{
-              width: 10,
-              height: 10,
-              left: 60 - 5 + dx,
-              top: 60 - 5 + dy,
-              background: "var(--color-sky-deep)",
-              boxShadow: hover
-                ? "0 0 0 3px color-mix(in srgb, var(--color-sky) 18%, transparent)"
-                : "none",
-              transition: settled
-                ? "left 900ms cubic-bezier(0.16,1,0.3,1), top 900ms cubic-bezier(0.16,1,0.3,1), box-shadow 600ms ease"
-                : "box-shadow 600ms ease",
-            }}
-          />
-        </div>
-      </div>
+          DAY ROLLS OVER · 04:00
+        </text>
+      </svg>
     </FrameBase>
   );
 }

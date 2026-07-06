@@ -12,7 +12,8 @@ import {
 type Project = {
   name: string;
   meta: string;
-  body: string;
+  body?: string;
+  caseStudy?: { label: string; text: string }[];
   stack?: string;
   href?: string;
   hrefLabel?: string;
@@ -23,8 +24,22 @@ const projects: Project[] = [
   {
     name: "StatViz",
     meta: "Founder & Lead Engineer · 2025–present",
-    body: "AI-augmented statistical analysis for academic institutions in Israel. End-to-end ownership: client intake, data processing, automated report generation, and customer-facing delivery. Real clients, real reports, paid work.",
-    stack: "Next.js · TypeScript · PostgreSQL / Prisma · Claude agent pipeline · Python · pandas / SciPy",
+    caseStudy: [
+      {
+        label: "Problem",
+        text: "Researchers need rigorous statistics with defensible write-ups. An LLM on its own can't be trusted to compute, or even transcribe, a number.",
+      },
+      {
+        label: "Built",
+        text: "A seven-agent Claude pipeline (ingest → explore → analyze → report → deliver) around a sealed statistics engine: the model plans the analysis but never computes anything. Every number comes from a registry of validated Python functions, is provenance-stamped, and is re-verified in the final report. An independent model critiques each analysis plan before it runs; delivery is fail-closed behind human approval gates. Output: Hebrew RTL Word, interactive HTML, and PDF reports.",
+      },
+      {
+        label: "Result",
+        text: "Real clients, real reports, paid work: graduate students to academic institutions, Herzog College among them. 30+ supported tests, from t-tests to SEM and multilevel models.",
+      },
+    ],
+    stack:
+      "Next.js · TypeScript · PostgreSQL / Prisma · Claude agent pipeline · Python (SciPy · statsmodels · pingouin · semopy)",
     href: "https://stat-viz.com",
     hrefLabel: "stat-viz.com",
     Visual: StatVizVisual,
@@ -47,8 +62,9 @@ const projects: Project[] = [
   },
   {
     name: "SelahOS",
-    meta: "Private · in development",
-    body: "A personal instrument panel for the ground layer of life: the daily rhythm of sleep, food, medication, hygiene, movement. No coaching, no streaks, no nudging.",
+    meta: "Personal · built, deployed, in daily use",
+    body: "A personal instrument panel for the ground layer of life: the daily rhythm of sleep, food, medication, hygiene, movement. No coaching, no streaks, no nudging. Concretely: the whole day is one mobile screen of tappable three-state circles; marking an anchor blooms the time it was met, then fades back to ground. Daily use takes under a minute.",
+    stack: "Next.js 15 · React 19 · Supabase (Postgres, RLS, magic-link auth) · Tailwind · Vitest",
     Visual: SelahOSVisual,
   },
 ];
@@ -114,9 +130,25 @@ function ProjectCard({
       <p className="mt-2 font-mono text-[12px] uppercase tracking-[0.14em] text-[var(--color-muted)]">
         {project.meta}
       </p>
-      <p className="mt-4 text-[15.5px] leading-[1.75] text-[var(--color-ink-soft)] sm:text-base">
-        {project.body}
-      </p>
+      {project.body && (
+        <p className="mt-4 text-[15.5px] leading-[1.75] text-[var(--color-ink-soft)] sm:text-base">
+          {project.body}
+        </p>
+      )}
+      {project.caseStudy && (
+        <dl className="mt-5 space-y-4">
+          {project.caseStudy.map((row) => (
+            <div key={row.label}>
+              <dt className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--color-muted)]">
+                {row.label}
+              </dt>
+              <dd className="mt-1.5 text-[15.5px] leading-[1.75] text-[var(--color-ink-soft)] sm:text-base">
+                {row.text}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      )}
       {project.stack && (
         <p className="mt-4 font-mono text-[13px] text-[var(--color-muted)]">
           {project.stack}

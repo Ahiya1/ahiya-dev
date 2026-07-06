@@ -36,12 +36,12 @@ const assistant = Assistant({
 export const metadata: Metadata = {
   title: "Ahiya Butman · AI Engineer, Founder, Independent Builder",
   description:
-    "AI engineer and founder of StatViz. I build practical AI tools and full-stack systems end to end, out of Israel. Former software engineer, Unit 8200.",
+    "AI engineer and founder of StatViz. I build production AI systems for research, analysis, and automation, end to end, out of Israel. Former software engineer, Unit 8200.",
   metadataBase: new URL("https://ahiya.dev"),
   openGraph: {
     title: "Ahiya Butman · AI Engineer, Founder, Independent Builder",
     description:
-      "AI engineer and founder of StatViz. I build practical AI tools and full-stack systems end to end, out of Israel. Former software engineer, Unit 8200.",
+      "AI engineer and founder of StatViz. I build production AI systems for research, analysis, and automation, end to end, out of Israel. Former software engineer, Unit 8200.",
     type: "website",
     url: "https://ahiya.dev",
     siteName: "ahiya.dev",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ahiya Butman · AI Engineer, Founder, Independent Builder",
     description:
-      "AI engineer and founder of StatViz. I build practical AI tools and full-stack systems end to end, out of Israel.",
+      "AI engineer and founder of StatViz. I build production AI systems for research, analysis, and automation, end to end, out of Israel.",
   },
 };
 
