@@ -240,6 +240,22 @@
   }
 }
 
+/* The capability glyphs breathe like the spines: presence rising and
+   settling on a slow cycle, staggered per glyph. */
+@keyframes glyph-breathe {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+.glyph-breathe {
+  animation: glyph-breathe 7s ease-in-out infinite;
+}
+
 .horizon {
   height: 1px;
   background: linear-gradient(
@@ -303,6 +319,10 @@
   .spine::before {
     animation: none;
     opacity: 0.55;
+  }
+  .glyph-breathe {
+    animation: none;
+    opacity: 0.7;
   }
   /* The focus cue is a calm opacity shift — a useful aid, kept as-is. */
   .card {

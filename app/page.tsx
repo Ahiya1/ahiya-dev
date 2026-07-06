@@ -1,37 +1,58 @@
 import { SelectedWork } from "./components/SelectedWork";
 
-/* Quiet glyphs for the "What I can do for you" section: small,
-   muted diagrams in the same mono line-language as the project
-   visuals. No motion; they sit still beside the headings. */
+/* Quiet glyphs for the "What I can do for you" section: small
+   diagrams in the same mono line-language as the project visuals.
+   They breathe on the same slow cycle as the spines and horizons,
+   staggered so they never inhale in unison. */
 
 function ShipGlyph() {
   return (
-    <svg width={64} height={24} aria-hidden className="shrink-0 opacity-45">
+    <svg
+      viewBox="0 0 64 24"
+      width={80}
+      height={30}
+      aria-hidden
+      className="shrink-0 glyph-breathe"
+    >
       <line x1={9} x2={23} y1={12} y2={12} stroke="var(--color-muted)" strokeWidth={1} />
       <line x1={29} x2={42} y1={12} y2={12} stroke="var(--color-muted)" strokeWidth={1} />
       <circle cx={6} cy={12} r={3} fill="none" stroke="var(--color-muted)" strokeWidth={1} />
       <circle cx={26} cy={12} r={3} fill="none" stroke="var(--color-muted)" strokeWidth={1} />
-      <rect x={45} y={9} width={6} height={6} fill="var(--color-sky-deep)" opacity={0.75} />
+      <rect x={45} y={9} width={6} height={6} fill="var(--color-sky-deep)" opacity={0.85} />
     </svg>
   );
 }
 
 function AutomationGlyph() {
   return (
-    <svg width={64} height={24} aria-hidden className="shrink-0 opacity-45">
+    <svg
+      viewBox="0 0 64 24"
+      width={80}
+      height={30}
+      aria-hidden
+      className="shrink-0 glyph-breathe"
+      style={{ animationDelay: "2.2s" }}
+    >
       <line x1={4} x2={18} y1={6} y2={9} stroke="var(--color-muted)" strokeWidth={1} />
       <line x1={4} x2={18} y1={12} y2={12} stroke="var(--color-muted)" strokeWidth={1} />
       <line x1={4} x2={18} y1={18} y2={15} stroke="var(--color-muted)" strokeWidth={1} />
       <rect x={22} y={6} width={18} height={12} fill="none" stroke="var(--color-muted)" strokeWidth={1} rx={1} />
-      <line x1={40} x2={56} y1={12} y2={12} stroke="var(--color-sky-deep)" strokeWidth={1} opacity={0.75} />
-      <path d="M 53 9.5 L 56.5 12 L 53 14.5" fill="none" stroke="var(--color-sky-deep)" strokeWidth={1} opacity={0.75} />
+      <line x1={40} x2={56} y1={12} y2={12} stroke="var(--color-sky-deep)" strokeWidth={1} opacity={0.85} />
+      <path d="M 53 9.5 L 56.5 12 L 53 14.5" fill="none" stroke="var(--color-sky-deep)" strokeWidth={1} opacity={0.85} />
     </svg>
   );
 }
 
 function ResearchGlyph() {
   return (
-    <svg width={64} height={24} aria-hidden className="shrink-0 opacity-45">
+    <svg
+      viewBox="0 0 64 24"
+      width={80}
+      height={30}
+      aria-hidden
+      className="shrink-0 glyph-breathe"
+      style={{ animationDelay: "4.4s" }}
+    >
       <line x1={4} x2={60} y1={20} y2={20} stroke="var(--color-muted)" strokeWidth={1} opacity={0.7} />
       <path
         d="M 6 20 C 20 20 24 5 32 5 C 40 5 44 20 58 20"
@@ -39,7 +60,7 @@ function ResearchGlyph() {
         stroke="var(--color-muted)"
         strokeWidth={1}
       />
-      <line x1={32} x2={32} y1={5} y2={20} stroke="var(--color-sky-deep)" strokeWidth={1} opacity={0.6} strokeDasharray="2 2" />
+      <line x1={32} x2={32} y1={5} y2={20} stroke="var(--color-sky-deep)" strokeWidth={1} opacity={0.7} strokeDasharray="2 2" />
     </svg>
   );
 }

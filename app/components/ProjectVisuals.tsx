@@ -27,13 +27,14 @@ function FrameBase({
 /* ─────────── StatViz ─────────── */
 /* The sealed path — the pipeline's actual architecture. Raw data on
    the left; a sealed registry function in the middle; a Hebrew RTL
-   report on the right. One cycle traces a single number's journey:
-   a datum leaves the matrix, the validated function computes (the
-   model never does), F = 12.34 emerges and lands in the report line,
+   report on the right. Above the registry, the agents: one writes
+   the analysis plan, an independent critic must approve it — only
+   then does the datum enter and the validated function compute (the
+   model never does). F = 12.34 emerges and lands in the report line,
    verified. The real system calls this "the only sanctioned path
    from data to a reported number." Hover holds the path still.     */
 
-const SV_CYCLE = 9.5;
+const SV_CYCLE = 11;
 
 const svEase = (k: number) =>
   k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
@@ -74,7 +75,7 @@ export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
     t <= a ? 0 : t >= b ? 1 : (t - a) / (b - a);
 
   /* End of cycle: the pass fades, the path rests, a new one begins. */
-  const fadeK = ph(8.6, 9.4);
+  const fadeK = ph(10.1, 10.9);
   const passOpacity = 1 - fadeK;
 
   /* Geometry */
@@ -89,23 +90,33 @@ export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
   const repR = 252;
   const repT = 18;
 
-  /* The datum's journey */
-  const dotK = svEase(ph(0.4, 1.6));
+  /* The agents above the registry: plan, then independent critique.
+     Only an approved plan lets the datum through. */
+  const planX = 96;
+  const critX = 136;
+  const agentY = 26;
+  const planActive = t >= 0.3 && t < 1.2 && fadeK === 0;
+  const planSent = t >= 0.3 && fadeK === 0;
+  const critActive = t >= 1.2 && t < 2.1 && fadeK === 0;
+  const critPassed = t >= 1.9 && fadeK === 0;
+
+  /* The datum's journey — gated on the approved plan */
+  const dotK = svEase(ph(2.1, 3.3));
   const dotX = 50 + (boxL - 50) * dotK;
-  const dotVisible = t > 0.4 && t < 1.6 && fadeK === 0;
+  const dotVisible = t > 2.1 && t < 3.3 && fadeK === 0;
 
-  const computing = t >= 1.6 && t < 2.8 && fadeK === 0;
-  const pulseK = ph(2.5, 3.2);
+  const computing = t >= 3.3 && t < 4.5 && fadeK === 0;
+  const pulseK = ph(4.2, 4.9);
 
-  const chipK = svEase(ph(2.8, 4.4));
+  const chipK = svEase(ph(4.5, 6.1));
   const chipX = boxR + (repL - boxR) * chipK;
-  const chipVisible = t > 2.8 && t < 4.4 && fadeK === 0;
+  const chipVisible = t > 4.5 && t < 6.1 && fadeK === 0;
 
-  const landed = t >= 4.4;
-  const checkK = ph(4.4, 4.9);
+  const landed = t >= 6.1;
+  const checkK = ph(6.1, 6.6);
 
   return (
-    <FrameBase ariaLabel="The StatViz sealed path: raw data enters a validated registry function — one-way ANOVA — which emits a provenance-stamped statistic that lands, verified, in a Hebrew report. The model plans; it never computes.">
+    <FrameBase ariaLabel="The StatViz sealed path: an agent writes the analysis plan, an independent critic approves it, then raw data enters a validated registry function — one-way ANOVA — which emits a provenance-stamped statistic that lands, verified, in a Hebrew report. The model plans; it never computes.">
       <svg
         width={W}
         height={H}
@@ -187,6 +198,92 @@ export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
           />
         )}
 
+        {/* The agents above the registry. One writes the plan; an
+            independent critic must approve it before anything runs. */}
+        <text
+          x={planX}
+          y={17}
+          fontSize={6}
+          textAnchor="middle"
+          fill={planActive ? "var(--color-ink)" : "var(--color-muted)"}
+          fontFamily="var(--font-mono)"
+          letterSpacing="0.14em"
+          opacity={planActive ? 0.95 : 0.55}
+          style={{ transition: "fill 300ms ease, opacity 300ms ease" }}
+        >
+          PLAN
+        </text>
+        <text
+          x={critX}
+          y={17}
+          fontSize={6}
+          textAnchor="middle"
+          fill={critActive ? "var(--color-ink)" : "var(--color-muted)"}
+          fontFamily="var(--font-mono)"
+          letterSpacing="0.14em"
+          opacity={critActive ? 0.95 : 0.55}
+          style={{ transition: "fill 300ms ease, opacity 300ms ease" }}
+        >
+          CRITIQUE
+        </text>
+        <circle
+          cx={planX}
+          cy={agentY}
+          r={3.2}
+          fill={planActive ? "var(--color-sky-deep)" : "none"}
+          stroke={planActive ? "var(--color-sky-deep)" : "var(--color-ink-soft)"}
+          strokeWidth={1}
+          opacity={planActive ? 0.9 : 0.55}
+          style={{ transition: "fill 300ms ease, stroke 300ms ease" }}
+        />
+        <circle
+          cx={critX}
+          cy={agentY}
+          r={3.2}
+          fill={critActive ? "var(--color-sky-deep)" : "none"}
+          stroke={critActive ? "var(--color-sky-deep)" : "var(--color-ink-soft)"}
+          strokeWidth={1}
+          opacity={critActive ? 0.9 : 0.55}
+          style={{ transition: "fill 300ms ease, stroke 300ms ease" }}
+        />
+        {/* The plan handed down into the sealed box */}
+        {planSent && (
+          <line
+            x1={planX}
+            x2={planX}
+            y1={agentY + 4}
+            y2={boxT - 1}
+            stroke="var(--color-ink-soft)"
+            strokeWidth={1}
+            strokeDasharray="2 2"
+            opacity={0.5 * passOpacity}
+          />
+        )}
+        {/* The critic reads the plan (not the data) and rules on it */}
+        {critPassed && (
+          <>
+            <line
+              x1={critX}
+              x2={critX}
+              y1={agentY + 4}
+              y2={boxT - 1}
+              stroke="var(--color-ink-soft)"
+              strokeWidth={1}
+              strokeDasharray="2 2"
+              opacity={0.5 * passOpacity}
+            />
+            <path
+              d={`M ${critX + 5.5} ${agentY - 1} l 2 2.2 l 3.6 -4.2`}
+              fill="none"
+              stroke="var(--color-sky-deep)"
+              strokeWidth={1.2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity={0.9 * passOpacity}
+            />
+          </>
+        )}
+
         {/* Report page — Hebrew RTL, lines right-aligned */}
         <rect
           x={repL}
@@ -230,7 +327,7 @@ export function StatVizVisual({ quiet = false }: { quiet?: boolean }) {
         )}
         {/* Mini findings chart rising on the page */}
         {[8, 13, 16].map((bh, i) => {
-          const riseK = svEase(ph(4.5 + i * 0.2, 5.2 + i * 0.2));
+          const riseK = svEase(ph(6.2 + i * 0.2, 6.9 + i * 0.2));
           return (
             <rect
               key={i}
