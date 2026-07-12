@@ -176,10 +176,8 @@ export function PartFour() {
           horizon.&rdquo;
         </p>
         <p>
-          She picks up one of her small stones, rolling it between her fingers.
-          &ldquo;There&rsquo;s a difference between hunger and craving. Hunger
-          comes from the body&rsquo;s true needs. Craving comes from the
-          mind&rsquo;s confusion.&rdquo; She places the stone in his palm.
+          She picks up one of her small stones, rolling it between her
+          fingers, and places it in his palm.
           &ldquo;Feel the weight of this. Its texture. Its temperature changing
           as it absorbs your body&rsquo;s heat. This is reality. The fruit you
           seek exists, but what you believe it can give you is a mirage.&rdquo;
@@ -195,7 +193,10 @@ export function PartFour() {
           adopt.&rdquo; She reaches into her pack and pulls out several small
           tubers&mdash;ordinary root vegetables gathered from some unseen
           garden. She begins to clean them, her movements unhurried yet
-          precise.
+          precise. She drops one into the pot and leaves another on the cloth
+          beside her. &ldquo;This one goes in because we are hungry,&rdquo;
+          she says. She taps the one on the cloth. &ldquo;This one you keep
+          staring at because you think it knows your name.&rdquo;
         </p>
         <p>
           &ldquo;Has it occurred to you,&rdquo; she says as she works,
@@ -216,8 +217,7 @@ export function PartFour() {
           a potato.&rdquo;
         </p>
         <p>
-          &ldquo;A... potato?&rdquo; Kai finds himself caught between
-          irritation and unexpected curiosity.
+          &ldquo;A... potato?&rdquo;
         </p>
         <Sacred>
           &ldquo;A sacred potato,&rdquo; she clarifies, her eyes twinkling.
@@ -231,11 +231,8 @@ export function PartFour() {
         </p>
         <p>
           &ldquo;A sacred potato,&rdquo; she corrects again, emphasizing the
-          word with gentle humor. &ldquo;An awareness that has convinced itself
-          it&rsquo;s a separate self with a particular story about what it
-          lacks. Your hollow place isn&rsquo;t something to fill or transcend
-          or analyze. It&rsquo;s just part of the particular shape your
-          potato-ness has taken.&rdquo;
+          word with gentle humor. &ldquo;An awareness telling itself a
+          particular story about what it lacks.&rdquo;
         </p>
         <p>
           Despite himself, Kai feels laughter bubbling up&mdash;unexpected and
@@ -247,9 +244,8 @@ export function PartFour() {
         </p>
         <p>
           Sienna shrugs. &ldquo;Whatever it wants. Fill it sometimes. Leave it
-          empty sometimes. Examine it. Ignore it. None of it matters
-          particularly, except in how it shapes your experience of being alive
-          right now.&rdquo;
+          empty sometimes. Examine it. Ignore it.&rdquo; She drops the cut
+          tubers into the pot. &ldquo;Tonight, it eats.&rdquo;
         </p>
         <p>
           She continues preparing the meal, cutting the vegetables with the
@@ -353,22 +349,13 @@ export function PartFour() {
           announcing itself.
         </p>
         <p>
-          All these years of desperate seeking, of elaborate philosophical
-          frameworks, of systems and explanations and narratives&mdash;and here
-          he stands, just a consciousness experiencing a tree at dawn. A sacred
-          potato indeed, taking itself terribly seriously while the universe
-          unfolds with complete indifference to his drama.
-        </p>
-        <p>
           The hollow place doesn&rsquo;t disappear. It simply becomes another
           feature in the landscape of his experience&mdash;neither defining nor
           irrelevant, just present like the sky or the sand or his breath.
         </p>
         <p>
-          Kai reaches up and picks a fruit from the lowest branch. Not from
-          hunger or need or desperate hope, but as a gesture of
-          acknowledgment. He studies its color and texture with appreciation,
-          then raises it to his lips.
+          Kai reaches up and picks a fruit from the lowest branch. He turns
+          it once in his hand, then raises it to his lips.
         </p>
         <p>
           The taste is exactly as it has always been&mdash;sweet, complex,

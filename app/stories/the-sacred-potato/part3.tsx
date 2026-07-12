@@ -81,14 +81,12 @@ export function PartThree() {
         </p>
         <p>&ldquo;Ah.&rdquo; Nasir nods slowly. &ldquo;And what emptiness would that be?&rdquo;</p>
         <p>
-          The question strikes Kai like a physical blow. He has never tried to
-          define the hollow place, never examined its contours or questioned
-          its origin. It has simply been there, as fundamental as breathing.
+          The question strikes Kai like a physical blow. His hands go still on
+          the makeshift sundial.
         </p>
         <p>
-          &ldquo;I don&rsquo;t know,&rdquo; he admits, his hands stilling on
-          the makeshift sundial. &ldquo;It&rsquo;s just... there. A void that
-          needs filling.&rdquo;
+          &ldquo;I don&rsquo;t know,&rdquo; he admits. &ldquo;It&rsquo;s just...
+          there. A void that needs filling.&rdquo;
         </p>
         <p>
           Nasir pokes at the small fire with a stick, sending sparks spiraling
@@ -123,9 +121,8 @@ export function PartThree() {
           nor calculated, but present and curious.
         </p>
         <p>
-          Afterward, as Nasir sleeps beside him, Kai watches the rise and fall
-          of his chest&mdash;appreciation without the need to transform the
-          experience into something more significant than it was.
+          Afterward, as Nasir sleeps beside him, Kai watches his chest rise
+          and fall. He does not name the night.
         </p>
       </Scene>
 
@@ -164,10 +161,9 @@ export function PartThree() {
       <Scene w="void" mode="felt" pace="slow">
         <Sacred>What if the fruit was never the problem?</Sacred>
         <p>
-          The question takes root, growing even as Kai continues to seek. He still tracks the trees, still consumes the fruit with
-          desperate need, but something has shifted. A small distance has
-          opened between himself and his actions, a space from which he can
-          observe his own compulsion.
+          The question takes root. He still tracks the trees, still consumes
+          the fruit with desperate need. But sometimes, as his hand closes
+          around one, he sees the hand closing.
         </p>
       </Scene>
 
@@ -229,7 +225,7 @@ export function PartThree() {
         </p>
         <p>
           His story hangs from him like fruit: bright, handled, offered to
-          others before he has swallowed it himself.
+          others while his own hand still reaches.
         </p>
       </Scene>
 
@@ -314,7 +310,7 @@ export function PartThree() {
           single moment of weakness. If he couldn&rsquo;t maintain perfection,
           what was the point of trying at all?
         </p>
-        <Beat>The pattern breaks, then reasserts itself. Progress isn&rsquo;t linear.</Beat>
+        <Beat>The pattern breaks, then reasserts itself.</Beat>
       </Scene>
 
       <Scene w="rainhint">
@@ -357,8 +353,8 @@ export function PartThree() {
         <p>
           They share a meal of dried meat and bread, their shoulders
           occasionally brushing in the crowded eating house. Each contact sends
-          a current through Kai&mdash;a different kind of hunger, equally
-          powerful but somehow cleaner.
+          a current through Kai&mdash;a hunger that does not open the old
+          hollow beneath it.
         </p>
         <p>
           When Kai mentions his own journey has no fixed destination, Elian
@@ -493,11 +489,8 @@ export function PartThree() {
         </p>
         <p>
           Later, as Elian sleeps beside him, Kai notices the change in his own
-          breathing&mdash;deeper, less guarded. The hollow place remains. But
-          for the first time, Kai can imagine it not as an adversary to be
-          conquered but as a creation of his own making. A shape he has avoided
-          so thoroughly that it has come to feel like destiny rather than
-          choice.
+          breathing&mdash;deeper, less guarded. The hollow place remains
+          beneath his ribs. His breath moves around it.
         </p>
       </Scene>
 

@@ -32,7 +32,7 @@ export function PartOne() {
         </p>
         <p>
           He reaches for his water skin. Numbers flow unbidden: 0.73 liters
-          remaining. At 0.05 liters per hour in current conditions, 14.2 hours
+          remaining. At 0.05 liters per hour in current conditions, 14.6 hours
           until the next well. These calculations rise to the surface of
           thought without effort&mdash;the engineer&rsquo;s reflexes persisting
           despite his attempts to escape them. His mouth will become dust. His
@@ -147,9 +147,8 @@ export function PartOne() {
           The tree appears in the hour when light begins to change but shadows
           have not yet lengthened. It stands alone, impossible and certain. A
           single tree where nothing should grow, its branches heavy with fruit
-          unlike any Kai has seen before. Each piece catches light differently,
-          as if they were not all the same species but many, collected from
-          countless orchards and somehow thriving together.
+          unlike any Kai has seen before. Each fruit catches light differently,
+          as if the tree had gathered its crop from countless orchards.
         </p>
         <p>
           His steps slow of their own accord. Something inside his chest
@@ -281,9 +280,10 @@ export function PartOne() {
         </p>
         <p>
           For a moment it occurs to him that she is not a sign of
-          anything&mdash;that Karesh is real, her father&rsquo;s partners are
-          real, that she is walking toward a life and not away from one. The
-          thought offers him nothing he can follow, so he sets it down.
+          anything&mdash;that Karesh has ledgers and kettle-smoke, that her
+          father&rsquo;s partners wait beneath striped awnings, that she is
+          walking toward a life and not away from one. The thought offers him
+          nothing he can follow, so he sets it down.
         </p>
       </Scene>
 

@@ -129,8 +129,8 @@ export function PartTwo() {
         <p>
           For a moment something crosses her face that is not
           desperation&mdash;an old fondness, maybe, for the woman who built
-          models because rain amazed her. Kai doesn&rsquo;t ask. He
-          lets her become the notebook again.
+          models because rain amazed her. Then she lowers her eyes and turns
+          the page. Kai doesn&rsquo;t ask.
         </p>
       </Scene>
 
