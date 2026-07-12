@@ -183,8 +183,9 @@ export function PartFour() {
           seek exists, but what you believe it can give you is a mirage.&rdquo;
         </p>
         <p>
-          Kai holds the stone, feeling its solid presence. &ldquo;So the answer
-          is to focus on what&rsquo;s real? Physical sensations? The present
+          Kai holds the stone, feeling its solid presence, then returns it to
+          the pattern between them. &ldquo;So the answer is to focus on
+          what&rsquo;s real? Physical sensations? The present
           moment?&rdquo;
         </p>
         <p>
@@ -236,7 +237,10 @@ export function PartFour() {
         </p>
         <p>
           Despite himself, Kai feels laughter bubbling up&mdash;unexpected and
-          genuine.
+          genuine. There&rsquo;s something absurdly perfect about the image:
+          all his years of seeking, all his elaborate
+          self-narratives&mdash;and he&rsquo;s just a potato taking itself too
+          seriously.
         </p>
         <p>
           &ldquo;So what does a sacred potato do about the hollow place?&rdquo;
@@ -244,12 +248,12 @@ export function PartFour() {
         </p>
         <p>
           Sienna shrugs. &ldquo;Whatever it wants. Fill it sometimes. Leave it
-          empty sometimes. Examine it. Ignore it.&rdquo; She drops the cut
-          tubers into the pot. &ldquo;Tonight, it eats.&rdquo;
+          empty sometimes. Examine it. Ignore it.&rdquo; She drops the
+          tuber from the cloth into the pot. &ldquo;Tonight, it eats.&rdquo;
         </p>
         <p>
-          She continues preparing the meal, cutting the vegetables with the
-          same care she might give to rare spices or precious fruit.
+          She continues preparing the meal, cutting the remaining vegetables
+          with the same care she might give to rare spices or precious fruit.
           &ldquo;Besides,&rdquo; she adds, &ldquo;if we were perfect, complete,
           lacking nothing... what a boring existence that would be. No seeking,
           no finding, no losing, no laughing at the cosmic joke of it
@@ -370,8 +374,8 @@ export function PartFour() {
         </p>
         <p>
           As he gathers his belongings, Kai&rsquo;s thoughts turn to the
-          University, to his abandoned work, to Neel and their tentative plans
-          to meet in the autumn. For the first time in years, these thoughts
+          University, to his abandoned work, to Neel and his invitation to
+          return. For the first time in years, these thoughts
           bring neither shame nor justification but simple curiosity. What
           would happen if he returned, not as the brilliant mind who must
           create perfection, but as the sacred potato willing to create

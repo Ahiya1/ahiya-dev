@@ -19,7 +19,7 @@ export function PartOne() {
         <p>
           Kai moves across sand that remembers nothing. Each footprint claims
           territory for seconds before wind reclaims it. This is his ninth
-          season crossing. His body has become a vessel for this single
+          crossing. His body has become a vessel for this single
           purpose&mdash;lean intention wrapped in skin turned copper by
           relentless sun. Tendons that know precisely how much tension to
           maintain. Lungs that extract what they need from air so dry it pulls

@@ -251,7 +251,7 @@ export function PartThree() {
         </Letter>
         <p>
           Something cracks inside Kai&mdash;not the hollow place expanding, but
-          a rigid belief system fracturing.
+          the belief that flawed creation was worse than abandoned potential.
         </p>
         <p>
           He unrolls the plans, tracing the modifications with fingertips
@@ -471,6 +471,11 @@ export function PartThree() {
         <p>
           The glassblower shrugs. &ldquo;The crack&rsquo;s part of the piece
           now. Sometimes the glass decides what it wants to be.&rdquo;
+        </p>
+        <p>
+          Later, as they walk away from the settlement, Elian says,
+          &ldquo;That&rsquo;s what my teacher means about shaping the
+          cracks.&rdquo;
         </p>
         <p>
           Kai nods, suddenly aware of the uneaten fruit still in his pack. He

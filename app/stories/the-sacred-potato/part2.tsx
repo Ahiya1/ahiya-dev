@@ -46,8 +46,8 @@ export function PartTwo() {
 
       <Scene w="firenight">
         <p>
-          &ldquo;First time in a grove?&rdquo; The old man&rsquo;s voice
-          startles Kai from his observations.
+          &ldquo;First time in a grove?&rdquo; The old man catches him
+          watching.
         </p>
         <p>Kai nods.</p>
         <p>
@@ -88,6 +88,16 @@ export function PartTwo() {
           &ldquo;I could stop anytime, of course. I simply choose not to.
           There&rsquo;s a subtle difference between the northern and southern
           varieties that few people recognize.&rdquo;
+        </p>
+        <p>
+          Dalin&rsquo;s elaborate justifications remind Kai of his own
+          explanations for leaving the University:{" "}
+          <em>
+            I need space to develop my theories. Institutional constraints
+            stifle true innovation. The desert contains water patterns crucial
+            to my research.
+          </em>{" "}
+          All partially true. All fundamentally lies.
         </p>
         <p>
           As night falls, the woman in indigo approaches their fire. Jana
@@ -432,8 +442,8 @@ export function PartTwo() {
         </p>
         <Beat>Three days later, he breaks it.</Beat>
         <p>
-          The next morning, the emptiness behind his breastbone expands to fill
-          his entire chest. His hands shake. Sweat soaks his sleeping mat
+          On the third morning, the emptiness behind his breastbone expands to
+          fill his entire chest. His hands shake. Sweat soaks his sleeping mat
           despite the desert&rsquo;s cold dawn. He knows a tree stands half a
           day&rsquo;s journey west. He closes his eyes, counts his breaths,
           focuses on the precise arrangement of stones around his campfire.
