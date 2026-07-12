@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { SelectedWork } from "./components/SelectedWork";
 
 /* Quiet glyphs for the "What I can do for you" section: small
@@ -233,6 +234,24 @@ export default function Home() {
             </a>
           </li>
         </ul>
+      </section>
+
+      <div className="horizon my-24" />
+
+      {/* A quiet door */}
+      <section>
+        <h2 className="font-mono text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
+          A desert story
+        </h2>
+        <p className="mt-6 font-display text-[19px] italic leading-[1.5] text-[var(--color-ink)] sm:text-xl">
+          <Link className="link" href="/stories/the-sacred-potato">
+            The Sacred Potato
+          </Link>
+          : a novella, read as a walk.
+        </p>
+        <p className="mt-3 font-mono text-[12px] uppercase tracking-[0.14em] text-[var(--color-muted)]">
+          Four parts · about an hour · best unhurried
+        </p>
       </section>
 
       <footer className="mt-28 font-mono text-[11px] uppercase tracking-[0.18em] text-[var(--color-muted)]">

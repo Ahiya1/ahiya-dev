@@ -1,0 +1,556 @@
+/* The Sacred Potato — a desert read as a walk.
+   Two clocks: scroll carries the reader (--journey, per-scene --p);
+   real time deepens the desert (--lived via JS-written offsets, --grain, --vig).
+   The portfolio's paper (#ddd9cd) is the ink of this night. At the final dawn
+   the page inverts back to the site's daylight material via --dawn. */
+
+.root {
+  --dawn: 0;
+  --dawn-bg: 0;
+  --dawn-ink: 0;
+  --fg: color-mix(in oklab, var(--color-ink) calc(var(--dawn-ink) * 100%), #dcd8cb);
+  --fg-soft: color-mix(in oklab, #56503f calc(var(--dawn-ink) * 100%), #a9a596);
+  --bg: color-mix(in oklab, var(--color-paper) calc(var(--dawn-bg) * 100%), #0a0c11);
+  --line: color-mix(in oklab, rgb(19 18 16 / 0.3) calc(var(--dawn-ink) * 100%), rgb(221 217 205 / 0.22));
+
+  position: relative;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--fg);
+  overflow-x: clip;
+  font-family: var(--font-display);
+  font-weight: 350;
+  font-size: 19px;
+  line-height: 1.92;
+}
+
+/* ---------- the stage: the desert itself ---------- */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: calc(1 - var(--dawn) * 0.9);
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    var(--sky-a, #08090d) 0%,
+    var(--sky-b, #0a0c11) 48%,
+    var(--sky-c, #0e1016) 72%,
+    var(--sky-c, #0e1016) 100%
+  );
+}
+
+.stars,
+.stars2 {
+  position: absolute;
+  inset: 0 0 26% 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280'%3E%3Cg fill='%23ddd9cd'%3E%3Ccircle cx='14' cy='36' r='0.9' opacity='0.85'/%3E%3Ccircle cx='58' cy='12' r='0.6' opacity='0.6'/%3E%3Ccircle cx='96' cy='74' r='1.1' opacity='0.9'/%3E%3Ccircle cx='131' cy='28' r='0.5' opacity='0.5'/%3E%3Ccircle cx='167' cy='96' r='0.8' opacity='0.7'/%3E%3Ccircle cx='203' cy='18' r='0.6' opacity='0.6'/%3E%3Ccircle cx='241' cy='58' r='1' opacity='0.85'/%3E%3Ccircle cx='26' cy='118' r='0.6' opacity='0.55'/%3E%3Ccircle cx='73' cy='151' r='0.9' opacity='0.75'/%3E%3Ccircle cx='118' cy='127' r='0.5' opacity='0.5'/%3E%3Ccircle cx='159' cy='176' r='0.7' opacity='0.65'/%3E%3Ccircle cx='212' cy='143' r='0.9' opacity='0.8'/%3E%3Ccircle cx='253' cy='190' r='0.5' opacity='0.5'/%3E%3Ccircle cx='38' cy='205' r='1' opacity='0.85'/%3E%3Ccircle cx='92' cy='236' r='0.6' opacity='0.6'/%3E%3Ccircle cx='143' cy='262' r='0.8' opacity='0.7'/%3E%3Ccircle cx='197' cy='224' r='0.5' opacity='0.55'/%3E%3Ccircle cx='247' cy='266' r='0.9' opacity='0.75'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 280px 280px;
+  opacity: calc(var(--stars, 0.4) * 0.9);
+  transform: translateY(var(--sy, 0px));
+}
+
+.stars2 {
+  background-size: 460px 460px;
+  opacity: calc(var(--stars, 0.4) * var(--deep, 0.3) * 0.8);
+  transform: translateY(calc(var(--sy, 0px) * 1.6));
+}
+
+.glow {
+  position: absolute;
+  left: var(--glow-x, 50%);
+  bottom: 20%;
+  width: 132vmin;
+  height: 60vmin;
+  transform: translateX(-50%) scale(var(--gp, 1));
+  background: radial-gradient(
+    50% 62% at 50% 82%,
+    var(--glow-c, #3c4356),
+    transparent 70%
+  );
+  opacity: var(--glow, 0.12);
+  filter: blur(4px);
+}
+
+/* svg is a replaced element: left/right alone won't stretch it — width must
+   be explicit or it collapses to the viewBox's intrinsic 1440px */
+.dunes {
+  position: absolute;
+  left: -14vw;
+  bottom: 0;
+  width: 128vw;
+  height: 38vh;
+  min-height: 220px;
+}
+
+.d0,
+.d1,
+.d2,
+.d3 {
+  will-change: transform;
+}
+.d0 {
+  fill: rgb(19 19 23 / 0.55);
+  transform: translate(calc(var(--dx1, 0px) * 0.4), calc(var(--b1, 0px) * 0.5));
+}
+.d1 {
+  fill: rgb(10 10 13 / 0.92);
+  transform: translate(var(--dx1, 0px), var(--b1, 0px));
+}
+.d2 {
+  fill: rgb(6 6 8 / 0.97);
+  transform: translate(var(--dx2, 0px), var(--b2, 0px));
+}
+.d3 {
+  fill: #030304;
+  transform: translate(var(--dx3, 0px), var(--b3, 0px));
+}
+
+.treeLayer {
+  position: absolute;
+  left: var(--tree-x, 50%);
+  bottom: calc(22vh + var(--b2, 0px));
+  width: 38vmin;
+  transform: translateX(-50%) scale(var(--tree-s, 0.25));
+  transform-origin: 50% 100%;
+  opacity: var(--tree, 0);
+  color: rgb(5 5 7 / 0.98);
+}
+
+.grove1,
+.grove2 {
+  position: absolute;
+  bottom: calc(22vh + var(--b2, 0px));
+  width: 38vmin;
+  transform-origin: 50% 100%;
+  opacity: calc(var(--grove, 0) * 0.85);
+  color: rgb(6 6 8 / 0.95);
+}
+.grove1 {
+  left: 24%;
+  transform: translateX(-50%) scale(calc(var(--tree-s, 0.25) * 0.62));
+}
+.grove2 {
+  left: 84%;
+  transform: translateX(-50%) scale(calc(var(--tree-s, 0.25) * 0.45));
+}
+
+.sand {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.heat {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 22%;
+  height: 26%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 5px,
+    rgb(221 217 205 / 0.02) 5px 9px
+  );
+  opacity: var(--heat, 0);
+  animation: heat-rise 7s linear infinite;
+}
+
+@keyframes heat-rise {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-18px);
+  }
+}
+
+/* interiors: the desert recedes behind felt scenes */
+.dimmer {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    120% 90% at 50% 42%,
+    rgb(4 5 8 / 0.9),
+    rgb(4 5 8 / 0.97)
+  );
+  opacity: var(--dim, 0);
+}
+
+.grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.87 0 0 0 0 0.85 0 0 0 0 0.8 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  opacity: var(--grain, 0.05);
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    115% 100% at 50% 45%,
+    transparent 58%,
+    rgb(3 4 6 / 0.75)
+  );
+  opacity: var(--vig, 0.25);
+}
+
+/* ---------- quiet chrome: a single thread, then nothing ---------- */
+
+.thread {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left));
+  top: 16vh;
+  bottom: 16vh;
+  width: 1px;
+  background: rgb(221 217 205 / 0.1);
+  opacity: var(--chrome, 1);
+  transition: opacity 2s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.thread i {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--journey, 0) * 100%);
+  background: rgb(221 217 205 / 0.34);
+}
+
+/* ---------- the column: the read is the walk ---------- */
+
+.column {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto;
+  max-width: 36rem;
+  padding: 0 1.4rem;
+}
+
+.column p {
+  margin: 0 0 1.9em;
+}
+
+.column em {
+  font-style: italic;
+}
+
+/* ---------- opening ---------- */
+
+.intro {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  position: relative;
+}
+
+.introInner {
+  padding-bottom: 10vh;
+}
+
+.introEyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  display: block;
+  margin-bottom: 1.6rem;
+}
+
+.introTitle {
+  font-family: var(--font-display);
+  font-weight: 320;
+  font-size: clamp(2.8rem, 9vw, 4.6rem);
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  margin: 0 0 1.4rem;
+}
+
+.introBy {
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--fg-soft);
+  margin: 0 0 2.6rem;
+}
+
+.introMeta {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  opacity: 0.7;
+}
+
+.cue {
+  position: absolute;
+  bottom: 7vh;
+  left: 50%;
+  transform: translateX(-50%);
+  display: grid;
+  justify-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  transition: opacity 2.4s ease;
+  animation: cue-breathe 4.2s ease-in-out infinite;
+}
+
+.cue::before {
+  content: "";
+  display: block;
+  width: 1px;
+  height: 34px;
+  background: linear-gradient(180deg, transparent, rgb(221 217 205 / 0.5));
+}
+
+@keyframes cue-breathe {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+.walked .cue {
+  opacity: 0;
+  animation: none;
+}
+
+/* ---------- scenes ---------- */
+
+.scene {
+  position: relative;
+  padding: 16vh 0;
+}
+
+.slow {
+  padding: 26vh 0;
+}
+
+.slow .prose > p {
+  margin-bottom: 34vh;
+}
+
+.slow .prose > p:last-child {
+  margin-bottom: 0;
+}
+
+.felt {
+  text-align: center;
+  font-style: italic;
+}
+
+.felt {
+  font-size: 1.1em;
+}
+
+.felt .prose {
+  max-width: 27rem;
+  margin-inline: auto;
+}
+
+.felt .prose > p {
+  line-height: 2.05;
+  margin-bottom: 2.3em;
+}
+
+/* thresholds between parts */
+
+.threshold {
+  min-height: 96vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 0;
+}
+
+.thresholdN {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  display: block;
+  margin-bottom: 1.3rem;
+}
+
+.thresholdTitle {
+  font-family: var(--font-display);
+  font-weight: 320;
+  font-size: clamp(2.2rem, 6.5vw, 3.4rem);
+  letter-spacing: 0.005em;
+  margin: 0;
+}
+
+/* sacred lines */
+
+.sacred {
+  font-size: 1.45em;
+  line-height: 1.8;
+  font-style: italic;
+  text-align: center;
+  max-width: 26rem;
+  margin: 2.8em auto !important;
+  color: var(--fg);
+}
+
+/* one-line strikes */
+
+.beat {
+  font-size: 1.4em;
+  line-height: 1.6;
+  font-style: normal;
+  text-align: center;
+  max-width: 26rem;
+  margin: 3.2em auto !important;
+  letter-spacing: 0.01em;
+}
+
+/* letters, plans */
+
+.letter {
+  border: 1px solid var(--line);
+  padding: 1.7rem 1.6rem 0.4rem;
+  margin: 2.6em 0;
+  font-size: 0.92em;
+  line-height: 1.9;
+  font-style: italic;
+  text-align: left;
+}
+
+.letter p {
+  margin-bottom: 1.2em;
+}
+
+/* ---------- the first bite: three heartbeats of actual quiet ---------- */
+
+.bitePulse {
+  position: sticky;
+  top: 0;
+  height: 0;
+  z-index: -1;
+}
+
+.bitePulse::before {
+  content: "";
+  position: absolute;
+  top: 30vh;
+  left: 50%;
+  width: 60vmin;
+  height: 60vmin;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgb(201 118 42 / 0.16), transparent 62%);
+  /* rises with the scene, vanishes past its middle — leaving the absence */
+  opacity: calc(1 - min(1, max(0, (var(--p, 0) - 0.55) / 0.12)) - max(0, 1 - var(--p, 0) / 0.35));
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+/* ---------- coda ---------- */
+
+.coda {
+  min-height: 70vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding-bottom: 16vh;
+}
+
+.codaQuote {
+  font-style: italic;
+  font-size: 1.16em;
+  line-height: 1.9;
+  max-width: 26rem;
+  margin: 0 auto 1.6rem;
+}
+
+.codaBy {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--fg-soft);
+  margin-bottom: 4.5rem;
+}
+
+.codaHome {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  color: var(--fg-soft);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 2px;
+  transition: color 0.4s ease, border-color 0.4s ease;
+}
+
+.codaHome:hover {
+  color: var(--fg);
+  border-color: var(--fg-soft);
+}
+
+/* ---------- reveals: prose surfaces as you reach it ---------- */
+
+/* words don't move — they come into presence, like eyes focusing */
+.prose > *,
+.thresholdInner > * {
+  transition:
+    opacity 2.1s ease,
+    filter 2.1s ease;
+}
+
+.js [data-prose] > *:not(.in) {
+  opacity: 0;
+  filter: blur(7px);
+}
+
+/* ---------- reduced motion: a clean dark read ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .js [data-prose] > *:not(.in) {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  .prose > *,
+  .thresholdInner > * {
+    transition: none;
+  }
+  .cue,
+  .heat {
+    animation: none;
+  }
+  .stage {
+    opacity: calc(1 - var(--dawn) * 0.9);
+  }
+  .root {
+    transition: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .root {
+    font-size: 16.5px;
+  }
+  .thread {
+    left: 10px;
+  }
+}

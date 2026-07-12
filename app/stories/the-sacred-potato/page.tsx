@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
-import Experience from "./Experience";
+import Story from "./Story";
 
 export const metadata: Metadata = {
-  title: "The Sacred Potato · Part I — Ahiya Butman",
+  title: "The Sacred Potato — Ahiya Butman",
   description:
-    "An immersive desert story. Walk with Kai across sand that remembers nothing, to the lone tree and the first bite. Part I — The Hollow Place.",
+    "A desert story, read as a walk. About seeking, addiction, and the cosmic joke of consciousness taking itself too seriously. Four parts, about an hour.",
   openGraph: {
-    title: "The Sacred Potato · Part I — The Hollow Place",
+    title: "The Sacred Potato",
     description:
-      "An immersive desert story about seeking, addiction, and the cosmic joke of consciousness taking itself too seriously.",
+      "A desert story, read as a walk. About seeking, addiction, and the cosmic joke of consciousness taking itself too seriously.",
     type: "article",
   },
 };
 
 export default function Page() {
-  return <Experience />;
+  return <Story />;
 }
