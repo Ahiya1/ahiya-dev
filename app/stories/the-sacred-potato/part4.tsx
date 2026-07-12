@@ -172,9 +172,8 @@ export function PartFour() {
           in a pattern that seems both random and purposeful. &ldquo;When I was
           very young,&rdquo; she begins, &ldquo;I watched my father destroy
           himself seeking water mirages. By the time I was old enough to travel
-          alone, I understood something essential about desire&mdash;that most
-          of what we chase is merely a projection of what we believe we
-          lack.&rdquo;
+          alone, I had learned to distrust a shining thing on the
+          horizon.&rdquo;
         </p>
         <p>
           She picks up one of her small stones, rolling it between her fingers.
@@ -337,8 +336,12 @@ export function PartFour() {
           away.
         </p>
         <p>
-          The tree is simply a tree&mdash;neither salvation nor temptation. The
-          sand beneath his feet is simply sand. The breath moving through his
+          The first light touches one fruit, then another. Dust clings to the
+          bark. An ant works its way along a split in the trunk, vanishes,
+          appears again. Nothing leans toward him. Nothing withholds itself.
+        </p>
+        <p>
+          The sand beneath his feet is simply sand. The breath moving through his
           body is simply breath. Each element complete in itself, requiring
           nothing beyond its own existence.
         </p>
@@ -346,8 +349,8 @@ export function PartFour() {
           In this moment of complete attention, something extraordinary
           happens, so simple it almost escapes notice: Kai laughs. Not the
           bitter laugh of his seeking years or the calculated laugh of social
-          interaction, but the genuine laughter of recognition. The cosmic joke
-          suddenly apparent.
+          interaction, but the genuine laughter of recognition. The joke arrives without
+          announcing itself.
         </p>
         <p>
           All these years of desperate seeking, of elaborate philosophical
@@ -411,9 +414,8 @@ export function PartFour() {
           truly solid.
         </p>
         <p>
-          Nothing permanent. Nothing missing. Nothing extra. Just this&mdash;a
-          sacred potato experiencing the present moment in all its ordinary
-          magnificence.
+          Nothing permanent. Nothing missing. Nothing extra. Just this&mdash;feet
+          in cool sand, sun on cloth, breath moving through a sacred potato.
         </p>
         <Sacred>
           Kai adjusts his head covering against the strengthening sun and

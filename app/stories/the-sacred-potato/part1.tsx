@@ -135,10 +135,10 @@ export function PartOne() {
       <Scene w="hardlight">
         <p>
           The tube still sits at the bottom of Kai&rsquo;s pack, untouched. He
-          adjusted the weight on his shoulders. The familiar ache of regret
-          settled between his shoulder blades&mdash;heavier than the pack,
-          heavier than thirst. Around him, the desert stretched in every
-          direction. He expected nothing today. He expected nothing at all.
+          adjusts the weight on his shoulders. The familiar ache of regret
+          settles between his shoulder blades&mdash;heavier than the pack,
+          heavier than thirst. Around him, the desert stretches in every
+          direction. He expects nothing today. He expects nothing at all.
         </p>
       </Scene>
 
@@ -224,8 +224,8 @@ export function PartOne() {
           &ldquo;Do you always play for trees?&rdquo;
         </p>
         <p>
-          The unexpected question startles a laugh from her&mdash;a bright
-          sound at odds with her composed demeanor. &ldquo;Only the interesting
+          The question startles a laugh from her, bright enough to make the
+          strings hum. &ldquo;Only the interesting
           ones.&rdquo; She tilts her head. &ldquo;Most travelers pass this tree
           without seeing it.&rdquo;
         </p>

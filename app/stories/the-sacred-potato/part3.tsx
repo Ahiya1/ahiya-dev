@@ -146,14 +146,13 @@ export function PartThree() {
         <p>
           &ldquo;May I offer something before we part?&rdquo; Nasir asks. When
           Kai nods, he continues: &ldquo;You&rsquo;re not seeking fruit.
-          You&rsquo;re seeking to escape the hollow place. But what if that
-          place isn&rsquo;t something to escape? What if it&rsquo;s just part
-          of being alive?&rdquo;
+          You&rsquo;re seeking to escape the hollow place. But maybe there&rsquo;s no
+          away. Maybe people just have places in them.&rdquo;
         </p>
         <p>
           They part with simple acknowledgment&mdash;a hand on shoulder, a
-          brief meeting of eyes. No promises. No drama. Just the recognition of
-          a complete encounter that requires no continuation.
+          brief meeting of eyes. No promises. No drama. Just his hand
+          leaving Kai&rsquo;s shoulder, warm for a moment after it is gone.
         </p>
         <p>
           As Kai watches Nasir&rsquo;s figure diminish against the western
@@ -165,8 +164,7 @@ export function PartThree() {
       <Scene w="void" mode="felt" pace="slow">
         <Sacred>What if the fruit was never the problem?</Sacred>
         <p>
-          The question takes root, growing alongside Kai&rsquo;s continued
-          seeking. He still tracks the trees, still consumes the fruit with
+          The question takes root, growing even as Kai continues to seek. He still tracks the trees, still consumes the fruit with
           desperate need, but something has shifted. A small distance has
           opened between himself and his actions, a space from which he can
           observe his own compulsion.
@@ -180,18 +178,14 @@ export function PartThree() {
           trajectory: the initial relief, followed by the intensified
           emptiness, followed by the desperate search for the next tree. He
           maps this curve mentally, recognizing its mathematical consistency.
-          The problem isn&rsquo;t that the system is faulty; it&rsquo;s working
-          exactly as designed. The flaw is in what he expects it to provide.
+          Relief, absence, pursuit. Nothing in the mechanism is broken.
         </p>
         <p>
-          He begins to notice parallels between his seeking and other patterns
-          in the desert. How traders fixate on particularly valuable goods,
-          speaking of them with the same intensity he reserves for the fruit.
-          How some travelers structure their entire journeys around visiting
-          certain oases known for their beauty, only to arrive and immediately
-          begin planning for the next landmark. How young men and women pursue
-          potential partners with a desperation that transforms the object of
-          desire into something symbolic rather than human.
+          Near a spice stall, a trader lifts the same blue scarf six times and
+          cannot buy it or set it down. At the public well, two lovers quarrel
+          without looking at each other, both watching the road for someone
+          else. A pilgrim arrives at the famous oasis and, before drinking,
+          asks how far to the next one.
         </p>
         <Whisper>
           The void, he realizes, is not unique to fruit seekers. It speaks in
@@ -233,11 +227,10 @@ export function PartThree() {
           slightly toward it before he catches himself, turning the movement
           into an adjustment of his robe.
         </p>
-        <Whisper>
-          His recovery narrative, Kai realizes, has become another kind of
-          fruit&mdash;another external solution to the hollow place, another
-          identity to cling to.
-        </Whisper>
+        <p>
+          His story hangs from him like fruit: bright, handled, offered to
+          others before he has swallowed it himself.
+        </p>
       </Scene>
 
       <Scene w="parchment" mode="felt">
@@ -358,8 +351,8 @@ export function PartThree() {
         <p>&ldquo;You have a destination,&rdquo; Kai observes. &ldquo;A specific purpose.&rdquo;</p>
         <p>
           Elian adjusts the strap of his pack. &ldquo;I have a
-          direction,&rdquo; he corrects. &ldquo;The purpose reveals itself in
-          the moving toward it.&rdquo;
+          direction,&rdquo; he corrects. &ldquo;Purpose is harder. I usually
+          find out late.&rdquo;
         </p>
         <p>
           They share a meal of dried meat and bread, their shoulders
