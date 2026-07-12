@@ -240,10 +240,7 @@ export function PartFour() {
         </p>
         <p>
           Despite himself, Kai feels laughter bubbling up&mdash;unexpected and
-          genuine. There&rsquo;s something absurdly perfect about the image.
-          All his years of seeking, all his elaborate self-narratives, all his
-          desperate attempts to fill the hollow place... and he&rsquo;s just a
-          potato taking itself too seriously.
+          genuine.
         </p>
         <p>
           &ldquo;So what does a sacred potato do about the hollow place?&rdquo;

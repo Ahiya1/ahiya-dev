@@ -171,11 +171,6 @@ export function PartThree() {
           opened between himself and his actions, a space from which he can
           observe his own compulsion.
         </p>
-        <p>
-          This awareness grows slowly, like a desert plant. Some days it
-          withers in the heat of his craving. Other days, it reaches toward
-          understanding.
-        </p>
       </Scene>
 
       <Scene w="hardlight">
@@ -267,9 +262,7 @@ export function PartThree() {
         </Letter>
         <p>
           Something cracks inside Kai&mdash;not the hollow place expanding, but
-          a rigid belief system fracturing. The belief that only perfection
-          warranted completion. That flawed creation was worse than abandoned
-          potential.
+          a rigid belief system fracturing.
         </p>
         <p>
           He unrolls the plans, tracing the modifications with fingertips
@@ -371,9 +364,8 @@ export function PartThree() {
         <p>
           They share a meal of dried meat and bread, their shoulders
           occasionally brushing in the crowded eating house. Each contact sends
-          a current through Kai that has nothing to do with the fruit&rsquo;s
-          promise&mdash;a different kind of hunger, equally powerful but
-          somehow cleaner.
+          a current through Kai&mdash;a different kind of hunger, equally
+          powerful but somehow cleaner.
         </p>
         <p>
           When Kai mentions his own journey has no fixed destination, Elian
@@ -555,8 +547,7 @@ export function PartThree() {
         <p>
           They dissolve into laughter again. When it finally subsides, Kai
           feels lighter than he has in years&mdash;the hollow place still there
-          but momentarily irrelevant, like a chronic pain forgotten during
-          intense pleasure.
+          but momentarily irrelevant.
         </p>
       </Scene>
 
@@ -599,9 +590,7 @@ export function PartThree() {
         </p>
         <p>
           Kai turns southward, aware of a curious lightness in his movements.
-          The hollow place is still there. But now it feels less like a wound
-          and more like a particular shape of awareness&mdash;a vessel capable
-          of holding experience without demanding it be of a certain kind.
+          The hollow place is still there. But it feels less like a wound.
         </p>
         <p>
           As Kai walks, memory returns&mdash;not as haunting regret but as

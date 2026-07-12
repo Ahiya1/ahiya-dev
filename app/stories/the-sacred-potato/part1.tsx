@@ -71,8 +71,7 @@ export function PartOne() {
           Three Cities drought.&rdquo;
         </p>
         <p>
-          Kai nodded once. The trader didn&rsquo;t press. Desert etiquette. Everyone out here was running
-          from something.
+          Kai nodded once. The trader didn&rsquo;t press. Desert etiquette.
         </p>
         <p>
           His maps have become extensions of memory. He rarely consults them
@@ -279,6 +278,12 @@ export function PartOne() {
           She kisses him once, lightly, then turns away. Kai watches until
           distance reduces her to a point, then to nothing against the empty
           landscape.
+        </p>
+        <p>
+          For a moment it occurs to him that she is not a sign of
+          anything&mdash;that Karesh is real, her father&rsquo;s partners are
+          real, that she is walking toward a life and not away from one. The
+          thought offers him nothing he can follow, so he sets it down.
         </p>
       </Scene>
 

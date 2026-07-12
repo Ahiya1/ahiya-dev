@@ -40,8 +40,7 @@ export function PartTwo() {
         <p>He eats another. And another. The same sequence with slight variations.</p>
         <p>
           By evening, Kai&rsquo;s stomach aches from too much sweetness, yet
-          the emptiness remains. He watches the others, recognizing in their
-          movements his own compulsion reflected back at different stages.
+          the emptiness remains. He watches the others.
         </p>
       </Scene>
 
@@ -91,16 +90,6 @@ export function PartTwo() {
           varieties that few people recognize.&rdquo;
         </p>
         <p>
-          Dalin&rsquo;s elaborate justifications remind Kai of his own
-          explanations for leaving the University.{" "}
-          <em>
-            I need space to develop my theories. Institutional constraints
-            stifle true innovation. The desert contains water patterns crucial
-            to my research.
-          </em>{" "}
-          All partially true. All fundamentally lies.
-        </p>
-        <p>
           As night falls, the woman in indigo approaches their fire. Jana
           introduces herself as a former mathematician from the eastern
           universities. She speaks in precise sentences, each word carefully
@@ -136,6 +125,12 @@ export function PartTwo() {
           refining equations. They were saving lives with flawed methods while
           I...&rdquo; She shrugs. &ldquo;I came to the desert to see the actual
           rain patterns. Found a tree instead.&rdquo;
+        </p>
+        <p>
+          For a moment something crosses her face that is not
+          desperation&mdash;an old fondness, maybe, for the woman who built
+          models because rain amazed her. Kai doesn&rsquo;t ask. It
+          doesn&rsquo;t fit what he needs her to be.
         </p>
       </Scene>
 
@@ -215,8 +210,7 @@ export function PartTwo() {
           That evening, he finds himself drawing calculations in the
           sand&mdash;flow rates, permeability variables, aquifer
           capacities&mdash;his fingers moving with muscle memory. For a moment,
-          the familiar equations bring a different kind of satisfaction, a
-          clarity distinct from the fruit&rsquo;s sweetness.
+          the familiar equations bring a different kind of satisfaction.
         </p>
         <p>
           Then he erases them with a sweep of his hand. Instead, he trades for
