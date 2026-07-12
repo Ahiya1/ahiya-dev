@@ -617,7 +617,7 @@ export function PartThree() {
           threatening to face directly.
         </p>
         <p>
-          <em>Neel would laugh at this,</em> he thinks suddenly. His oldest
+          <em>Neel would laugh at this,</em>{" "}he thinks suddenly. His oldest
           friend who had seen every iteration of his brilliance and subsequent
           flight. Who had named the pattern when Kai himself couldn&rsquo;t see
           it.
