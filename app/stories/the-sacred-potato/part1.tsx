@@ -71,8 +71,7 @@ export function PartOne() {
           Three Cities drought.&rdquo;
         </p>
         <p>
-          Kai nodded once, neither confirming nor denying. The trader
-          didn&rsquo;t press. Desert etiquette. Everyone out here was running
+          Kai nodded once. The trader didn&rsquo;t press. Desert etiquette. Everyone out here was running
           from something.
         </p>
         <p>
@@ -80,8 +79,7 @@ export function PartOne() {
           now. His body knows the terrain, responds to gradient changes too
           subtle for conscious recognition. His thinking mind calculates
           distance, water consumption, likely changes in wind direction.
-          Another part of him&mdash;neither body nor calculating
-          mind&mdash;registers everything else. The precise configuration of
+          Another part of him registers everything else. The precise configuration of
           clouds. The quality of silence. How light moves differently at
           different times of day.
         </p>

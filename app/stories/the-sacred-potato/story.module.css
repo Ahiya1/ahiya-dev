@@ -412,6 +412,14 @@
   color: var(--fg);
 }
 
+/* thesis lines at lower volume: image loud, explanation a whisper */
+
+.whisper {
+  font-size: 0.85em;
+  line-height: 1.95;
+  color: var(--fg-soft);
+}
+
 /* one-line strikes */
 
 .beat {

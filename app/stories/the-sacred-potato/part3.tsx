@@ -1,5 +1,5 @@
 import React from "react";
-import { Scene, Threshold, Sacred, Letter, Beat } from "./Scene";
+import { Scene, Threshold, Sacred, Letter, Beat, Whisper } from "./Scene";
 
 export function PartThree() {
   return (
@@ -124,10 +124,8 @@ export function PartThree() {
         </p>
         <p>
           Afterward, as Nasir sleeps beside him, Kai watches the rise and fall
-          of his chest. Not the desperate clinging he had felt after being with
-          Senna. Not the analytical distance that had colored his time with
-          Jana. Something else&mdash;appreciation without the need to transform
-          the experience into something more significant than it was.
+          of his chest&mdash;appreciation without the need to transform the
+          experience into something more significant than it was.
         </p>
       </Scene>
 
@@ -200,10 +198,10 @@ export function PartThree() {
           potential partners with a desperation that transforms the object of
           desire into something symbolic rather than human.
         </p>
-        <p>
+        <Whisper>
           The void, he realizes, is not unique to fruit seekers. It speaks in
           many languages.
-        </p>
+        </Whisper>
       </Scene>
 
       <Scene w="villagewarm">
@@ -240,11 +238,11 @@ export function PartThree() {
           slightly toward it before he catches himself, turning the movement
           into an adjustment of his robe.
         </p>
-        <p>
+        <Whisper>
           His recovery narrative, Kai realizes, has become another kind of
           fruit&mdash;another external solution to the hollow place, another
           identity to cling to.
-        </p>
+        </Whisper>
       </Scene>
 
       <Scene w="parchment" mode="felt">
@@ -494,11 +492,6 @@ export function PartThree() {
           now. Sometimes the glass decides what it wants to be.&rdquo;
         </p>
         <p>
-          Later, as they walk away from the settlement, Elian says,
-          &ldquo;That&rsquo;s what my teacher means about shaping the
-          cracks.&rdquo;
-        </p>
-        <p>
           Kai nods, suddenly aware of the uneaten fruit still in his pack. He
           removes it, studies it for a moment, then deliberately places it on a
           rock beside the path. Neither discarding nor consuming it, but simply
@@ -526,8 +519,7 @@ export function PartThree() {
       <Scene w="rainhint">
         <p>
           Elian stays with him for twenty-eight days. Their journey takes a
-          winding path eastward, neither hurrying nor delaying, responsive to
-          the terrain and to each other. They encounter three more fruit trees
+          winding path eastward, responsive to the terrain and to each other. They encounter three more fruit trees
           during this time. At each one, Kai&rsquo;s response is
           different&mdash;once eating with conscious attention, once passing by
           without stopping, once sitting beneath the branches without reaching
@@ -541,8 +533,8 @@ export function PartThree() {
         </p>
         <Beat>&ldquo;Behold,&rdquo; he announces, &ldquo;my masterpiece.&rdquo;</Beat>
         <p>
-          Something breaks loose in Kai&mdash;not the hollow place expanding,
-          but a rigidity he hadn&rsquo;t known he carried. He laughs, first
+          Something breaks loose in Kai&mdash;a rigidity he hadn&rsquo;t known
+          he carried. He laughs, first
           quietly, then with increasing abandon until tears stream down his
           face.
         </p>
@@ -577,13 +569,15 @@ export function PartThree() {
         </p>
         <p>
           &ldquo;This is where we part,&rdquo; Elian says, his voice carrying
-          neither sadness nor detachment, simply recognition.
+          only recognition.
         </p>
         <p>
-          Kai nods, surprised by the lack of desperation he feels. Their
-          connection has been profound without becoming another form of
-          seeking, intense without creating dependency.
+          Kai nods, surprised by the lack of desperation he feels.
         </p>
+        <Whisper>
+          Their connection has been profound without becoming another form of
+          seeking, intense without creating dependency.
+        </Whisper>
         <p>&ldquo;What will you seek in the south?&rdquo; Elian asks.</p>
         <p>
           Kai considers the question. For years, the answer would have been

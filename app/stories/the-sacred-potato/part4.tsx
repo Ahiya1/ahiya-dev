@@ -1,5 +1,5 @@
 import React from "react";
-import { Scene, Threshold, Sacred, Beat } from "./Scene";
+import { Scene, Threshold, Sacred, Beat, Whisper } from "./Scene";
 
 export function PartFour() {
   return (
@@ -274,15 +274,13 @@ export function PartFour() {
       <Scene w="nightstars">
         <p>
           That night, they lie beside the same fire but apart, each wrapped in
-          their own blankets. The space between them is neither barrier nor
-          invitation&mdash;simply the natural distance between two complete
-          beings.
+          their own blankets. The space between them is simply the natural
+          distance between two complete beings.
         </p>
         <p>
           In the morning, Sienna continues her journey northward. Kai watches
           her go, struck by the complete absence of drama in their parting. She
-          simply goes. He simply remains. Nothing is missing from this
-          exchange.
+          simply goes. He simply remains.
         </p>
       </Scene>
 
@@ -304,11 +302,11 @@ export function PartFour() {
           seeker looks confused, but something in Kai&rsquo;s laughter seems to
           reach him more than the words themselves.
         </p>
-        <p>
+        <Whisper>
           The phrase becomes not a philosophy to follow but a creation to play
           with&mdash;a lens through which to view both his suffering and his
           joy with slightly less desperate seriousness.
-        </p>
+        </Whisper>
       </Scene>
 
       <Scene w="predawn" pace="slow">

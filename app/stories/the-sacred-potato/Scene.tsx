@@ -61,6 +61,12 @@ export function Beat({ children }: { children: React.ReactNode }) {
   return <p className={styles.beat}>{children}</p>;
 }
 
+// The design law's second half: image loud, explanation a whisper
+// downstream. Thesis lines survive at lower volume.
+export function Whisper({ children }: { children: React.ReactNode }) {
+  return <p className={styles.whisper}>{children}</p>;
+}
+
 // Letters and plans: paper held close in the dark.
 export function Letter({ children }: { children: React.ReactNode }) {
   return <div className={styles.letter}>{children}</div>;
