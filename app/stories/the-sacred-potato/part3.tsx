@@ -1,5 +1,5 @@
 import React from "react";
-import { Scene, Threshold, Sacred, Letter, Beat } from "./Scene";
+import { Scene, Threshold, Sacred, Letter, Beat, Whisper } from "./Scene";
 
 export function PartThree() {
   return (
@@ -81,14 +81,12 @@ export function PartThree() {
         </p>
         <p>&ldquo;Ah.&rdquo; Nasir nods slowly. &ldquo;And what emptiness would that be?&rdquo;</p>
         <p>
-          The question strikes Kai like a physical blow. He has never tried to
-          define the hollow place, never examined its contours or questioned
-          its origin. It has simply been there, as fundamental as breathing.
+          The question strikes Kai like a physical blow. His hands go still on
+          the makeshift sundial.
         </p>
         <p>
-          &ldquo;I don&rsquo;t know,&rdquo; he admits, his hands stilling on
-          the makeshift sundial. &ldquo;It&rsquo;s just... there. A void that
-          needs filling.&rdquo;
+          &ldquo;I don&rsquo;t know,&rdquo; he admits. &ldquo;It&rsquo;s just...
+          there. A void that needs filling.&rdquo;
         </p>
         <p>
           Nasir pokes at the small fire with a stick, sending sparks spiraling
@@ -123,11 +121,8 @@ export function PartThree() {
           nor calculated, but present and curious.
         </p>
         <p>
-          Afterward, as Nasir sleeps beside him, Kai watches the rise and fall
-          of his chest. Not the desperate clinging he had felt after being with
-          Senna. Not the analytical distance that had colored his time with
-          Jana. Something else&mdash;appreciation without the need to transform
-          the experience into something more significant than it was.
+          Afterward, as Nasir sleeps beside him, Kai watches his chest rise
+          and fall. He does not name the night.
         </p>
       </Scene>
 
@@ -148,14 +143,13 @@ export function PartThree() {
         <p>
           &ldquo;May I offer something before we part?&rdquo; Nasir asks. When
           Kai nods, he continues: &ldquo;You&rsquo;re not seeking fruit.
-          You&rsquo;re seeking to escape the hollow place. But what if that
-          place isn&rsquo;t something to escape? What if it&rsquo;s just part
-          of being alive?&rdquo;
+          You&rsquo;re seeking to escape the hollow place. But maybe there&rsquo;s no
+          away. Maybe people just have places in them.&rdquo;
         </p>
         <p>
           They part with simple acknowledgment&mdash;a hand on shoulder, a
-          brief meeting of eyes. No promises. No drama. Just the recognition of
-          a complete encounter that requires no continuation.
+          brief meeting of eyes. No promises. No drama. Just his hand
+          leaving Kai&rsquo;s shoulder, warm for a moment after it is gone.
         </p>
         <p>
           As Kai watches Nasir&rsquo;s figure diminish against the western
@@ -167,16 +161,9 @@ export function PartThree() {
       <Scene w="void" mode="felt" pace="slow">
         <Sacred>What if the fruit was never the problem?</Sacred>
         <p>
-          The question takes root, growing alongside Kai&rsquo;s continued
-          seeking. He still tracks the trees, still consumes the fruit with
-          desperate need, but something has shifted. A small distance has
-          opened between himself and his actions, a space from which he can
-          observe his own compulsion.
-        </p>
-        <p>
-          This awareness grows slowly, like a desert plant. Some days it
-          withers in the heat of his craving. Other days, it reaches toward
-          understanding.
+          The question takes root. He still tracks the trees, still consumes
+          the fruit with desperate need. But sometimes, as his hand closes
+          around one, he sees the hand closing.
         </p>
       </Scene>
 
@@ -187,23 +174,19 @@ export function PartThree() {
           trajectory: the initial relief, followed by the intensified
           emptiness, followed by the desperate search for the next tree. He
           maps this curve mentally, recognizing its mathematical consistency.
-          The problem isn&rsquo;t that the system is faulty; it&rsquo;s working
-          exactly as designed. The flaw is in what he expects it to provide.
+          Relief, absence, pursuit. Nothing in the mechanism is broken.
         </p>
         <p>
-          He begins to notice parallels between his seeking and other patterns
-          in the desert. How traders fixate on particularly valuable goods,
-          speaking of them with the same intensity he reserves for the fruit.
-          How some travelers structure their entire journeys around visiting
-          certain oases known for their beauty, only to arrive and immediately
-          begin planning for the next landmark. How young men and women pursue
-          potential partners with a desperation that transforms the object of
-          desire into something symbolic rather than human.
+          Near a spice stall, a trader lifts the same blue scarf six times and
+          cannot buy it or set it down. At the public well, two lovers quarrel
+          without looking at each other, both watching the road for someone
+          else. A pilgrim arrives at the famous oasis and, before drinking,
+          asks how far to the next one.
         </p>
-        <p>
+        <Whisper>
           The void, he realizes, is not unique to fruit seekers. It speaks in
           many languages.
-        </p>
+        </Whisper>
       </Scene>
 
       <Scene w="villagewarm">
@@ -241,9 +224,8 @@ export function PartThree() {
           into an adjustment of his robe.
         </p>
         <p>
-          His recovery narrative, Kai realizes, has become another kind of
-          fruit&mdash;another external solution to the hollow place, another
-          identity to cling to.
+          His story hangs from him like fruit: bright, handled, offered to
+          others while his own hand still reaches.
         </p>
       </Scene>
 
@@ -269,9 +251,7 @@ export function PartThree() {
         </Letter>
         <p>
           Something cracks inside Kai&mdash;not the hollow place expanding, but
-          a rigid belief system fracturing. The belief that only perfection
-          warranted completion. That flawed creation was worse than abandoned
-          potential.
+          the belief that flawed creation was worse than abandoned potential.
         </p>
         <p>
           He unrolls the plans, tracing the modifications with fingertips
@@ -330,7 +310,7 @@ export function PartThree() {
           single moment of weakness. If he couldn&rsquo;t maintain perfection,
           what was the point of trying at all?
         </p>
-        <Beat>The pattern breaks, then reasserts itself. Progress isn&rsquo;t linear.</Beat>
+        <Beat>The pattern breaks, then reasserts itself.</Beat>
       </Scene>
 
       <Scene w="rainhint">
@@ -367,15 +347,14 @@ export function PartThree() {
         <p>&ldquo;You have a destination,&rdquo; Kai observes. &ldquo;A specific purpose.&rdquo;</p>
         <p>
           Elian adjusts the strap of his pack. &ldquo;I have a
-          direction,&rdquo; he corrects. &ldquo;The purpose reveals itself in
-          the moving toward it.&rdquo;
+          direction,&rdquo; he corrects. &ldquo;Purpose is harder. I usually
+          find out late.&rdquo;
         </p>
         <p>
           They share a meal of dried meat and bread, their shoulders
           occasionally brushing in the crowded eating house. Each contact sends
-          a current through Kai that has nothing to do with the fruit&rsquo;s
-          promise&mdash;a different kind of hunger, equally powerful but
-          somehow cleaner.
+          a current through Kai&mdash;a hunger that does not open the old
+          hollow beneath it.
         </p>
         <p>
           When Kai mentions his own journey has no fixed destination, Elian
@@ -515,19 +494,15 @@ export function PartThree() {
         </p>
         <p>
           Later, as Elian sleeps beside him, Kai notices the change in his own
-          breathing&mdash;deeper, less guarded. The hollow place remains. But
-          for the first time, Kai can imagine it not as an adversary to be
-          conquered but as a creation of his own making. A shape he has avoided
-          so thoroughly that it has come to feel like destiny rather than
-          choice.
+          breathing&mdash;deeper, less guarded. The hollow place remains
+          beneath his ribs. His breath moves around it.
         </p>
       </Scene>
 
       <Scene w="rainhint">
         <p>
           Elian stays with him for twenty-eight days. Their journey takes a
-          winding path eastward, neither hurrying nor delaying, responsive to
-          the terrain and to each other. They encounter three more fruit trees
+          winding path eastward, responsive to the terrain and to each other. They encounter three more fruit trees
           during this time. At each one, Kai&rsquo;s response is
           different&mdash;once eating with conscious attention, once passing by
           without stopping, once sitting beneath the branches without reaching
@@ -541,8 +516,8 @@ export function PartThree() {
         </p>
         <Beat>&ldquo;Behold,&rdquo; he announces, &ldquo;my masterpiece.&rdquo;</Beat>
         <p>
-          Something breaks loose in Kai&mdash;not the hollow place expanding,
-          but a rigidity he hadn&rsquo;t known he carried. He laughs, first
+          Something breaks loose in Kai&mdash;a rigidity he hadn&rsquo;t known
+          he carried. He laughs, first
           quietly, then with increasing abandon until tears stream down his
           face.
         </p>
@@ -563,8 +538,7 @@ export function PartThree() {
         <p>
           They dissolve into laughter again. When it finally subsides, Kai
           feels lighter than he has in years&mdash;the hollow place still there
-          but momentarily irrelevant, like a chronic pain forgotten during
-          intense pleasure.
+          but momentarily irrelevant.
         </p>
       </Scene>
 
@@ -577,13 +551,15 @@ export function PartThree() {
         </p>
         <p>
           &ldquo;This is where we part,&rdquo; Elian says, his voice carrying
-          neither sadness nor detachment, simply recognition.
+          only recognition.
         </p>
         <p>
-          Kai nods, surprised by the lack of desperation he feels. Their
-          connection has been profound without becoming another form of
-          seeking, intense without creating dependency.
+          Kai nods, surprised by the lack of desperation he feels.
         </p>
+        <Whisper>
+          Their connection has been profound without becoming another form of
+          seeking, intense without creating dependency.
+        </Whisper>
         <p>&ldquo;What will you seek in the south?&rdquo; Elian asks.</p>
         <p>
           Kai considers the question. For years, the answer would have been
@@ -605,9 +581,7 @@ export function PartThree() {
         </p>
         <p>
           Kai turns southward, aware of a curious lightness in his movements.
-          The hollow place is still there. But now it feels less like a wound
-          and more like a particular shape of awareness&mdash;a vessel capable
-          of holding experience without demanding it be of a certain kind.
+          The hollow place is still there. But it feels less like a wound.
         </p>
         <p>
           As Kai walks, memory returns&mdash;not as haunting regret but as

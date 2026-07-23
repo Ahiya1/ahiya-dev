@@ -19,7 +19,7 @@ export function PartOne() {
         <p>
           Kai moves across sand that remembers nothing. Each footprint claims
           territory for seconds before wind reclaims it. This is his ninth
-          season crossing. His body has become a vessel for this single
+          crossing. His body has become a vessel for this single
           purpose&mdash;lean intention wrapped in skin turned copper by
           relentless sun. Tendons that know precisely how much tension to
           maintain. Lungs that extract what they need from air so dry it pulls
@@ -32,7 +32,7 @@ export function PartOne() {
         </p>
         <p>
           He reaches for his water skin. Numbers flow unbidden: 0.73 liters
-          remaining. At 0.05 liters per hour in current conditions, 14.2 hours
+          remaining. At 0.05 liters per hour in current conditions, 14.6 hours
           until the next well. These calculations rise to the surface of
           thought without effort&mdash;the engineer&rsquo;s reflexes persisting
           despite his attempts to escape them. His mouth will become dust. His
@@ -71,17 +71,14 @@ export function PartOne() {
           Three Cities drought.&rdquo;
         </p>
         <p>
-          Kai nodded once, neither confirming nor denying. The trader
-          didn&rsquo;t press. Desert etiquette. Everyone out here was running
-          from something.
+          Kai nodded once. The trader didn&rsquo;t press. Desert etiquette.
         </p>
         <p>
           His maps have become extensions of memory. He rarely consults them
           now. His body knows the terrain, responds to gradient changes too
           subtle for conscious recognition. His thinking mind calculates
           distance, water consumption, likely changes in wind direction.
-          Another part of him&mdash;neither body nor calculating
-          mind&mdash;registers everything else. The precise configuration of
+          Another part of him registers everything else. The precise configuration of
           clouds. The quality of silence. How light moves differently at
           different times of day.
         </p>
@@ -138,10 +135,10 @@ export function PartOne() {
       <Scene w="hardlight">
         <p>
           The tube still sits at the bottom of Kai&rsquo;s pack, untouched. He
-          adjusted the weight on his shoulders. The familiar ache of regret
-          settled between his shoulder blades&mdash;heavier than the pack,
-          heavier than thirst. Around him, the desert stretched in every
-          direction. He expected nothing today. He expected nothing at all.
+          adjusts the weight on his shoulders. The familiar ache of regret
+          settles between his shoulder blades&mdash;heavier than the pack,
+          heavier than thirst. Around him, the desert stretches in every
+          direction. He expects nothing today. He expects nothing at all.
         </p>
       </Scene>
 
@@ -150,9 +147,8 @@ export function PartOne() {
           The tree appears in the hour when light begins to change but shadows
           have not yet lengthened. It stands alone, impossible and certain. A
           single tree where nothing should grow, its branches heavy with fruit
-          unlike any Kai has seen before. Each piece catches light differently,
-          as if they were not all the same species but many, collected from
-          countless orchards and somehow thriving together.
+          unlike any Kai has seen before. Each fruit catches light differently,
+          as if the tree had gathered its crop from countless orchards.
         </p>
         <p>
           His steps slow of their own accord. Something inside his chest
@@ -227,8 +223,8 @@ export function PartOne() {
           &ldquo;Do you always play for trees?&rdquo;
         </p>
         <p>
-          The unexpected question startles a laugh from her&mdash;a bright
-          sound at odds with her composed demeanor. &ldquo;Only the interesting
+          The question startles a laugh from her, bright enough to make the
+          strings hum. &ldquo;Only the interesting
           ones.&rdquo; She tilts her head. &ldquo;Most travelers pass this tree
           without seeing it.&rdquo;
         </p>
@@ -281,6 +277,13 @@ export function PartOne() {
           She kisses him once, lightly, then turns away. Kai watches until
           distance reduces her to a point, then to nothing against the empty
           landscape.
+        </p>
+        <p>
+          For a moment it occurs to him that she is not a sign of
+          anything&mdash;that Karesh has ledgers and kettle-smoke, that her
+          father&rsquo;s partners wait beneath striped awnings, that she is
+          walking toward a life and not away from one. The thought offers him
+          nothing he can follow, so he sets it down.
         </p>
       </Scene>
 

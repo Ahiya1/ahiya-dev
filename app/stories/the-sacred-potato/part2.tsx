@@ -33,22 +33,21 @@ export function PartTwo() {
         <p>
           The taste remains extraordinary&mdash;complex layers of sweetness
           giving way to subtle tartness, then returning to sweetness again. But
-          now he recognizes the pattern. The momentary fulfillment, the
-          fleeting sense of completeness, followed by its disappearance and the
-          hollow space reopening, somehow larger than before.
+          now he recognizes the pattern. First the fullness. Then its
+          quick vanishing. Then the hollow under his ribs opening wider than
+          before.
         </p>
         <p>He eats another. And another. The same sequence with slight variations.</p>
         <p>
           By evening, Kai&rsquo;s stomach aches from too much sweetness, yet
-          the emptiness remains. He watches the others, recognizing in their
-          movements his own compulsion reflected back at different stages.
+          the emptiness remains. He watches the others.
         </p>
       </Scene>
 
       <Scene w="firenight">
         <p>
-          &ldquo;First time in a grove?&rdquo; The old man&rsquo;s voice
-          startles Kai from his observations.
+          &ldquo;First time in a grove?&rdquo; The old man catches him
+          watching.
         </p>
         <p>Kai nods.</p>
         <p>
@@ -92,7 +91,7 @@ export function PartTwo() {
         </p>
         <p>
           Dalin&rsquo;s elaborate justifications remind Kai of his own
-          explanations for leaving the University.{" "}
+          explanations for leaving the University:{" "}
           <em>
             I need space to develop my theories. Institutional constraints
             stifle true innovation. The desert contains water patterns crucial
@@ -136,6 +135,12 @@ export function PartTwo() {
           refining equations. They were saving lives with flawed methods while
           I...&rdquo; She shrugs. &ldquo;I came to the desert to see the actual
           rain patterns. Found a tree instead.&rdquo;
+        </p>
+        <p>
+          For a moment something crosses her face that is not
+          desperation&mdash;an old fondness, maybe, for the woman who built
+          models because rain amazed her. Then she lowers her eyes and turns
+          the page. Kai doesn&rsquo;t ask.
         </p>
       </Scene>
 
@@ -215,8 +220,7 @@ export function PartTwo() {
           That evening, he finds himself drawing calculations in the
           sand&mdash;flow rates, permeability variables, aquifer
           capacities&mdash;his fingers moving with muscle memory. For a moment,
-          the familiar equations bring a different kind of satisfaction, a
-          clarity distinct from the fruit&rsquo;s sweetness.
+          the familiar equations bring a different kind of satisfaction.
         </p>
         <p>
           Then he erases them with a sweep of his hand. Instead, he trades for
@@ -229,9 +233,9 @@ export function PartTwo() {
         <p>
           The seasons turn. Summer heat gives way to autumn winds, then to
           winter&rsquo;s cold clarity, then to spring&rsquo;s brief explosion
-          of desert flowers. Through all these changes, Kai continues his
-          seeking, abandoning earlier patterns of discipline, allowing the
-          fruit to become the organizing principle of his existence.
+          of desert flowers. Through all these changes, Kai continues. Routes bend
+          toward trees. Meals, sleep, trade, weather&mdash;all arrange
+          themselves around fruit.
         </p>
         <p>
           His once-sturdy body grows gaunt, his movements taking on the
@@ -251,8 +255,8 @@ export function PartTwo() {
         <p>
           &ldquo;That was someone else,&rdquo; Kai replies, focusing instead on
           completing the work quickly so he can continue his journey. The
-          hollow place has become a constant companion, occasionally quieted by
-          the fruit but never for long enough.
+          hollow place walks beside him now. Fruit quiets it for an hour,
+          sometimes less.
         </p>
         <p>
           Memory intrudes with increasing frequency. The complex mathematical
@@ -308,8 +312,8 @@ export function PartTwo() {
         </p>
         <p>Kai says nothing.</p>
         <p>
-          In the calligrapher&rsquo;s precise script he had first met, he now
-          sees only jagged desperation.
+          The old precise script remains in places. Around it, the page has
+          broken into hooks and scratches.
         </p>
         <p>
           &ldquo;If you follow the rules perfectly,&rdquo; Jana says,
@@ -377,8 +381,8 @@ export function PartTwo() {
           Eight days later, Jana turns southward toward a region where,
           according to her calculations, a particular variety of tree will be
           fruiting. Kai discovers his own path now leads eastward. They part
-          without ceremony, two objects moving in trajectories determined by
-          forces neither fully understands.
+          without ceremony. Her footprints angle south. His continue east. By
+          morning, wind has troubled both.
         </p>
       </Scene>
 
@@ -438,8 +442,8 @@ export function PartTwo() {
         </p>
         <Beat>Three days later, he breaks it.</Beat>
         <p>
-          The next morning, the emptiness behind his breastbone expands to fill
-          his entire chest. His hands shake. Sweat soaks his sleeping mat
+          On the third morning, the emptiness behind his breastbone expands to
+          fill his entire chest. His hands shake. Sweat soaks his sleeping mat
           despite the desert&rsquo;s cold dawn. He knows a tree stands half a
           day&rsquo;s journey west. He closes his eyes, counts his breaths,
           focuses on the precise arrangement of stones around his campfire.

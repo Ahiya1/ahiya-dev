@@ -1,5 +1,5 @@
 import React from "react";
-import { Scene, Threshold, Sacred, Beat } from "./Scene";
+import { Scene, Threshold, Sacred, Beat, Whisper } from "./Scene";
 
 export function PartFour() {
   return (
@@ -172,22 +172,20 @@ export function PartFour() {
           in a pattern that seems both random and purposeful. &ldquo;When I was
           very young,&rdquo; she begins, &ldquo;I watched my father destroy
           himself seeking water mirages. By the time I was old enough to travel
-          alone, I understood something essential about desire&mdash;that most
-          of what we chase is merely a projection of what we believe we
-          lack.&rdquo;
+          alone, I had learned to distrust a shining thing on the
+          horizon.&rdquo;
         </p>
         <p>
-          She picks up one of her small stones, rolling it between her fingers.
-          &ldquo;There&rsquo;s a difference between hunger and craving. Hunger
-          comes from the body&rsquo;s true needs. Craving comes from the
-          mind&rsquo;s confusion.&rdquo; She places the stone in his palm.
+          She picks up one of her small stones, rolling it between her
+          fingers, and places it in his palm.
           &ldquo;Feel the weight of this. Its texture. Its temperature changing
           as it absorbs your body&rsquo;s heat. This is reality. The fruit you
           seek exists, but what you believe it can give you is a mirage.&rdquo;
         </p>
         <p>
-          Kai holds the stone, feeling its solid presence. &ldquo;So the answer
-          is to focus on what&rsquo;s real? Physical sensations? The present
+          Kai holds the stone, feeling its solid presence, then returns it to
+          the pattern between them. &ldquo;So the answer is to focus on
+          what&rsquo;s real? Physical sensations? The present
           moment?&rdquo;
         </p>
         <p>
@@ -196,7 +194,10 @@ export function PartFour() {
           adopt.&rdquo; She reaches into her pack and pulls out several small
           tubers&mdash;ordinary root vegetables gathered from some unseen
           garden. She begins to clean them, her movements unhurried yet
-          precise.
+          precise. She drops one into the pot and leaves another on the cloth
+          beside her. &ldquo;This one goes in because we are hungry,&rdquo;
+          she says. She taps the one on the cloth. &ldquo;This one you keep
+          staring at because you think it knows your name.&rdquo;
         </p>
         <p>
           &ldquo;Has it occurred to you,&rdquo; she says as she works,
@@ -217,8 +218,7 @@ export function PartFour() {
           a potato.&rdquo;
         </p>
         <p>
-          &ldquo;A... potato?&rdquo; Kai finds himself caught between
-          irritation and unexpected curiosity.
+          &ldquo;A... potato?&rdquo;
         </p>
         <Sacred>
           &ldquo;A sacred potato,&rdquo; she clarifies, her eyes twinkling.
@@ -232,18 +232,15 @@ export function PartFour() {
         </p>
         <p>
           &ldquo;A sacred potato,&rdquo; she corrects again, emphasizing the
-          word with gentle humor. &ldquo;An awareness that has convinced itself
-          it&rsquo;s a separate self with a particular story about what it
-          lacks. Your hollow place isn&rsquo;t something to fill or transcend
-          or analyze. It&rsquo;s just part of the particular shape your
-          potato-ness has taken.&rdquo;
+          word with gentle humor. &ldquo;An awareness telling itself a
+          particular story about what it lacks.&rdquo;
         </p>
         <p>
           Despite himself, Kai feels laughter bubbling up&mdash;unexpected and
-          genuine. There&rsquo;s something absurdly perfect about the image.
-          All his years of seeking, all his elaborate self-narratives, all his
-          desperate attempts to fill the hollow place... and he&rsquo;s just a
-          potato taking itself too seriously.
+          genuine. There&rsquo;s something absurdly perfect about the image:
+          all his years of seeking, all his elaborate
+          self-narratives&mdash;and he&rsquo;s just a potato taking itself too
+          seriously.
         </p>
         <p>
           &ldquo;So what does a sacred potato do about the hollow place?&rdquo;
@@ -251,13 +248,12 @@ export function PartFour() {
         </p>
         <p>
           Sienna shrugs. &ldquo;Whatever it wants. Fill it sometimes. Leave it
-          empty sometimes. Examine it. Ignore it. None of it matters
-          particularly, except in how it shapes your experience of being alive
-          right now.&rdquo;
+          empty sometimes. Examine it. Ignore it.&rdquo; She drops the
+          tuber from the cloth into the pot. &ldquo;Tonight, it eats.&rdquo;
         </p>
         <p>
-          She continues preparing the meal, cutting the vegetables with the
-          same care she might give to rare spices or precious fruit.
+          She continues preparing the meal, cutting the remaining vegetables
+          with the same care she might give to rare spices or precious fruit.
           &ldquo;Besides,&rdquo; she adds, &ldquo;if we were perfect, complete,
           lacking nothing... what a boring existence that would be. No seeking,
           no finding, no losing, no laughing at the cosmic joke of it
@@ -274,15 +270,13 @@ export function PartFour() {
       <Scene w="nightstars">
         <p>
           That night, they lie beside the same fire but apart, each wrapped in
-          their own blankets. The space between them is neither barrier nor
-          invitation&mdash;simply the natural distance between two complete
-          beings.
+          their own blankets. The space between them is simply the natural
+          distance between two complete beings.
         </p>
         <p>
           In the morning, Sienna continues her journey northward. Kai watches
           her go, struck by the complete absence of drama in their parting. She
-          simply goes. He simply remains. Nothing is missing from this
-          exchange.
+          simply goes. He simply remains.
         </p>
       </Scene>
 
@@ -304,11 +298,11 @@ export function PartFour() {
           seeker looks confused, but something in Kai&rsquo;s laughter seems to
           reach him more than the words themselves.
         </p>
-        <p>
+        <Whisper>
           The phrase becomes not a philosophy to follow but a creation to play
           with&mdash;a lens through which to view both his suffering and his
           joy with slightly less desperate seriousness.
-        </p>
+        </Whisper>
       </Scene>
 
       <Scene w="predawn" pace="slow">
@@ -342,8 +336,12 @@ export function PartFour() {
           away.
         </p>
         <p>
-          The tree is simply a tree&mdash;neither salvation nor temptation. The
-          sand beneath his feet is simply sand. The breath moving through his
+          The first light touches one fruit, then another. Dust clings to the
+          bark. An ant works its way along a split in the trunk, vanishes,
+          appears again. Nothing leans toward him. Nothing withholds itself.
+        </p>
+        <p>
+          The sand beneath his feet is simply sand. The breath moving through his
           body is simply breath. Each element complete in itself, requiring
           nothing beyond its own existence.
         </p>
@@ -351,15 +349,8 @@ export function PartFour() {
           In this moment of complete attention, something extraordinary
           happens, so simple it almost escapes notice: Kai laughs. Not the
           bitter laugh of his seeking years or the calculated laugh of social
-          interaction, but the genuine laughter of recognition. The cosmic joke
-          suddenly apparent.
-        </p>
-        <p>
-          All these years of desperate seeking, of elaborate philosophical
-          frameworks, of systems and explanations and narratives&mdash;and here
-          he stands, just a consciousness experiencing a tree at dawn. A sacred
-          potato indeed, taking itself terribly seriously while the universe
-          unfolds with complete indifference to his drama.
+          interaction, but the genuine laughter of recognition. The joke arrives without
+          announcing itself.
         </p>
         <p>
           The hollow place doesn&rsquo;t disappear. It simply becomes another
@@ -367,10 +358,8 @@ export function PartFour() {
           irrelevant, just present like the sky or the sand or his breath.
         </p>
         <p>
-          Kai reaches up and picks a fruit from the lowest branch. Not from
-          hunger or need or desperate hope, but as a gesture of
-          acknowledgment. He studies its color and texture with appreciation,
-          then raises it to his lips.
+          Kai reaches up and picks a fruit from the lowest branch. He turns
+          it once in his hand, then raises it to his lips.
         </p>
         <p>
           The taste is exactly as it has always been&mdash;sweet, complex,
@@ -385,8 +374,8 @@ export function PartFour() {
         </p>
         <p>
           As he gathers his belongings, Kai&rsquo;s thoughts turn to the
-          University, to his abandoned work, to Neel and their tentative plans
-          to meet in the autumn. For the first time in years, these thoughts
+          University, to his abandoned work, to Neel and his invitation to
+          return. For the first time in years, these thoughts
           bring neither shame nor justification but simple curiosity. What
           would happen if he returned, not as the brilliant mind who must
           create perfection, but as the sacred potato willing to create
@@ -416,9 +405,8 @@ export function PartFour() {
           truly solid.
         </p>
         <p>
-          Nothing permanent. Nothing missing. Nothing extra. Just this&mdash;a
-          sacred potato experiencing the present moment in all its ordinary
-          magnificence.
+          Nothing permanent. Nothing missing. Nothing extra. Just this&mdash;feet
+          in cool sand, sun on cloth, breath moving through a sacred potato.
         </p>
         <Sacred>
           Kai adjusts his head covering against the strengthening sun and
