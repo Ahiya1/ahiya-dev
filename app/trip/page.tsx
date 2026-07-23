@@ -107,10 +107,12 @@ export default function TripPage() {
 
   if (!loaded) return <main dir="rtl" className="min-h-screen" />;
 
-  // The trip is live but the opening ceremony hasn't happened yet:
-  // lock the game until someone runs the ceremony. The 15s state poll
-  // unlocks everyone automatically once ceremonyDone flips.
-  if (state?.isLive && !state.ceremonyDone) {
+  // The game stays locked until the opening ceremony has been run —
+  // before AND during the trip. Claimed identities still bind while
+  // locked (the ?k= effect above), and the 15s state poll unlocks
+  // everyone automatically the moment ceremonyDone flips.
+  if (state && !state.ceremonyDone) {
+    const player = identity ? playerById(identity.playerId) : undefined;
     return (
       <main
         dir="rtl"
@@ -120,11 +122,18 @@ export default function TripPage() {
         <h1 className="mt-4 text-4xl font-extrabold text-[var(--color-ink)]">
           הבוטמניאדה
         </h1>
+        {player && (
+          <p className="mt-4 rounded-full border border-[var(--color-rule)] bg-white/60 px-4 py-1.5 text-base font-bold text-[var(--color-ink)]">
+            {player.emoji} {player.name}, מקומך שמור
+          </p>
+        )}
         <p className="mt-3 animate-pulse text-xl font-bold text-[var(--color-sky-deep)]">
-          הטקס טרם נערך
+          {state.isLive ? "הטקס טרם נערך" : "אמירי הגליל · 29 ביולי"}
         </p>
         <p className="mt-2 text-base text-[var(--color-muted)]">
-          התכנסו כולם יחד - הטקס ייפתח על ידי מנהל התחרות
+          {state.isLive
+            ? "התכנסו כולם יחד - הטקס ייפתח על ידי מנהל התחרות"
+            : "המשחק ייפתח בטקס חגיגי ביום הראשון של הטיול"}
         </p>
       </main>
     );
