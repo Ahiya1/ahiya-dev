@@ -22,7 +22,7 @@ export const PLAYERS: Player[] = [
   { id: 'tal', name: 'טל', emoji: '😎' },
   { id: 'ahiya', name: 'אחיה', emoji: '🐙' },
   { id: 'netanel', name: 'נתנאל', emoji: '🍫' },
-  { id: 'hillel', name: 'הלל', emoji: '😭' },
+  { id: 'hillel', name: 'הלל', emoji: '✨' },
 ];
 
 export const playerById = (id: string): Player | undefined =>
