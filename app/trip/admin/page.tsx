@@ -234,6 +234,52 @@ export default function TripAdminPage() {
         </div>
       </section>
 
+      <section className="mt-4 rounded-2xl border border-[var(--color-rule)] bg-white/60 p-4">
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold text-[var(--color-ink)]">
+            🔗 קישורים אישיים
+          </h2>
+          <button
+            disabled={busy !== null}
+            onClick={loadLinks}
+            className="rounded-lg bg-[var(--color-ink)] px-4 py-2 text-sm font-bold text-[var(--color-paper)] disabled:opacity-50"
+          >
+            {busy === "links" ? "טוען..." : links ? "רענון" : "הצגת קישורים"}
+          </button>
+        </div>
+        {links && (
+          <div className="mt-3 space-y-2">
+            {links.map((link) => {
+              const p = playerById(link.playerId);
+              return (
+                <div
+                  key={link.playerId}
+                  className="flex items-center justify-between gap-2 rounded-xl border border-[var(--color-rule)] bg-white p-3 text-sm"
+                >
+                  <div className="min-w-0">
+                    <p className="font-bold text-[var(--color-ink)]">
+                      {p?.emoji} {link.name}
+                    </p>
+                    <p
+                      dir="ltr"
+                      className="truncate text-xs text-[var(--color-muted)]"
+                    >
+                      {link.url}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => copyLink(link)}
+                    className="shrink-0 rounded-lg border border-[var(--color-rule)] bg-white px-3 py-1.5 text-xs font-bold text-[var(--color-ink)]"
+                  >
+                    {copied === link.playerId ? "הועתק ✓" : "העתקה"}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
+
       <section className="mt-4">
         <h2 className="mb-2 font-bold text-[var(--color-ink)]">
           הגשות ({state?.submissions.length ?? 0})
