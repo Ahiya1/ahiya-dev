@@ -5,12 +5,20 @@ import { playerById } from "../content/players";
 import { missionById } from "../content/missions";
 import type { GameState } from "../lib/store";
 
+interface PlayerLink {
+  playerId: string;
+  name: string;
+  url: string;
+}
+
 export default function TripAdminPage() {
   const [password, setPassword] = useState<string | null>(null);
   const [input, setInput] = useState("");
   const [state, setState] = useState<GameState | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [links, setLinks] = useState<PlayerLink[] | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
 
   useEffect(() => {
     const saved = sessionStorage.getItem("trip_admin_password");
@@ -59,6 +67,43 @@ export default function TripAdminPage() {
       setMessage("שגיאת רשת");
     } finally {
       setBusy(null);
+    }
+  };
+
+  const loadLinks = async (): Promise<void> => {
+    if (!password) return;
+    setBusy("links");
+    setMessage(null);
+    try {
+      const res = await fetch("/trip/api/admin", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ password, action: "links" }),
+      });
+      const data = await res.json();
+      if (res.status === 401) {
+        sessionStorage.removeItem("trip_admin_password");
+        setPassword(null);
+        setMessage("סיסמה שגויה");
+      } else if (!res.ok) {
+        setMessage(data.error ?? "שגיאה");
+      } else {
+        setLinks(data.links as PlayerLink[]);
+      }
+    } catch {
+      setMessage("שגיאת רשת");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const copyLink = async (link: PlayerLink): Promise<void> => {
+    try {
+      await navigator.clipboard.writeText(link.url);
+      setCopied(link.playerId);
+      setTimeout(() => setCopied(null), 2000);
+    } catch {
+      setMessage("ההעתקה נכשלה");
     }
   };
 

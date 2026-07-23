@@ -1,10 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
 import { playerById, type PlayerId } from "./content/players";
 import type { GameState } from "./lib/store";
-import NamePicker from "./components/NamePicker";
 import MissionsTab from "./components/MissionsTab";
 import FeedTab from "./components/FeedTab";
 import LeaderboardTab from "./components/LeaderboardTab";
@@ -19,16 +17,68 @@ const TABS: { id: Tab; label: string; emoji: string }[] = [
 
 const POLL_MS = 15_000;
 
+interface Identity {
+  playerId: PlayerId;
+  token: string;
+}
+
+function storedIdentity(): Identity | null {
+  try {
+    const raw = localStorage.getItem("trip_identity");
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<Identity>;
+    if (
+      typeof parsed.playerId === "string" &&
+      typeof parsed.token === "string" &&
+      playerById(parsed.playerId)
+    ) {
+      return { playerId: parsed.playerId, token: parsed.token };
+    }
+  } catch {
+    // corrupt storage — treat as logged out
+  }
+  return null;
+}
+
 export default function TripPage() {
-  const [player, setPlayer] = useState<PlayerId | null>(null);
+  const [identity, setIdentity] = useState<Identity | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [state, setState] = useState<GameState | null>(null);
   const [tab, setTab] = useState<Tab>("missions");
 
+  // Identity comes from a personal magic link (?k=...) sent in WhatsApp.
+  // Once claimed it lives in localStorage; there is no manual name picker.
   useEffect(() => {
-    const saved = localStorage.getItem("trip_player");
-    if (saved && playerById(saved)) setPlayer(saved as PlayerId);
-    setLoaded(true);
+    const init = async () => {
+      const saved = storedIdentity();
+      const url = new URL(window.location.href);
+      const k = url.searchParams.get("k");
+      if (k) {
+        try {
+          const res = await fetch("/trip/api/claim", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ k }),
+          });
+          if (res.ok) {
+            const data = (await res.json()) as Identity;
+            localStorage.setItem("trip_identity", JSON.stringify(data));
+            setIdentity(data);
+            url.searchParams.delete("k");
+            history.replaceState(null, "", url.pathname + url.search + url.hash);
+            setLoaded(true);
+            return;
+          }
+        } catch {
+          // network hiccup — fall back to any saved identity
+        }
+        url.searchParams.delete("k");
+        history.replaceState(null, "", url.pathname + url.search + url.hash);
+      }
+      if (saved) setIdentity(saved);
+      setLoaded(true);
+    };
+    init();
   }, []);
 
   const refresh = useCallback(async () => {
@@ -55,16 +105,6 @@ export default function TripPage() {
     };
   }, [refresh]);
 
-  const pick = (id: PlayerId) => {
-    localStorage.setItem("trip_player", id);
-    setPlayer(id);
-  };
-
-  const switchPlayer = () => {
-    localStorage.removeItem("trip_player");
-    setPlayer(null);
-  };
-
   if (!loaded) return <main dir="rtl" className="min-h-screen" />;
 
   // The trip is live but the opening ceremony hasn't happened yet:
@@ -84,27 +124,33 @@ export default function TripPage() {
           הטקס טרם נערך
         </p>
         <p className="mt-2 text-base text-[var(--color-muted)]">
-          התכנסו כולם יחד ופתחו את טקס הפתיחה
+          התכנסו כולם יחד - הטקס ייפתח על ידי מנהל התחרות
         </p>
-        <Link
-          href="/trip/ceremony"
-          className="mt-8 rounded-2xl bg-[var(--color-ink)] px-8 py-4 text-xl font-bold text-[var(--color-paper)] shadow-lg"
-        >
-          אל הטקס ←
-        </Link>
       </main>
     );
   }
 
-  if (!player) {
+  if (!identity) {
     return (
-      <main dir="rtl" className="min-h-screen">
-        <NamePicker onPick={pick} />
+      <main
+        dir="rtl"
+        className="flex min-h-screen flex-col items-center justify-center px-6 text-center"
+      >
+        <div className="text-7xl">🏆</div>
+        <h1 className="mt-4 text-4xl font-extrabold text-[var(--color-ink)]">
+          הבוטמניאדה
+        </h1>
+        <p className="mt-6 max-w-xs text-lg leading-relaxed text-[var(--color-ink-soft)]">
+          כדי להצטרף, פתחו את הקישור האישי שקיבלתם בוואטסאפ
+        </p>
+        <p className="mt-4 text-xs text-[var(--color-muted)]">
+          לא קיבלתם קישור? תתלוננו אצל אחיה
+        </p>
       </main>
     );
   }
 
-  const me = playerById(player);
+  const me = playerById(identity.playerId);
 
   return (
     <main dir="rtl" className="mx-auto min-h-screen max-w-md pb-24">
@@ -123,14 +169,10 @@ export default function TripPage() {
               )}
             </p>
           </div>
-          <button
-            onClick={switchPlayer}
-            className="flex items-center gap-1.5 rounded-full border border-[var(--color-rule)] bg-white/60 px-3 py-1.5 text-sm font-medium text-[var(--color-ink)]"
-            title="החלפת שחקן"
-          >
+          <div className="flex items-center gap-1.5 rounded-full border border-[var(--color-rule)] bg-white/60 px-3 py-1.5 text-sm font-medium text-[var(--color-ink)]">
             <span className="text-lg">{me?.emoji}</span>
             {me?.name}
-          </button>
+          </div>
         </div>
       </header>
 
@@ -147,7 +189,12 @@ export default function TripPage() {
             <p className="mt-3 text-sm">טוענים את המשחק...</p>
           </div>
         ) : tab === "missions" ? (
-          <MissionsTab playerId={player} state={state} onRefresh={refresh} />
+          <MissionsTab
+            playerId={identity.playerId}
+            token={identity.token}
+            state={state}
+            onRefresh={refresh}
+          />
         ) : tab === "feed" ? (
           <FeedTab state={state} />
         ) : (

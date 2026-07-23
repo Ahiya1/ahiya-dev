@@ -7,6 +7,7 @@ import {
   putJson,
   type TriviaRecord,
 } from '../../lib/store';
+import { verifyPlayer } from '../../lib/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,11 +18,15 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json()) as {
       playerId?: string;
+      token?: string;
       day?: number;
       answers?: Record<string, string>;
     };
     const player = playerById(String(body.playerId ?? ''));
     if (!player) return bad('שחקן לא מוכר');
+    if (!verifyPlayer(player.id, String(body.token ?? ''))) {
+      return bad('קישור אישי לא תקין — פתחו שוב את הקישור מוואטסאפ', 401);
+    }
     const day = body.day;
     if (day !== 1 && day !== 2 && day !== 3) return bad('יום לא תקין');
     const answers = body.answers;

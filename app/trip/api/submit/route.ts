@@ -10,6 +10,7 @@ import {
   type VerdictRecord,
 } from '../../lib/store';
 import { judgeSubmission } from '../../lib/judge';
+import { verifyPlayer } from '../../lib/auth';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -24,6 +25,7 @@ export async function POST(req: Request) {
   try {
     let playerId = '';
     let missionId = '';
+    let token = '';
     let text: string | undefined;
     let photo: File | null = null;
 
@@ -32,6 +34,7 @@ export async function POST(req: Request) {
       const form = await req.formData();
       playerId = String(form.get('playerId') ?? '');
       missionId = String(form.get('missionId') ?? '');
+      token = String(form.get('token') ?? '');
       const t = form.get('text');
       if (typeof t === 'string' && t.trim()) text = t.trim();
       const p = form.get('photo');
@@ -40,10 +43,12 @@ export async function POST(req: Request) {
       const body = (await req.json()) as {
         playerId?: string;
         missionId?: string;
+        token?: string;
         text?: string;
       };
       playerId = String(body.playerId ?? '');
       missionId = String(body.missionId ?? '');
+      token = String(body.token ?? '');
       if (typeof body.text === 'string' && body.text.trim()) {
         text = body.text.trim();
       }
@@ -51,6 +56,9 @@ export async function POST(req: Request) {
 
     const player = playerById(playerId);
     if (!player) return bad('שחקן לא מוכר');
+    if (!verifyPlayer(player.id, token)) {
+      return bad('קישור אישי לא תקין — פתחו שוב את הקישור מוואטסאפ', 401);
+    }
     const mission = missionById(missionId);
     if (!mission) return bad('משימה לא מוכרת');
     if (mission.personalFor && mission.personalFor !== player.id) {

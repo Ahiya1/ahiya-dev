@@ -26,12 +26,14 @@ const LOADING_LINES = [
 function MissionCard({
   mission,
   playerId,
+  token,
   mySubs,
   frozen,
   onRefresh,
 }: {
   mission: Mission;
   playerId: PlayerId;
+  token: string;
   mySubs: SubmissionWithVerdict[];
   frozen: boolean;
   onRefresh: () => void;
@@ -70,6 +72,7 @@ function MissionCard({
     try {
       const form = new FormData();
       form.set("playerId", playerId);
+      form.set("token", token);
       form.set("missionId", mission.id);
       if (text.trim()) form.set("text", text.trim());
       if (mission.type === "photo" && file) {
@@ -211,10 +214,12 @@ function MissionCard({
 
 export default function MissionsTab({
   playerId,
+  token,
   state,
   onRefresh,
 }: {
   playerId: PlayerId;
+  token: string;
   state: GameState;
   onRefresh: () => void;
 }) {
@@ -237,6 +242,7 @@ export default function MissionsTab({
 
       <TriviaCard
         playerId={playerId}
+        token={token}
         day={state.currentDay}
         state={state}
         frozen={state.frozen}
@@ -248,6 +254,7 @@ export default function MissionsTab({
           key={m.id}
           mission={m}
           playerId={playerId}
+          token={token}
           mySubs={state.submissions.filter(
             (s) => s.playerId === playerId && s.missionId === m.id,
           )}
@@ -266,6 +273,7 @@ export default function MissionsTab({
               key={m.id}
               mission={m}
               playerId={playerId}
+              token={token}
               mySubs={state.submissions.filter(
                 (s) => s.playerId === playerId && s.missionId === m.id,
               )}

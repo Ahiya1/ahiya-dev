@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { PLAYERS, type PlayerId } from "../content/players";
 
@@ -69,6 +69,47 @@ export default function CeremonyPage() {
   const [count, setCount] = useState(3);
   const [busy, setBusy] = useState(false);
 
+  // Admin gate: the ceremony only opens with the admin password
+  // (shared with /trip/admin via the same sessionStorage key).
+  const [password, setPassword] = useState<string | null>(null);
+  const [gateChecked, setGateChecked] = useState(false);
+  const [gateInput, setGateInput] = useState("");
+  const [gateBusy, setGateBusy] = useState(false);
+  const [gateError, setGateError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("trip_admin_password");
+    if (saved) setPassword(saved);
+    setGateChecked(true);
+  }, []);
+
+  const unlock = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!gateInput || gateBusy) return;
+    setGateBusy(true);
+    setGateError(null);
+    try {
+      const res = await fetch("/trip/api/admin", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ password: gateInput, action: "ping" }),
+      });
+      if (res.ok) {
+        sessionStorage.setItem("trip_admin_password", gateInput);
+        setPassword(gateInput);
+        setGateInput("");
+      } else if (res.status === 401) {
+        setGateError("סיסמה שגויה");
+      } else {
+        setGateError("משהו השתבש, נסו שוב");
+      }
+    } catch {
+      setGateError("שגיאת רשת, נסו שוב");
+    } finally {
+      setGateBusy(false);
+    }
+  };
+
   const advance = useCallback(() => {
     if (slide === COUNTDOWN_SLIDE || slide === FINALE_SLIDE) return;
     if (sub < SUBSTEPS[slide] - 1) {
@@ -104,7 +145,7 @@ export default function CeremonyPage() {
       await fetch("/trip/api/ceremony", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ done: true }),
+        body: JSON.stringify({ done: true, password }),
       });
     } catch {
       // even if the write hiccups, take them to the game
@@ -114,6 +155,48 @@ export default function CeremonyPage() {
 
   const key = `${slide}-${sub}`;
   const showHint = slide !== COUNTDOWN_SLIDE && slide !== FINALE_SLIDE;
+
+  if (!password) {
+    return (
+      <main
+        dir="rtl"
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0c0a09] px-6 text-center text-amber-50"
+      >
+        {gateChecked && (
+          <>
+            <div className="text-6xl">🔐</div>
+            <h1 className="mt-5 text-3xl font-black text-amber-300">
+              טקס הפתיחה
+            </h1>
+            <p className="mt-3 text-base text-amber-50/60">
+              הטקס נפתח על ידי מנהל התחרות בלבד
+            </p>
+            {gateError && (
+              <p className="mt-4 text-sm font-medium text-red-400">
+                {gateError}
+              </p>
+            )}
+            <form onSubmit={unlock} className="mt-8 w-full max-w-xs space-y-3">
+              <input
+                type="password"
+                value={gateInput}
+                onChange={(e) => setGateInput(e.target.value)}
+                placeholder="סיסמת ניהול"
+                className="w-full rounded-xl border border-amber-50/20 bg-amber-50/5 p-3 text-center text-base text-amber-50 placeholder:text-amber-50/30 focus:border-amber-400 focus:outline-none"
+              />
+              <button
+                type="submit"
+                disabled={!gateInput || gateBusy}
+                className="w-full rounded-xl bg-amber-400 py-3 text-lg font-black text-[#0c0a09] transition-transform active:scale-95 disabled:opacity-50"
+              >
+                {gateBusy ? "בודקים..." : "פתח את הטקס"}
+              </button>
+            </form>
+          </>
+        )}
+      </main>
+    );
+  }
 
   return (
     <main

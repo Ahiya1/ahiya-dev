@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { playerById } from '../../content/players';
+import { PLAYERS, playerById } from '../../content/players';
 import { missionById } from '../../content/missions';
+import { playerToken } from '../../lib/auth';
 import {
   listJson,
   putJson,
@@ -12,6 +13,8 @@ import { judgeSubmission } from '../../lib/judge';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
+
+const BASE_URL = process.env.TRIP_BASE_URL || 'https://ahiya.dev';
 
 const bad = (message: string, status = 400) =>
   NextResponse.json({ error: message }, { status });
@@ -32,6 +35,18 @@ export async function POST(req: Request) {
     }
 
     switch (body.action) {
+      case 'ping': {
+        // Lightweight password check (used by the ceremony unlock screen).
+        return NextResponse.json({ ok: true });
+      }
+      case 'links': {
+        const links = PLAYERS.map((p) => ({
+          playerId: p.id,
+          name: p.name,
+          url: `${BASE_URL}/trip?k=${playerToken(p.id)}`,
+        }));
+        return NextResponse.json({ ok: true, links });
+      }
       case 'setDay': {
         const day = body.day;
         if (day !== null && day !== 1 && day !== 2 && day !== 3) {

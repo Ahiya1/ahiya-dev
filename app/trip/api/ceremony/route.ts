@@ -10,23 +10,15 @@ export async function POST(req: Request) {
   try {
     const body = (await req.json()) as { done?: boolean; password?: string };
 
-    if (body.done === true) {
-      // Family-trust: anyone in the room may open the games.
-      const config = await writeConfig({ ceremonyDone: true });
-      return NextResponse.json({ ok: true, config });
+    // Opening AND resetting the ceremony are admin-only.
+    const expected = process.env.TRIP_ADMIN_PASSWORD;
+    if (!expected || body.password !== expected) {
+      return bad('סיסמה שגויה', 401);
     }
 
-    if (body.done === false) {
-      // Resetting the ceremony is admin-only.
-      const expected = process.env.TRIP_ADMIN_PASSWORD;
-      if (!expected || body.password !== expected) {
-        return bad('סיסמה שגויה', 401);
-      }
-      const config = await writeConfig({ ceremonyDone: false });
-      return NextResponse.json({ ok: true, config });
-    }
-
-    return bad('חסר ערך done');
+    if (typeof body.done !== 'boolean') return bad('חסר ערך done');
+    const config = await writeConfig({ ceremonyDone: body.done });
+    return NextResponse.json({ ok: true, config });
   } catch (err) {
     console.error('ceremony error', err);
     return bad('משהו השתבש', 500);

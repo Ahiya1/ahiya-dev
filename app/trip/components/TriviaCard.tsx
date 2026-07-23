@@ -13,12 +13,14 @@ interface TriviaResult {
 
 export default function TriviaCard({
   playerId,
+  token,
   day,
   state,
   frozen,
   onRefresh,
 }: {
   playerId: PlayerId;
+  token: string;
   day: 1 | 2 | 3;
   state: GameState;
   frozen: boolean;
@@ -45,7 +47,7 @@ export default function TriviaCard({
       const res = await fetch("/trip/api/trivia", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ playerId, day, answers: picks }),
+        body: JSON.stringify({ playerId, token, day, answers: picks }),
       });
       const data = await res.json();
       if (res.ok || res.status === 409) {
