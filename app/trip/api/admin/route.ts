@@ -8,6 +8,7 @@ import {
   writeConfig,
   type SubmissionRecord,
   type VerdictRecord,
+  PREFIX,
 } from '../../lib/store';
 import { judgeSubmission } from '../../lib/judge';
 
@@ -64,7 +65,7 @@ export async function POST(req: Request) {
         const submissionId = String(body.submissionId ?? '');
         if (!submissionId) return bad('חסר submissionId');
         const submissions = await listJson<SubmissionRecord>(
-          'trip/submissions/',
+          `${PREFIX}submissions/`,
         );
         const submission = submissions.find((s) => s.id === submissionId);
         if (!submission) return bad('הגשה לא נמצאה', 404);
@@ -84,7 +85,7 @@ export async function POST(req: Request) {
           avg: result.avg,
           judgedAt: new Date().toISOString(),
         };
-        await putJson(`trip/verdicts/${submissionId}.json`, verdict);
+        await putJson(`${PREFIX}verdicts/${submissionId}.json`, verdict);
         return NextResponse.json({ ok: true, verdict });
       }
       default:

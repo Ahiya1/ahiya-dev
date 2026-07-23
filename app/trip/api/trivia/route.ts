@@ -6,6 +6,7 @@ import {
   listJson,
   putJson,
   type TriviaRecord,
+  PREFIX,
 } from '../../lib/store';
 import { verifyPlayer } from '../../lib/auth';
 
@@ -36,7 +37,7 @@ export async function POST(req: Request) {
     if (config.frozen) return bad('המשחק הוקפא', 403);
 
     // One attempt per player per day — first one wins.
-    const existing = await listJson<TriviaRecord>('trip/trivia/');
+    const existing = await listJson<TriviaRecord>(`${PREFIX}trivia/`);
     const prior = existing
       .filter((t) => t.playerId === player.id && t.day === day)
       .sort((a, b) => a.createdAt.localeCompare(b.createdAt))[0];
@@ -76,7 +77,7 @@ export async function POST(req: Request) {
       points,
       createdAt: new Date().toISOString(),
     };
-    await putJson(`trip/trivia/${day}__${player.id}.json`, record);
+    await putJson(`${PREFIX}trivia/${day}__${player.id}.json`, record);
 
     return NextResponse.json({ correct, points, answers: correctAnswers });
   } catch (err) {

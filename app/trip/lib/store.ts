@@ -1,5 +1,10 @@
 import { list, put } from '@vercel/blob';
 import { PLAYERS, type PlayerId } from '../content/players';
+
+/** Key namespace: production writes to trip/, every other environment
+ * (preview deploys, local dev) to trip-dev/ — same Blob store, zero mixing. */
+export const PREFIX =
+  process.env.VERCEL_ENV === 'production' ? 'trip/' : 'trip-dev/';
 import type { MissionType } from '../content/missions';
 import type { JudgeVerdict } from '../content/judges';
 import { currentDay } from './day';
@@ -101,7 +106,7 @@ export async function listJson<T>(prefix: string): Promise<T[]> {
 
 /** Upload a photo under an unguessable key; returns the public URL. */
 export async function uploadPhoto(file: Blob): Promise<string> {
-  const { url } = await put(`trip/photos/${crypto.randomUUID()}.jpg`, file, {
+  const { url } = await put(`${PREFIX}photos/${crypto.randomUUID()}.jpg`, file, {
     access: 'public',
     contentType: 'image/jpeg',
   });
@@ -110,7 +115,7 @@ export async function uploadPhoto(file: Blob): Promise<string> {
 
 /** Latest admin config (latest updatedAt wins if multiple blobs exist). */
 export async function getConfig(): Promise<AdminConfig> {
-  const configs = await listJson<AdminConfig>('trip/config/');
+  const configs = await listJson<AdminConfig>(`${PREFIX}config/`);
   if (configs.length === 0) return {};
   configs.sort((a, b) => (a.updatedAt ?? '').localeCompare(b.updatedAt ?? ''));
   return configs[configs.length - 1];
@@ -128,7 +133,7 @@ export async function writeConfig(
     ...patch,
     updatedAt: new Date().toISOString(),
   };
-  await putJson('trip/config/state.json', next);
+  await putJson(`${PREFIX}config/state.json`, next);
   return next;
 }
 
@@ -137,9 +142,9 @@ const round1 = (n: number): number => Math.round(n * 10) / 10;
 /** Assemble the full game state in one pass. */
 export async function getGameState(): Promise<GameState> {
   const [subs, verdicts, triviaRaw, config] = await Promise.all([
-    listJson<SubmissionRecord>('trip/submissions/'),
-    listJson<VerdictRecord>('trip/verdicts/'),
-    listJson<TriviaRecord>('trip/trivia/'),
+    listJson<SubmissionRecord>(`${PREFIX}submissions/`),
+    listJson<VerdictRecord>(`${PREFIX}verdicts/`),
+    listJson<TriviaRecord>(`${PREFIX}trivia/`),
     getConfig(),
   ]);
 

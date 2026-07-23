@@ -8,6 +8,7 @@ import {
   uploadPhoto,
   type SubmissionRecord,
   type VerdictRecord,
+  PREFIX,
 } from '../../lib/store';
 import { judgeSubmission } from '../../lib/judge';
 import { verifyPlayer } from '../../lib/auth';
@@ -70,7 +71,7 @@ export async function POST(req: Request) {
     const config = await getConfig();
     if (config.frozen) return bad('המשחק הוקפא — אין הגשות חדשות', 403);
 
-    const existing = await listJson<SubmissionRecord>('trip/submissions/');
+    const existing = await listJson<SubmissionRecord>(`${PREFIX}submissions/`);
     const attempts = existing.filter(
       (s) => s.playerId === player.id && s.missionId === mission.id,
     ).length;
@@ -94,7 +95,7 @@ export async function POST(req: Request) {
       imageUrl,
       createdAt: new Date().toISOString(),
     };
-    await putJson(`trip/submissions/${id}.json`, submission);
+    await putJson(`${PREFIX}submissions/${id}.json`, submission);
 
     const result = await judgeSubmission({
       playerName: player.name,
@@ -109,7 +110,7 @@ export async function POST(req: Request) {
       avg: result.avg,
       judgedAt: new Date().toISOString(),
     };
-    await putJson(`trip/verdicts/${id}.json`, verdict);
+    await putJson(`${PREFIX}verdicts/${id}.json`, verdict);
 
     return NextResponse.json({ submission, verdict });
   } catch (err) {
