@@ -35,6 +35,7 @@ export interface TriviaRecord {
 export interface AdminConfig {
   dayOverride?: 1 | 2 | 3 | null;
   frozen?: boolean;
+  ceremonyDone?: boolean;
   updatedAt?: string;
 }
 
@@ -58,6 +59,7 @@ export interface GameState {
   currentDay: 1 | 2 | 3;
   isLive: boolean;
   frozen: boolean;
+  ceremonyDone: boolean;
 }
 
 // ---------- Blob primitives (append-only event log) ----------
@@ -112,6 +114,22 @@ export async function getConfig(): Promise<AdminConfig> {
   if (configs.length === 0) return {};
   configs.sort((a, b) => (a.updatedAt ?? '').localeCompare(b.updatedAt ?? ''));
   return configs[configs.length - 1];
+}
+
+/** Write a config patch on top of the latest config (latest-wins log). */
+export async function writeConfig(
+  patch: Partial<AdminConfig>,
+): Promise<AdminConfig> {
+  const current = await getConfig();
+  const next: AdminConfig = {
+    dayOverride: current.dayOverride ?? null,
+    frozen: current.frozen ?? false,
+    ceremonyDone: current.ceremonyDone ?? false,
+    ...patch,
+    updatedAt: new Date().toISOString(),
+  };
+  await putJson('trip/config/state.json', next);
+  return next;
 }
 
 const round1 = (n: number): number => Math.round(n * 10) / 10;
@@ -182,5 +200,6 @@ export async function getGameState(): Promise<GameState> {
     currentDay: day,
     isLive,
     frozen: config.frozen ?? false,
+    ceremonyDone: config.ceremonyDone ?? false,
   };
 }

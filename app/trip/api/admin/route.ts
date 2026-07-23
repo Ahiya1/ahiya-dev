@@ -2,10 +2,9 @@ import { NextResponse } from 'next/server';
 import { playerById } from '../../content/players';
 import { missionById } from '../../content/missions';
 import {
-  getConfig,
   listJson,
   putJson,
-  type AdminConfig,
+  writeConfig,
   type SubmissionRecord,
   type VerdictRecord,
 } from '../../lib/store';
@@ -16,18 +15,6 @@ export const maxDuration = 60;
 
 const bad = (message: string, status = 400) =>
   NextResponse.json({ error: message }, { status });
-
-async function writeConfig(patch: Partial<AdminConfig>): Promise<AdminConfig> {
-  const current = await getConfig();
-  const next: AdminConfig = {
-    dayOverride: current.dayOverride ?? null,
-    frozen: current.frozen ?? false,
-    ...patch,
-    updatedAt: new Date().toISOString(),
-  };
-  await putJson('trip/config/state.json', next);
-  return next;
-}
 
 export async function POST(req: Request) {
   try {

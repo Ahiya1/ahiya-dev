@@ -33,12 +33,13 @@ export default function TripAdminPage() {
   const action = async (
     payload: Record<string, unknown>,
     busyKey: string,
+    endpoint = "/trip/api/admin",
   ): Promise<void> => {
     if (!password) return;
     setBusy(busyKey);
     setMessage(null);
     try {
-      const res = await fetch("/trip/api/admin", {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ password, ...payload }),
@@ -163,6 +164,27 @@ export default function TripAdminPage() {
             className="rounded-lg bg-[var(--color-ink)] px-4 py-2 text-sm font-bold text-[var(--color-paper)] disabled:opacity-50"
           >
             {state?.frozen ? "להפשיר" : "להקפיא"}
+          </button>
+        </div>
+      </section>
+
+      <section className="mt-4 rounded-2xl border border-[var(--color-rule)] bg-white/60 p-4">
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold text-[var(--color-ink)]">
+            {state?.ceremonyDone ? "🏆 הטקס נערך" : "🔒 הטקס טרם נערך"}
+          </h2>
+          <button
+            disabled={busy !== null || !state?.ceremonyDone}
+            onClick={() =>
+              action(
+                { done: false },
+                "ceremony-reset",
+                "/trip/api/ceremony",
+              )
+            }
+            className="rounded-lg bg-[var(--color-ink)] px-4 py-2 text-sm font-bold text-[var(--color-paper)] disabled:opacity-50"
+          >
+            אפס טקס
           </button>
         </div>
       </section>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { playerById, type PlayerId } from "./content/players";
 import type { GameState } from "./lib/store";
 import NamePicker from "./components/NamePicker";
@@ -65,6 +66,35 @@ export default function TripPage() {
   };
 
   if (!loaded) return <main dir="rtl" className="min-h-screen" />;
+
+  // The trip is live but the opening ceremony hasn't happened yet:
+  // lock the game until someone runs the ceremony. The 15s state poll
+  // unlocks everyone automatically once ceremonyDone flips.
+  if (state?.isLive && !state.ceremonyDone) {
+    return (
+      <main
+        dir="rtl"
+        className="flex min-h-screen flex-col items-center justify-center px-6 text-center"
+      >
+        <div className="text-7xl">🏆</div>
+        <h1 className="mt-4 text-4xl font-extrabold text-[var(--color-ink)]">
+          הבוטמניאדה
+        </h1>
+        <p className="mt-3 animate-pulse text-xl font-bold text-[var(--color-sky-deep)]">
+          הטקס טרם נערך
+        </p>
+        <p className="mt-2 text-base text-[var(--color-muted)]">
+          התכנסו כולם יחד ופתחו את טקס הפתיחה
+        </p>
+        <Link
+          href="/trip/ceremony"
+          className="mt-8 rounded-2xl bg-[var(--color-ink)] px-8 py-4 text-xl font-bold text-[var(--color-paper)] shadow-lg"
+        >
+          אל הטקס ←
+        </Link>
+      </main>
+    );
+  }
 
   if (!player) {
     return (
