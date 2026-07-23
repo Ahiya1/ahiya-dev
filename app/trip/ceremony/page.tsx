@@ -77,11 +77,21 @@ export default function CeremonyPage() {
   const [gateBusy, setGateBusy] = useState(false);
   const [gateError, setGateError] = useState<string | null>(null);
 
+  // Pre-trip the ceremony is open as a preview (no password, no release
+  // button); once the trip is live, the admin gate applies.
+  const [isLive, setIsLive] = useState<boolean | null>(null);
+
   useEffect(() => {
     const saved = sessionStorage.getItem("trip_admin_password");
     if (saved) setPassword(saved);
-    setGateChecked(true);
+    fetch("/trip/api/state", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((s: { isLive?: boolean }) => setIsLive(s.isLive === true))
+      .catch(() => setIsLive(true)) // on doubt, stay locked
+      .finally(() => setGateChecked(true));
   }, []);
+
+  const previewMode = isLive === false;
 
   const unlock = async (e: FormEvent) => {
     e.preventDefault();
@@ -156,13 +166,13 @@ export default function CeremonyPage() {
   const key = `${slide}-${sub}`;
   const showHint = slide !== COUNTDOWN_SLIDE && slide !== FINALE_SLIDE;
 
-  if (!password) {
+  if (!password && !previewMode) {
     return (
       <main
         dir="rtl"
         className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0c0a09] px-6 text-center text-amber-50"
       >
-        {gateChecked && (
+        {gateChecked && isLive !== null && (
           <>
             <div className="text-6xl">🔐</div>
             <h1 className="mt-5 text-3xl font-black text-amber-300">
@@ -342,16 +352,23 @@ export default function CeremonyPage() {
             <h1 className="text-5xl font-black leading-tight text-amber-300">
               שהמשחקים יחלו! 🎉
             </h1>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                finish();
-              }}
-              disabled={busy}
-              className="mt-12 rounded-2xl bg-amber-400 px-10 py-5 text-2xl font-black text-[#0c0a09] shadow-[0_0_50px_rgba(251,191,36,0.45)] transition-transform active:scale-95 disabled:opacity-60"
-            >
-              {busy ? "משחררים..." : "לשחרר את הבוטמנים ←"}
-            </button>
+            {previewMode ? (
+              <p className="mt-12 max-w-xs text-lg font-bold text-amber-200/80">
+                🔒 זו תצוגה מקדימה. הכפתור האמיתי מחכה ליום רביעי, כשכולם
+                בחדר.
+              </p>
+            ) : (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  finish();
+                }}
+                disabled={busy}
+                className="mt-12 rounded-2xl bg-amber-400 px-10 py-5 text-2xl font-black text-[#0c0a09] shadow-[0_0_50px_rgba(251,191,36,0.45)] transition-transform active:scale-95 disabled:opacity-60"
+              >
+                {busy ? "משחררים..." : "לשחרר את הבוטמנים ←"}
+              </button>
+            )}
           </div>
         )}
       </div>

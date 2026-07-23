@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { del, list } from '@vercel/blob';
 import { PLAYERS, playerById } from '../../content/players';
 import { missionById } from '../../content/missions';
 import { playerToken } from '../../lib/auth';
@@ -39,6 +40,20 @@ export async function POST(req: Request) {
       case 'ping': {
         // Lightweight password check (used by the ceremony unlock screen).
         return NextResponse.json({ ok: true });
+      }
+      case 'wipe': {
+        // Delete ALL game data in this environment's namespace (PREFIX).
+        // Photos, submissions, verdicts, trivia, config — a factory reset.
+        const urls: string[] = [];
+        let cursor: string | undefined;
+        for (;;) {
+          const page = await list({ prefix: PREFIX, cursor });
+          for (const b of page.blobs) urls.push(b.url);
+          if (!page.hasMore || !page.cursor) break;
+          cursor = page.cursor;
+        }
+        if (urls.length > 0) await del(urls);
+        return NextResponse.json({ ok: true, deleted: urls.length });
       }
       case 'links': {
         const links = PLAYERS.map((p) => ({

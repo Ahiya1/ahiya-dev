@@ -234,6 +234,31 @@ export default function TripAdminPage() {
         </div>
       </section>
 
+      <section className="mt-4 rounded-2xl border border-red-200 bg-red-50/60 p-4">
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold text-[var(--color-ink)]">🧹 איפוס נתונים</h2>
+          <button
+            disabled={busy !== null}
+            onClick={() => {
+              if (
+                window.confirm(
+                  'למחוק את כל נתוני המשחק בסביבה הזו? הגשות, ציונים, טריוויה ותמונות. אין דרך חזרה.',
+                )
+              ) {
+                void action({ action: 'wipe' }, 'wipe');
+              }
+            }}
+            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-bold text-white disabled:opacity-50"
+          >
+            {busy === 'wipe' ? 'מוחק...' : 'איפוס מלא'}
+          </button>
+        </div>
+        <p className="mt-2 text-xs text-[var(--color-muted)]">
+          מוחק את כל ההגשות, פסקי הדין, הטריוויה, התמונות וההגדרות של הסביבה
+          הנוכחית. לניקוי אחרי בדיקות, לפני שהמשחק האמיתי מתחיל.
+        </p>
+      </section>
+
       <section className="mt-4 rounded-2xl border border-[var(--color-rule)] bg-white/60 p-4">
         <div className="flex items-center justify-between">
           <h2 className="font-bold text-[var(--color-ink)]">
