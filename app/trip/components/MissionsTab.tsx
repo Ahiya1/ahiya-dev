@@ -11,7 +11,7 @@ import type {
 } from "../lib/store";
 import VerdictList, { ScoreBadge } from "./VerdictList";
 import TriviaCard from "./TriviaCard";
-import { downscaleImage } from "./downscale";
+import { downscaleImage, PhotoError } from "./downscale";
 
 const MAX_ATTEMPTS = 3;
 
@@ -44,15 +44,21 @@ function MissionCard({
   const [loadingLine, setLoadingLine] = useState(LOADING_LINES[0]);
   const [fresh, setFresh] = useState<{
     submission: SubmissionRecord;
-    verdict: VerdictRecord;
+    verdict: VerdictRecord | null;
   } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
+  const [rejudging, setRejudging] = useState(false);
+  const [resolvedIds, setResolvedIds] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const freshCounted =
+  const freshIsNew =
     fresh !== null && !mySubs.some((s) => s.id === fresh.submission.id);
-  const attempts = mySubs.length + (freshCounted ? 1 : 0);
+  // Only judged submissions burn an attempt — the server counts the same way,
+  // so a judging timeout never costs anybody one of their three tries.
+  const attempts =
+    mySubs.filter((s) => s.verdict).length +
+    (freshIsNew && fresh?.verdict ? 1 : 0);
   const attemptsLeft = Math.max(0, MAX_ATTEMPTS - attempts);
   const best = mySubs.reduce<SubmissionWithVerdict | null>(
     (acc, s) =>
@@ -60,6 +66,40 @@ function MissionCard({
     null,
   );
   const judged = fresh?.verdict ?? best?.verdict ?? null;
+
+  // Submissions that were stored but never got a verdict (judging timed out).
+  // `resolvedIds` hides one the moment we get its verdict back, without
+  // waiting for the next state poll.
+  const pendingId =
+    [
+      ...(freshIsNew && fresh && !fresh.verdict ? [fresh.submission.id] : []),
+      ...mySubs.filter((s) => !s.verdict).map((s) => s.id),
+    ].find((id) => !resolvedIds.includes(id)) ?? null;
+
+  const askForVerdict = async () => {
+    if (!pendingId || rejudging) return;
+    setRejudging(true);
+    setError(null);
+    try {
+      const res = await fetch("/trip/api/rejudge", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ playerId, token, submissionId: pendingId }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.verdict) {
+        setError(data.error ?? "השופטים עדיין מתחמקים, נסו שוב עוד רגע");
+      } else {
+        setResolvedIds((prev) => [...prev, pendingId]);
+        setFresh({ submission: data.submission, verdict: data.verdict });
+        onRefresh();
+      }
+    } catch {
+      setError("משהו השתבש, נסו שוב");
+    } finally {
+      setRejudging(false);
+    }
+  };
 
   const submit = async () => {
     setSubmitting(true);
@@ -87,14 +127,18 @@ function MissionCard({
       if (!res.ok) {
         setError(data.error ?? "משהו השתבש");
       } else {
-        setFresh(data);
+        // data.verdict may be null (pending) — the card then offers a rejudge.
+        setFresh({ submission: data.submission, verdict: data.verdict ?? null });
         setText("");
         setFile(null);
         setFormOpen(false);
         onRefresh();
       }
-    } catch {
-      setError("משהו השתבש, נסו שוב");
+    } catch (err) {
+      // A photo we could not convert gets its own actionable message.
+      setError(
+        err instanceof PhotoError ? err.message : "משהו השתבש, נסו שוב",
+      );
     } finally {
       clearInterval(spin);
       setSubmitting(false);
@@ -132,6 +176,27 @@ function MissionCard({
             <VerdictList verdicts={judged.verdicts} />
           </div>
         </details>
+      )}
+
+      {pendingId && !submitting && (
+        <div className="mt-3 rounded-xl border border-amber-300 bg-amber-50 p-3 text-center">
+          <p className="text-sm font-bold text-amber-900">
+            ⚖️ השופטים עוד מתלבטים...
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-amber-900/70">
+            ההגשה נשמרה ולא בזבזה לכם ניסיון. אפשר לזרז אותם.
+          </p>
+          <button
+            onClick={askForVerdict}
+            disabled={rejudging}
+            className="mt-2 w-full rounded-lg bg-amber-500 py-2 text-sm font-bold text-white transition-transform active:scale-95 disabled:opacity-50"
+          >
+            {rejudging ? "מזרזים אותם..." : "בקש פסק דין"}
+          </button>
+          {error && !formOpen && (
+            <p className="mt-2 text-xs text-red-700">{error}</p>
+          )}
+        </div>
       )}
 
       {submitting ? (
@@ -240,7 +305,10 @@ export default function MissionsTab({
         </p>
       )}
 
+      {/* key={currentDay} remounts the card when the day rolls over, so
+          yesterday's picks and result can never leak into today's quiz. */}
       <TriviaCard
+        key={state.currentDay}
         playerId={playerId}
         token={token}
         day={state.currentDay}

@@ -9,6 +9,7 @@ import {
   PREFIX,
 } from '../../lib/store';
 import { verifyPlayer } from '../../lib/auth';
+import { currentDay } from '../../lib/day';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,13 +29,15 @@ export async function POST(req: Request) {
     if (!verifyPlayer(player.id, String(body.token ?? ''))) {
       return bad('קישור אישי לא תקין — פתחו שוב את הקישור מוואטסאפ', 401);
     }
-    const day = body.day;
-    if (day !== 1 && day !== 2 && day !== 3) return bad('יום לא תקין');
     const answers = body.answers;
     if (!answers || typeof answers !== 'object') return bad('חסרות תשובות');
 
     const config = await getConfig();
+    if (!config.ceremonyDone) return bad('הטקס טרם נערך', 403);
     if (config.frozen) return bad('המשחק הוקפא', 403);
+    // The client-supplied `day` is ignored on purpose: a stale phone (or a
+    // curious one) must not be able to play a different day's quiz.
+    const { day } = currentDay(config.dayOverride);
 
     // One attempt per player per day — first one wins.
     const existing = await listJson<TriviaRecord>(`${PREFIX}trivia/`);
@@ -58,14 +61,26 @@ export async function POST(req: Request) {
       );
     }
 
+    // The answers must be exactly this day's quotes — nothing missing, nothing
+    // extra. Guards against a phone that stayed open across a day change and
+    // submits yesterday's picks.
+    const submittedIds = Object.keys(answers);
+    const matchesToday =
+      submittedIds.length === quotes.length &&
+      quotes.every((q) => {
+        const a = answers[q.id];
+        return typeof a === 'string' && playerById(a) !== undefined;
+      });
+    if (!matchesToday) {
+      return bad('התשובות לא תואמות את החידון של היום - רעננו את הדף');
+    }
+
     const cleanAnswers: Record<string, PlayerId> = {};
     let correct = 0;
     for (const q of quotes) {
-      const a = answers[q.id];
-      if (typeof a === 'string' && playerById(a)) {
-        cleanAnswers[q.id] = a as PlayerId;
-        if (a === q.answer) correct++;
-      }
+      const a = answers[q.id] as PlayerId;
+      cleanAnswers[q.id] = a;
+      if (a === q.answer) correct++;
     }
     const points = correct * POINTS_PER_CORRECT;
 

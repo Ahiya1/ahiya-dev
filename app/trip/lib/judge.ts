@@ -6,9 +6,24 @@ import {
   buildJudgeUserPrompt,
   type JudgeVerdict,
 } from '../content/judges';
+import {
+  imageTypeFromHeader,
+  sniffImageType,
+  type SupportedImageType,
+} from './images';
 
 const FALLBACK_COMMENT = 'השופט יצא להפסקת מים';
 const JUDGE_IDS = JUDGES.map((j) => j.id);
+
+// The calling routes declare maxDuration = 60. Keep the worst case well under
+// that: at most one image fetch (8s) + one model call with a single retry
+// (2 x 20s), and only attempt the second (top-up) call when there is still
+// real budget left. A platform kill mid-flight is what leaves a submission
+// stuck without a verdict, so bounding this is the whole point.
+const REQUEST_TIMEOUT_MS = 20_000;
+const IMAGE_FETCH_TIMEOUT_MS = 8_000;
+/** Past this much elapsed time, skip the second call and use canned verdicts. */
+const SECOND_CALL_CUTOFF_MS = 35_000;
 
 export interface JudgeResult {
   verdicts: JudgeVerdict[];
@@ -34,16 +49,35 @@ export async function judgeSubmission(args: {
   missionDescription: string;
   text?: string;
   imageUrl?: string;
+  /** When the HTTP handler started, so we can respect its 60s budget.
+   * Defaults to "now" for callers that judge outside a request. */
+  startedAt?: number;
 }): Promise<JudgeResult> {
-  const client = new Anthropic();
+  const startedAt = args.startedAt ?? Date.now();
+  const elapsed = () => Date.now() - startedAt;
+
+  const client = new Anthropic({
+    timeout: REQUEST_TIMEOUT_MS,
+    maxRetries: 1,
+  });
   const model = process.env.TRIP_MODEL || 'claude-sonnet-5';
 
-  let imageData: string | null = null;
+  let image: { data: string; mediaType: SupportedImageType } | null = null;
   if (args.imageUrl) {
     try {
-      const res = await fetch(args.imageUrl);
+      const res = await fetch(args.imageUrl, {
+        signal: AbortSignal.timeout(IMAGE_FETCH_TIMEOUT_MS),
+      });
       if (res.ok) {
-        imageData = Buffer.from(await res.arrayBuffer()).toString('base64');
+        const buf = Buffer.from(await res.arrayBuffer());
+        // Trust the bytes over any label: sending Anthropic image/jpeg for a
+        // HEIC/PNG payload either errors or produces a garbage verdict.
+        const mediaType =
+          sniffImageType(new Uint8Array(buf.subarray(0, 16))) ??
+          imageTypeFromHeader(res.headers.get('content-type'));
+        if (mediaType) {
+          image = { data: buf.toString('base64'), mediaType };
+        }
       }
     } catch {
       // judge from the text description alone
@@ -55,16 +89,20 @@ export async function judgeSubmission(args: {
     missionTitle: args.missionTitle,
     missionDescription: args.missionDescription,
     text: args.text,
-    hasImage: imageData !== null,
+    hasImage: image !== null,
   });
 
   const content: Anthropic.ContentBlockParam[] = [
     { type: 'text', text: prompt },
   ];
-  if (imageData) {
+  if (image) {
     content.push({
       type: 'image',
-      source: { type: 'base64', media_type: 'image/jpeg', data: imageData },
+      source: {
+        type: 'base64',
+        media_type: image.mediaType,
+        data: image.data,
+      },
     });
   }
 
@@ -112,7 +150,10 @@ export async function judgeSubmission(args: {
   } catch {
     // retried below
   }
-  if (byJudge.size < JUDGES.length) {
+  // Only top up a partial answer while there is budget left — otherwise the
+  // platform kills the request and the submission ends up with no verdict at
+  // all, which is far worse than a canned comment from one judge.
+  if (byJudge.size < JUDGES.length && elapsed() < SECOND_CALL_CUTOFF_MS) {
     try {
       absorb(await callOnce());
     } catch {

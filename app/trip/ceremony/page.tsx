@@ -68,6 +68,7 @@ export default function CeremonyPage() {
   const [sub, setSub] = useState(0);
   const [count, setCount] = useState(3);
   const [busy, setBusy] = useState(false);
+  const [releaseError, setReleaseError] = useState<string | null>(null);
 
   // Admin gate: the ceremony only opens with the admin password
   // (shared with /trip/admin via the same sessionStorage key).
@@ -84,9 +85,16 @@ export default function CeremonyPage() {
   useEffect(() => {
     const saved = sessionStorage.getItem("trip_admin_password");
     if (saved) setPassword(saved);
+    // Preview mode is only entered on an explicit, successful `isLive: false`.
+    // A failed request or an unreadable body means we do NOT know, and the safe
+    // assumption is that the game is live and locked — so the admin gate and
+    // the real release button both stay available.
     fetch("/trip/api/state", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((s: { isLive?: boolean }) => setIsLive(s.isLive === true))
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`state ${r.status}`);
+        const s = (await r.json()) as { isLive?: boolean };
+        setIsLive(s.isLive === false ? false : true);
+      })
       .catch(() => setIsLive(true)) // on doubt, stay locked
       .finally(() => setGateChecked(true));
   }, []);
@@ -148,18 +156,66 @@ export default function CeremonyPage() {
     return () => clearInterval(timer);
   }, [slide]);
 
+  /** Confirm the release actually landed. The blob log and the state route's
+   * short cache are both eventually consistent, so poll for a few seconds
+   * before declaring failure. Returns false only if we never saw it. */
+  const confirmReleased = async (): Promise<boolean> => {
+    const ATTEMPTS = 6;
+    for (let i = 0; i < ATTEMPTS; i++) {
+      try {
+        const res = await fetch("/trip/api/state", { cache: "no-store" });
+        if (res.ok) {
+          const s = (await res.json()) as { ceremonyDone?: boolean };
+          if (s.ceremonyDone === true) return true;
+        }
+      } catch {
+        // keep trying
+      }
+      if (i < ATTEMPTS - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+      }
+    }
+    return false;
+  };
+
+  // Releasing is the one irreversible moment of the evening: eight phones are
+  // locked until ceremonyDone flips. So we never navigate on hope — only after
+  // a 2xx write AND a state read that confirms ceremonyDone === true. Every
+  // other outcome keeps us on the finale slide with a retry button.
   const finish = async () => {
     if (busy) return;
     setBusy(true);
+    setReleaseError(null);
     try {
-      await fetch("/trip/api/ceremony", {
+      const res = await fetch("/trip/api/ceremony", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ done: true, password }),
       });
+      if (!res.ok) {
+        if (res.status === 401) {
+          // Wrong/stale admin password: send them back to the gate so they can
+          // re-enter it. The slide state is kept, so unlocking returns here.
+          sessionStorage.removeItem("trip_admin_password");
+          setPassword(null);
+          setGateError("הסיסמה לא התקבלה - הזינו שוב כדי לשחרר");
+        } else {
+          setReleaseError("השחרור נכשל - נסו שוב");
+        }
+        setBusy(false);
+        return;
+      }
+      if (!(await confirmReleased())) {
+        setReleaseError("השחרור עוד לא אושר - נסו שוב");
+        setBusy(false);
+        return;
+      }
     } catch {
-      // even if the write hiccups, take them to the game
+      setReleaseError("השחרור נכשל - בדקו את החיבור ונסו שוב");
+      setBusy(false);
+      return;
     }
+    // Confirmed released. `busy` stays true so nobody double-taps mid-navigation.
     router.push("/trip");
   };
 
@@ -358,16 +414,33 @@ export default function CeremonyPage() {
                 בחדר.
               </p>
             ) : (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  finish();
-                }}
-                disabled={busy}
-                className="mt-12 rounded-2xl bg-amber-400 px-10 py-5 text-2xl font-black text-[#0c0a09] shadow-[0_0_50px_rgba(251,191,36,0.45)] transition-transform active:scale-95 disabled:opacity-60"
-              >
-                {busy ? "משחררים..." : "לשחרר את הבוטמנים ←"}
-              </button>
+              <>
+                {releaseError && (
+                  <div className="mx-auto mt-10 max-w-xs rounded-2xl border border-red-400/40 bg-red-500/10 p-4">
+                    <p className="text-lg font-black text-red-300">
+                      {releaseError}
+                    </p>
+                    <p className="mt-2 text-sm text-amber-50/70">
+                      הטלפונים עדיין נעולים. אל תעזבו את המסך הזה עד שהשחרור
+                      יאושר.
+                    </p>
+                  </div>
+                )}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    finish();
+                  }}
+                  disabled={busy}
+                  className="mt-12 rounded-2xl bg-amber-400 px-10 py-5 text-2xl font-black text-[#0c0a09] shadow-[0_0_50px_rgba(251,191,36,0.45)] transition-transform active:scale-95 disabled:opacity-60"
+                >
+                  {busy
+                    ? "משחררים..."
+                    : releaseError
+                      ? "שחרר שוב"
+                      : "לשחרר את הבוטמנים ←"}
+                </button>
+              </>
             )}
           </div>
         )}

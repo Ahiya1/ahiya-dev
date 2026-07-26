@@ -22,6 +22,7 @@ const bad = (message: string, status = 400) =>
   NextResponse.json({ error: message }, { status });
 
 export async function POST(req: Request) {
+  const startedAt = Date.now();
   try {
     const body = (await req.json()) as {
       password?: string;
@@ -93,6 +94,7 @@ export async function POST(req: Request) {
           missionDescription: mission.description,
           text: submission.text,
           imageUrl: submission.imageUrl,
+          startedAt,
         });
         const verdict: VerdictRecord = {
           submissionId,

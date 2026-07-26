@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { playerById, type PlayerId } from "./content/players";
 import type { GameState } from "./lib/store";
 import MissionsTab from "./components/MissionsTab";
@@ -45,14 +45,35 @@ export default function TripPage() {
   const [loaded, setLoaded] = useState(false);
   const [state, setState] = useState<GameState | null>(null);
   const [tab, setTab] = useState<Tab>("missions");
+  // Set when a claim could not be completed because of the network, NOT
+  // because the link was rejected. `?k=` stays in the URL so a retry works.
+  const [claimFailed, setClaimFailed] = useState(false);
+  const [claiming, setClaiming] = useState(false);
+  // An identity from a previous successful claim, offered as an escape hatch
+  // when a fresh claim cannot reach the server.
+  const [fallbackIdentity, setFallbackIdentity] = useState<Identity | null>(
+    null,
+  );
 
   // Identity comes from a personal magic link (?k=...) sent in WhatsApp.
   // Once claimed it lives in localStorage; there is no manual name picker.
-  useEffect(() => {
-    const init = async () => {
+  // The URL is only cleaned after a claim that actually saved an identity —
+  // on rural cellular, dropping `k` on a failed fetch would strand the player
+  // with no way back in.
+  const claimingRef = useRef(false);
+
+  const claim = useCallback(async () => {
+    if (claimingRef.current) return;
+    claimingRef.current = true;
+    setClaiming(true);
+    try {
       const saved = storedIdentity();
       const url = new URL(window.location.href);
       const k = url.searchParams.get("k");
+      const clean = () => {
+        url.searchParams.delete("k");
+        history.replaceState(null, "", url.pathname + url.search + url.hash);
+      };
       if (k) {
         try {
           const res = await fetch("/trip/api/claim", {
@@ -64,31 +85,80 @@ export default function TripPage() {
             const data = (await res.json()) as Identity;
             localStorage.setItem("trip_identity", JSON.stringify(data));
             setIdentity(data);
-            url.searchParams.delete("k");
-            history.replaceState(null, "", url.pathname + url.search + url.hash);
+            setClaimFailed(false);
+            clean(); // only now: the identity is actually saved
             setLoaded(true);
             return;
           }
+          if (res.status !== 404) {
+            // 5xx / proxy error: the link may well be fine. Keep `k`, retry.
+            setClaimFailed(true);
+            setFallbackIdentity(saved);
+            setLoaded(true);
+            return;
+          }
+          // 404: the token is genuinely not one of ours. Drop it and fall
+          // through to the "open your personal link" screen.
+          clean();
         } catch {
-          // network hiccup — fall back to any saved identity
+          // Network hiccup — keep `k` so the retry button can use it.
+          setClaimFailed(true);
+          setLoaded(true);
+          return;
         }
-        url.searchParams.delete("k");
-        history.replaceState(null, "", url.pathname + url.search + url.hash);
       }
+      setClaimFailed(false);
       if (saved) setIdentity(saved);
       setLoaded(true);
-    };
-    init();
-  }, []);
-
-  const refresh = useCallback(async () => {
-    try {
-      const res = await fetch("/trip/api/state", { cache: "no-store" });
-      if (res.ok) setState((await res.json()) as GameState);
-    } catch {
-      // keep the last known state
+    } finally {
+      claimingRef.current = false;
+      setClaiming(false);
     }
   }, []);
+
+  useEffect(() => {
+    claim();
+  }, [claim]);
+
+  // Poll bookkeeping: never let two state requests overlap (a slow one landing
+  // after a fast one would overwrite newer data), and never apply a response
+  // older than one already applied.
+  const inFlight = useRef(false);
+  const queued = useRef(false);
+  const ticket = useRef(0);
+  const applied = useRef(0);
+  const refreshRef = useRef<() => Promise<void>>(async () => {});
+
+  const refresh = useCallback(async () => {
+    if (inFlight.current) {
+      queued.current = true; // coalesce: run once more when this one lands
+      return;
+    }
+    inFlight.current = true;
+    const mine = ++ticket.current;
+    try {
+      const res = await fetch("/trip/api/state", { cache: "no-store" });
+      if (res.ok) {
+        const data = (await res.json()) as GameState;
+        if (mine > applied.current) {
+          applied.current = mine;
+          setState(data);
+        }
+      }
+    } catch {
+      // keep the last known state
+    } finally {
+      inFlight.current = false;
+    }
+    if (queued.current) {
+      queued.current = false;
+      await refreshRef.current();
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshRef.current = refresh;
+  }, [refresh]);
 
   useEffect(() => {
     refresh();
@@ -106,6 +176,47 @@ export default function TripPage() {
   }, [refresh]);
 
   if (!loaded) return <main dir="rtl" className="min-h-screen" />;
+
+  // The personal link is still in the URL but we could not reach the server to
+  // exchange it. Never strip `k` here — offer a retry instead.
+  if (claimFailed && !identity) {
+    const fallbackPlayer = fallbackIdentity
+      ? playerById(fallbackIdentity.playerId)
+      : undefined;
+    return (
+      <main
+        dir="rtl"
+        className="flex min-h-screen flex-col items-center justify-center px-6 text-center"
+      >
+        <div className="text-7xl">📶</div>
+        <h1 className="mt-4 text-3xl font-extrabold text-[var(--color-ink)]">
+          החיבור נכשל - נסו שוב
+        </h1>
+        <p className="mt-4 max-w-xs text-base leading-relaxed text-[var(--color-ink-soft)]">
+          הקישור האישי שלכם שמור בכתובת, רק הרשת הפריעה. התקרבו לוואטסאפ, נשמו,
+          ולחצו שוב.
+        </p>
+        <button
+          onClick={() => claim()}
+          disabled={claiming}
+          className="mt-6 w-full max-w-xs rounded-xl bg-[var(--color-ink)] py-3 text-base font-bold text-[var(--color-paper)] transition-transform active:scale-95 disabled:opacity-50"
+        >
+          {claiming ? "מנסים..." : "לנסות שוב"}
+        </button>
+        {fallbackPlayer && fallbackIdentity && (
+          <button
+            onClick={() => {
+              setIdentity(fallbackIdentity);
+              setClaimFailed(false);
+            }}
+            className="mt-3 w-full max-w-xs rounded-xl border border-[var(--color-rule)] py-3 text-sm font-medium text-[var(--color-ink-soft)]"
+          >
+            להמשיך כ{fallbackPlayer.emoji} {fallbackPlayer.name}
+          </button>
+        )}
+      </main>
+    );
+  }
 
   // The game stays locked until the opening ceremony has been run —
   // before AND during the trip. Claimed identities still bind while

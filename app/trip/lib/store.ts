@@ -8,6 +8,7 @@ export const PREFIX =
 import type { MissionType } from '../content/missions';
 import type { JudgeVerdict } from '../content/judges';
 import { currentDay } from './day';
+import { extensionFor, type SupportedImageType } from './images';
 
 // ---------- Records stored as JSON blobs ----------
 
@@ -42,7 +43,17 @@ export interface AdminConfig {
   frozen?: boolean;
   ceremonyDone?: boolean;
   updatedAt?: string;
+  /** Which fields this config event actually set. Events written by the
+   * current code carry only their patched fields, so two writers touching
+   * different fields (ceremony release + freeze) cannot erase each other.
+   * Legacy events (full snapshots) have no patchedFields — see getConfig. */
+  patchedFields?: ConfigField[];
 }
+
+/** The config fields a patch may set (updatedAt/patchedFields are metadata). */
+export type ConfigField = 'dayOverride' | 'frozen' | 'ceremonyDone';
+
+const CONFIG_FIELDS: ConfigField[] = ['dayOverride', 'frozen', 'ceremonyDone'];
 
 // ---------- Assembled state ----------
 
@@ -104,37 +115,86 @@ export async function listJson<T>(prefix: string): Promise<T[]> {
   return out;
 }
 
-/** Upload a photo under an unguessable key; returns the public URL. */
-export async function uploadPhoto(file: Blob): Promise<string> {
-  const { url } = await put(`${PREFIX}photos/${crypto.randomUUID()}.jpg`, file, {
-    access: 'public',
-    contentType: 'image/jpeg',
-  });
+/** Upload a photo under an unguessable key; returns the public URL.
+ * The content type is whatever the bytes actually are (sniffed by the caller),
+ * so the judge can send Anthropic a truthful media_type later. */
+export async function uploadPhoto(
+  file: Blob,
+  contentType: SupportedImageType = 'image/jpeg',
+): Promise<string> {
+  const key = `${PREFIX}photos/${crypto.randomUUID()}.${extensionFor(contentType)}`;
+  const { url } = await put(key, file, { access: 'public', contentType });
   return url;
 }
 
-/** Latest admin config (latest updatedAt wins if multiple blobs exist). */
+/** Fold every config event, oldest first, into one config.
+ *
+ * Each event only re-applies the fields it actually patched, so a freeze
+ * written from an old snapshot can no longer erase a concurrent ceremony
+ * release (and vice versa) — independent fields always survive.
+ * Legacy events (written before patchedFields existed) were full snapshots,
+ * so for those we apply every field they define. */
 export async function getConfig(): Promise<AdminConfig> {
-  const configs = await listJson<AdminConfig>(`${PREFIX}config/`);
-  if (configs.length === 0) return {};
-  configs.sort((a, b) => (a.updatedAt ?? '').localeCompare(b.updatedAt ?? ''));
-  return configs[configs.length - 1];
+  const events = await listJson<AdminConfig>(`${PREFIX}config/`);
+  if (events.length === 0) return {};
+  const ordered = [...events].sort((a, b) =>
+    (a.updatedAt ?? '').localeCompare(b.updatedAt ?? ''),
+  );
+  const out: AdminConfig = {
+    dayOverride: null,
+    frozen: false,
+    ceremonyDone: false,
+  };
+  for (const event of ordered) {
+    const fields =
+      event.patchedFields ??
+      CONFIG_FIELDS.filter((f) => event[f] !== undefined);
+    for (const field of fields) {
+      if (field === 'dayOverride') out.dayOverride = event.dayOverride ?? null;
+      else if (field === 'frozen') out.frozen = event.frozen ?? false;
+      else if (field === 'ceremonyDone') {
+        out.ceremonyDone = event.ceremonyDone ?? false;
+      }
+    }
+    if (event.updatedAt) out.updatedAt = event.updatedAt;
+  }
+  return out;
 }
 
-/** Write a config patch on top of the latest config (latest-wins log). */
+/** Append a config patch event. The event carries ONLY the patched fields
+ * (plus patchedFields/updatedAt), so concurrent writers to different fields
+ * merge cleanly in getConfig instead of clobbering each other.
+ * We re-read right before writing so the returned config is the freshest
+ * merged view for the caller. */
 export async function writeConfig(
   patch: Partial<AdminConfig>,
 ): Promise<AdminConfig> {
+  const patchedFields = CONFIG_FIELDS.filter((f) => f in patch);
   const current = await getConfig();
-  const next: AdminConfig = {
+  const updatedAt = new Date().toISOString();
+
+  const event: AdminConfig = { patchedFields, updatedAt };
+  const merged: AdminConfig = {
     dayOverride: current.dayOverride ?? null,
     frozen: current.frozen ?? false,
     ceremonyDone: current.ceremonyDone ?? false,
-    ...patch,
-    updatedAt: new Date().toISOString(),
+    updatedAt,
   };
-  await putJson(`${PREFIX}config/state.json`, next);
-  return next;
+  for (const field of patchedFields) {
+    if (field === 'dayOverride') {
+      event.dayOverride = patch.dayOverride ?? null;
+      merged.dayOverride = event.dayOverride;
+    } else if (field === 'frozen') {
+      event.frozen = patch.frozen ?? false;
+      merged.frozen = event.frozen;
+    } else if (field === 'ceremonyDone') {
+      event.ceremonyDone = patch.ceremonyDone ?? false;
+      merged.ceremonyDone = event.ceremonyDone;
+    }
+  }
+
+  await putJson(`${PREFIX}config/state.json`, event);
+  return merged;
 }
 
 const round1 = (n: number): number => Math.round(n * 10) / 10;
