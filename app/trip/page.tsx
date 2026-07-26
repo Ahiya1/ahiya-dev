@@ -101,8 +101,11 @@ export default function TripPage() {
           // through to the "open your personal link" screen.
           clean();
         } catch {
-          // Network hiccup — keep `k` so the retry button can use it.
+          // Network hiccup — keep `k` so the retry button can use it, and
+          // offer the already-saved identity as an escape hatch (a returning
+          // player reopening their link in a dead zone must not get stuck).
           setClaimFailed(true);
+          setFallbackIdentity(saved);
           setLoaded(true);
           return;
         }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PlayerId } from "../content/players";
 import { missionsFor, type Mission } from "../content/missions";
 import type {
@@ -40,6 +40,17 @@ function MissionCard({
 }) {
   const [text, setText] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  // Local preview so nobody sends a photo to the judges sight unseen.
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!file) {
+      setPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
   const [submitting, setSubmitting] = useState(false);
   const [loadingLine, setLoadingLine] = useState(LOADING_LINES[0]);
   const [fresh, setFresh] = useState<{
@@ -191,7 +202,7 @@ function MissionCard({
             disabled={rejudging}
             className="mt-2 w-full rounded-lg bg-amber-500 py-2 text-sm font-bold text-white transition-transform active:scale-95 disabled:opacity-50"
           >
-            {rejudging ? "מזרזים אותם..." : "בקש פסק דין"}
+            {rejudging ? "מזרזים אותם..." : "לבקש פסק דין"}
           </button>
           {error && !formOpen && (
             <p className="mt-2 text-xs text-red-700">{error}</p>
@@ -221,11 +232,13 @@ function MissionCard({
         <div className="mt-4 space-y-3">
           {mission.type === "photo" ? (
             <div>
+              {/* No `capture` attribute on purpose: people shoot photos out on
+                  the trail and submit later from the guesthouse, so the gallery
+                  must stay available alongside the camera. */}
               <input
                 ref={fileRef}
                 type="file"
                 accept="image/*"
-                capture="environment"
                 className="hidden"
                 onChange={(e) => setFile(e.target.files?.[0] ?? null)}
               />
@@ -233,8 +246,15 @@ function MissionCard({
                 onClick={() => fileRef.current?.click()}
                 className="w-full rounded-xl border-2 border-dashed border-[var(--color-muted)] py-4 text-base font-medium text-[var(--color-ink-soft)]"
               >
-                {file ? `📷 ${file.name}` : "📷 לצלם או לבחור תמונה"}
+                {file ? "📷 להחליף תמונה" : "📷 לצלם או לבחור תמונה"}
               </button>
+              {previewUrl && (
+                <img
+                  src={previewUrl}
+                  alt="התמונה שנבחרה"
+                  className="mt-2 h-44 w-full rounded-xl object-cover"
+                />
+              )}
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value)}
