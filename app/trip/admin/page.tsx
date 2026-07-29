@@ -234,6 +234,22 @@ export default function TripAdminPage() {
         </div>
       </section>
 
+      <section className="mt-4 rounded-2xl border border-[var(--color-rule)] bg-white/60 p-4">
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold text-[var(--color-ink)]">🏅 טקס הסיום</h2>
+          <a
+            href="/trip/podium"
+            className="rounded-lg bg-[var(--color-ink)] px-4 py-2 text-sm font-bold text-[var(--color-paper)]"
+          >
+            אל הפודיום
+          </a>
+        </div>
+        <p className="mt-2 text-xs text-[var(--color-muted)]">
+          חשיפת הפודיום ביום שישי: סיכום, פרסים, מקומות 3-2-1 וחתימת
+          התוצאות. מומלץ להקפיא את המשחק לפני.
+        </p>
+      </section>
+
       <section className="mt-4 rounded-2xl border border-red-200 bg-red-50/60 p-4">
         <div className="flex items-center justify-between">
           <h2 className="font-bold text-[var(--color-ink)]">🧹 איפוס נתונים</h2>
