@@ -250,45 +250,60 @@ export default function PodiumPage() {
     });
   }, [presenting, password, step, numbersShown]);
 
-  // Followers: track the presenter's position.
+  // Followers: track the presenter's position over a long-poll loop — the
+  // server answers the instant a new position lands, so a tap on the
+  // presenter's phone shows up here in well under a second.
   useEffect(() => {
     if (watch !== true) return;
     let cancelled = false;
-    const tick = async () => {
-      try {
-        const res = await fetch("/trip/api/ceremony-live", {
-          cache: "no-store",
-        });
-        if (!res.ok) return;
-        const { live } = (await res.json()) as {
-          live: {
-            ceremony: string;
-            active: boolean;
-            slide: number;
-            sub: number;
-            startedAt: string;
-          } | null;
-        };
-        if (cancelled || !live?.active || live.ceremony !== "podium") return;
-        liveStartedAtRef.current = live.startedAt;
-        setLiveSeen(true);
-        setStep((s) => {
-          const wanted = Math.max(0, live.slide);
-          // The slides array needs game state to exist; until then hold at 0.
-          return slides.length > 0
-            ? Math.min(wanted, slides.length - 1)
-            : s;
-        });
-        setNumbersShown(Math.min(Math.max(1, live.sub), numberLines.length || 1));
-      } catch {
-        // next tick retries
+    const controller = new AbortController();
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+    let cursor = "";
+    (async () => {
+      while (!cancelled) {
+        try {
+          const res = await fetch(
+            `/trip/api/ceremony-live?wait=1&since=${encodeURIComponent(cursor)}`,
+            { cache: "no-store", signal: controller.signal },
+          );
+          if (!res.ok) {
+            await sleep(1200);
+            continue;
+          }
+          const data = (await res.json()) as {
+            cursor?: string;
+            live: {
+              ceremony: string;
+              active: boolean;
+              slide: number;
+              sub: number;
+              startedAt: string;
+            } | null;
+          };
+          if (cancelled) return;
+          if (data.cursor) cursor = data.cursor;
+          const live = data.live;
+          if (!live?.active || live.ceremony !== "podium") continue;
+          liveStartedAtRef.current = live.startedAt;
+          setLiveSeen(true);
+          setStep((s) => {
+            const wanted = Math.max(0, live.slide);
+            // The slides array needs game state to exist; until then hold.
+            return slides.length > 0
+              ? Math.min(wanted, slides.length - 1)
+              : s;
+          });
+          setNumbersShown(
+            Math.min(Math.max(1, live.sub), numberLines.length || 1),
+          );
+        } catch {
+          if (!cancelled) await sleep(1200);
+        }
       }
-    };
-    tick();
-    const interval = setInterval(tick, 1500);
+    })();
     return () => {
       cancelled = true;
-      clearInterval(interval);
+      controller.abort();
     };
   }, [watch, slides.length, numberLines.length]);
 

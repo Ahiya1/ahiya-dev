@@ -166,9 +166,10 @@ export default function TripPage() {
   }, [refresh]);
 
   // When the presenter starts a ceremony, every phone on this page gets
-  // soaked straight into it. The lock screen checks eagerly (the opening
-  // ceremony is what it is waiting for); once the game is open we only
-  // listen for Friday's podium, so a lazy poll is enough.
+  // soaked straight into it. The lock screen holds a long-poll — the server
+  // answers the instant the ceremony starts, so the soak-in is immediate.
+  // Once the game is open we only listen for Friday's podium: a lazy poll,
+  // tightened when the game is frozen (freezing is the pre-podium step).
   const stateRef = useRef<GameState | null>(null);
   useEffect(() => {
     stateRef.current = state;
@@ -179,13 +180,77 @@ export default function TripPage() {
     : !state.ceremonyDone
       ? "lock"
       : "game";
+  const frozen = state?.frozen === true;
 
   useEffect(() => {
     if (ceremonyPhase === "idle") return;
-    const check = async () => {
-      if (document.visibilityState !== "visible") return;
+
+    const handleLive = (live: {
+      ceremony: string;
+      active: boolean;
+      startedAt: string;
+      updatedAt: string;
+    }) => {
+      if (!live.active) return;
       const s = stateRef.current;
       if (!s?.isLive) return; // pre-trip previews never soak anyone
+      // An abandoned run (presenter closed the tab) goes quiet; after 15
+      // minutes without a broadcast we stop pulling people into it.
+      if (Date.now() - Date.parse(live.updatedAt) > 15 * 60 * 1000) return;
+      if (live.ceremony === "opening" && !s.ceremonyDone) {
+        router.push("/trip/ceremony?watch=1");
+      } else if (live.ceremony === "podium" && s.ceremonyDone) {
+        if (!sessionStorage.getItem(`trip_watched_podium_${live.startedAt}`)) {
+          router.push("/trip/podium?watch=1");
+        }
+      }
+    };
+
+    if (ceremonyPhase === "lock") {
+      let cancelled = false;
+      const controller = new AbortController();
+      const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+      let cursor = "";
+      (async () => {
+        while (!cancelled) {
+          if (document.visibilityState !== "visible") {
+            await sleep(1000);
+            continue;
+          }
+          try {
+            const res = await fetch(
+              `/trip/api/ceremony-live?wait=1&since=${encodeURIComponent(cursor)}`,
+              { cache: "no-store", signal: controller.signal },
+            );
+            if (!res.ok) {
+              await sleep(1500);
+              continue;
+            }
+            const data = (await res.json()) as {
+              cursor?: string;
+              live: {
+                ceremony: string;
+                active: boolean;
+                startedAt: string;
+                updatedAt: string;
+              } | null;
+            };
+            if (cancelled) return;
+            if (data.cursor) cursor = data.cursor;
+            if (data.live) handleLive(data.live);
+          } catch {
+            if (!cancelled) await sleep(1500);
+          }
+        }
+      })();
+      return () => {
+        cancelled = true;
+        controller.abort();
+      };
+    }
+
+    const check = async () => {
+      if (document.visibilityState !== "visible") return;
       try {
         const res = await fetch("/trip/api/ceremony-live", {
           cache: "no-store",
@@ -199,25 +264,15 @@ export default function TripPage() {
             updatedAt: string;
           } | null;
         };
-        if (!live?.active) return;
-        // An abandoned run (presenter closed the tab) goes quiet; after 15
-        // minutes without a broadcast we stop pulling people into it.
-        if (Date.now() - Date.parse(live.updatedAt) > 15 * 60 * 1000) return;
-        if (live.ceremony === "opening" && !s.ceremonyDone) {
-          router.push("/trip/ceremony?watch=1");
-        } else if (live.ceremony === "podium" && s.ceremonyDone) {
-          if (!sessionStorage.getItem(`trip_watched_podium_${live.startedAt}`)) {
-            router.push("/trip/podium?watch=1");
-          }
-        }
+        if (live) handleLive(live);
       } catch {
         // next tick retries
       }
     };
     check();
-    const interval = setInterval(check, ceremonyPhase === "lock" ? 3000 : 12000);
+    const interval = setInterval(check, frozen ? 2500 : 10_000);
     return () => clearInterval(interval);
-  }, [ceremonyPhase, router]);
+  }, [ceremonyPhase, frozen, router]);
 
   useEffect(() => {
     refresh();

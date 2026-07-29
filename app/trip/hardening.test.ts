@@ -436,7 +436,9 @@ describe('ceremony live sync', () => {
   it('followers see the latest broadcast position', async () => {
     await post({ ...presenter, slide: 3, sub: 0, seq: 1 });
     await post({ ...presenter, slide: 4, sub: 2, seq: 2 });
-    const { live } = await (await liveGet()).json();
+    const { live } = await (
+      await liveGet(new Request('http://test/trip/api/ceremony-live'))
+    ).json();
     expect(live).toMatchObject({ ceremony: 'opening', active: true, slide: 4, sub: 2 });
   });
 
@@ -450,7 +452,9 @@ describe('ceremony live sync', () => {
       sub: 1,
       seq: 1,
     });
-    const { live } = await (await liveGet()).json();
+    const { live } = await (
+      await liveGet(new Request('http://test/trip/api/ceremony-live'))
+    ).json();
     expect(live).toMatchObject({ ceremony: 'podium', slide: 1 });
   });
 });
