@@ -19,6 +19,7 @@ export default function TripAdminPage() {
   const [message, setMessage] = useState<string | null>(null);
   const [links, setLinks] = useState<PlayerLink[] | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [diag, setDiag] = useState<string | null>(null);
 
   useEffect(() => {
     const saved = sessionStorage.getItem("trip_admin_password");
@@ -92,6 +93,44 @@ export default function TripAdminPage() {
       }
     } catch {
       setMessage("שגיאת רשת");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const runDiagnose = async (): Promise<void> => {
+    if (!password) return;
+    setBusy("diagnose");
+    setDiag(null);
+    try {
+      const res = await fetch("/trip/api/admin", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ password, action: "diagnose" }),
+      });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        hasKey?: boolean;
+        model?: string;
+        status?: number | null;
+        error?: string;
+        reply?: string;
+      };
+      if (res.status === 401) {
+        sessionStorage.removeItem("trip_admin_password");
+        setPassword(null);
+        setMessage("סיסמה שגויה");
+      } else if (data.ok) {
+        setDiag(`✅ השופטים מחוברים (${data.model}) — ענה: "${data.reply}"`);
+      } else {
+        setDiag(
+          `❌ אין חיבור לקלוד · מפתח: ${data.hasKey ? "קיים" : "חסר!"} · מודל: ${
+            data.model
+          }${data.status ? ` · סטטוס ${data.status}` : ""}\n${data.error ?? ""}`,
+        );
+      }
+    } catch {
+      setDiag("❌ הבדיקה עצמה נכשלה - בעיית רשת");
     } finally {
       setBusy(null);
     }
@@ -232,6 +271,24 @@ export default function TripAdminPage() {
             אפס טקס
           </button>
         </div>
+      </section>
+
+      <section className="mt-4 rounded-2xl border border-[var(--color-rule)] bg-white/60 p-4">
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold text-[var(--color-ink)]">🩺 בדיקת שופטים</h2>
+          <button
+            disabled={busy !== null}
+            onClick={runDiagnose}
+            className="rounded-lg bg-[var(--color-ink)] px-4 py-2 text-sm font-bold text-[var(--color-paper)] disabled:opacity-50"
+          >
+            {busy === "diagnose" ? "בודקים..." : "בדיקה"}
+          </button>
+        </div>
+        {diag && (
+          <p className="mt-2 whitespace-pre-wrap break-words text-xs text-[var(--color-ink-soft)]" dir="auto">
+            {diag}
+          </p>
+        )}
       </section>
 
       <section className="mt-4 rounded-2xl border border-[var(--color-rule)] bg-white/60 p-4">

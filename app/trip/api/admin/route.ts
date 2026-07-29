@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import Anthropic from '@anthropic-ai/sdk';
 import { del, list } from '@vercel/blob';
 import { PLAYERS, playerById } from '../../content/players';
 import { missionById } from '../../content/missions';
@@ -41,6 +42,41 @@ export async function POST(req: Request) {
       case 'ping': {
         // Lightweight password check (used by the ceremony unlock screen).
         return NextResponse.json({ ok: true });
+      }
+      case 'diagnose': {
+        // Live check of the judge pipeline: is the key there, does the model
+        // answer. Returns the real error so it can be read from a phone.
+        const model = process.env.TRIP_MODEL || 'claude-sonnet-5';
+        const hasKey = !!process.env.ANTHROPIC_API_KEY;
+        if (!hasKey) {
+          return NextResponse.json({
+            ok: false,
+            hasKey,
+            model,
+            error: 'ANTHROPIC_API_KEY חסר בסביבת הריצה של Vercel',
+          });
+        }
+        try {
+          const client = new Anthropic({ timeout: 15_000, maxRetries: 0 });
+          const r = await client.messages.create({
+            model,
+            max_tokens: 32,
+            messages: [{ role: 'user', content: 'ענה במילה אחת בלבד: שלום' }],
+          });
+          const text =
+            r.content.find((b): b is Anthropic.TextBlock => b.type === 'text')
+              ?.text ?? '';
+          return NextResponse.json({ ok: true, hasKey, model, reply: text });
+        } catch (err) {
+          const e = err as { status?: number; message?: string };
+          return NextResponse.json({
+            ok: false,
+            hasKey,
+            model,
+            status: e?.status ?? null,
+            error: String(e?.message ?? err).slice(0, 300),
+          });
+        }
       }
       case 'wipe': {
         // Delete ALL game data in this environment's namespace (PREFIX).

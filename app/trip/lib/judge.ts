@@ -106,6 +106,9 @@ export async function judgeSubmission(args: {
     });
   }
 
+  // Forced tool use, not structured outputs: it is the older, universally
+  // supported way to get validated JSON, and it is the exact pattern the
+  // tutor feature already runs successfully in this same deployment.
   const callOnce = async (): Promise<JudgeVerdict[]> => {
     const response = await client.messages.create({
       model,
@@ -118,24 +121,21 @@ export async function judgeSubmission(args: {
         },
       ],
       messages: [{ role: 'user', content }],
-      output_config: {
-        format: {
-          type: 'json_schema',
-          schema: VERDICT_SCHEMA as unknown as Record<string, unknown>,
+      tools: [
+        {
+          name: 'return_verdicts',
+          description: 'החזרת פסקי הדין של שלושת השופטים על ההגשה',
+          input_schema: VERDICT_SCHEMA as unknown as Anthropic.Tool.InputSchema,
         },
-      },
+      ],
+      tool_choice: { type: 'tool', name: 'return_verdicts' },
     });
-    const textBlock = response.content.find(
-      (b): b is Anthropic.TextBlock => b.type === 'text',
+    const toolBlock = response.content.find(
+      (b): b is Anthropic.ToolUseBlock => b.type === 'tool_use',
     );
-    if (!textBlock) return [];
-    try {
-      const parsed = JSON.parse(textBlock.text) as { verdicts?: unknown[] };
-      if (!Array.isArray(parsed.verdicts)) return [];
-      return parsed.verdicts.filter(isValidVerdict);
-    } catch {
-      return [];
-    }
+    const parsed = (toolBlock?.input ?? null) as { verdicts?: unknown[] } | null;
+    if (!parsed || !Array.isArray(parsed.verdicts)) return [];
+    return parsed.verdicts.filter(isValidVerdict);
   };
 
   const byJudge = new Map<JudgeVerdict['judge'], JudgeVerdict>();
@@ -145,10 +145,22 @@ export async function judgeSubmission(args: {
     }
   };
 
+  // A failed call must leave a trace: canned "water break" verdicts with no
+  // logged cause are undebuggable from a phone in the Galilee.
+  const logFailure = (attempt: string, err: unknown) => {
+    const e = err as { status?: number; message?: string };
+    console.error(
+      `judge call failed (${attempt})`,
+      'model:', model,
+      'status:', e?.status ?? 'none',
+      'error:', String(e?.message ?? err).slice(0, 500),
+    );
+  };
+
   try {
     absorb(await callOnce());
-  } catch {
-    // retried below
+  } catch (err) {
+    logFailure('first', err);
   }
   // Only top up a partial answer while there is budget left — otherwise the
   // platform kills the request and the submission ends up with no verdict at
@@ -156,8 +168,8 @@ export async function judgeSubmission(args: {
   if (byJudge.size < JUDGES.length && elapsed() < SECOND_CALL_CUTOFF_MS) {
     try {
       absorb(await callOnce());
-    } catch {
-      // canned fallback below
+    } catch (err) {
+      logFailure('second', err);
     }
   }
 
