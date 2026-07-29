@@ -187,7 +187,6 @@ export const missionById = (id: string): Mission | undefined =>
 export function missionsFor(playerId: PlayerId, day: 1 | 2 | 3): Mission[] {
   return MISSIONS.filter(
     (m) =>
-      (!m.personalFor && m.day <= day) ||
-      (m.personalFor === playerId && (m.personalFor !== 'ahiya' || day >= 1)),
+      (!m.personalFor && m.day <= day) || m.personalFor === playerId,
   );
 }
