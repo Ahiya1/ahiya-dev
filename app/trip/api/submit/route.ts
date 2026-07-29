@@ -82,8 +82,9 @@ export async function POST(req: Request) {
     if (!config.ceremonyDone) return bad('הטקס טרם נערך', 403);
     if (config.frozen) return bad('המשחק הוקפא — אין הגשות חדשות', 403);
     const { day: today } = currentDay(config.dayOverride);
-    // Personal missions are open every day; dated missions are not.
-    if (!mission.personalFor && mission.day > today) {
+    // Every mission — personal ones included — opens on its day; late
+    // submissions for earlier days stay allowed.
+    if (mission.day > today) {
       return bad('המשימה הזו תיפתח בהמשך', 403);
     }
 

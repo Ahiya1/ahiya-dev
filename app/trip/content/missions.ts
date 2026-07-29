@@ -104,7 +104,8 @@ export const MISSIONS: Mission[] = [
       'המסורת הוותיקה, מהדורת הגליל. כמו פעם: "אני הולך להרים את אמא בהפתעה, תהיו מוכנים עם המצלמה". נקודות על ביצוע, אבל בעיקר על התיעוד.',
   },
 
-  // ---- Personal missions (one per player, submit any day) ----
+  // ---- Personal missions (one per player per day) ----
+  // Day 1: each player vs their most famous habit.
   {
     id: 'p-abba',
     day: 1,
@@ -177,16 +178,164 @@ export const MISSIONS: Mission[] = [
       'משחק מילים מקורי אחד, שנולד בטיול הזה. כתוב אותו כאן בדיוק כמו שסיפרת אותו. אחרי שנים שהמשפחה עונה "זה לא מצחיק כשאתה מביא את הבדיחה", סוף סוף יש ערכאה מוסמכת שתכריע. אין ערעור.',
     personalFor: 'ahiya',
   },
+
+  // Day 2: the plot thickens.
+  {
+    id: 'p2-abba',
+    day: 2,
+    type: 'text',
+    title: 'משימה אישית: הודעה חסרת תועלת',
+    description:
+      'כתוב הודעה אחת בלי שום מטרה לוגיסטית: בלי שעות, בלי תזכורות, בלי הנחיות, בלי מים. סתם הודעה. השופטים יודעים בדיוק כמה זה קשה, והם מודדים.',
+    personalFor: 'abba',
+  },
+  {
+    id: 'p2-ima',
+    day: 2,
+    type: 'text',
+    title: 'משימה אישית: משפט ומשל',
+    description:
+      'הוכיחי בוואטסאפ, בסגנון ההוכחות של 23:00, את המשפט הבא: "הטיול הזה מושלם". עם שלבים, עם טיעונים, עם "משל" בסוף. הפאנל יבדוק את הריגורוזיות.',
+    personalFor: 'ima',
+  },
+  {
+    id: 'p2-shir',
+    day: 2,
+    type: 'text',
+    title: 'משימה אישית: מכתב פיוס לרובוטים',
+    description:
+      'כתבי הודעה קצרה ומפויסת לשלושת שופטי ה-AI. אנחנו יודעים שאת מפחדת מאיתנו. אנחנו רק רוצים לשפוט אותך בהוגנות. מותר קולולולוש אחד לקינוח.',
+    personalFor: 'shir',
+  },
+  {
+    id: 'p2-moshe',
+    day: 2,
+    type: 'text',
+    title: 'משימה אישית: חוסר נימוס',
+    description:
+      'כתוב משפט אחד גס רוח באמת. לא "סליחה שאני מעז". גס. אנחנו משוכנעים שאתה לא מסוגל, וזו בדיוק הסיבה שהמשימה קיימת.',
+    personalFor: 'moshe',
+  },
+  {
+    id: 'p2-tal',
+    day: 2,
+    type: 'text',
+    title: 'משימה אישית: מילון חדש',
+    description:
+      'תאר רגע אחד מהיום בשלושה סופרלטיבים שאינם "רצח" ואינם "אחי". שלושה. חדשים. השופטים עוקבים אחרי הסטטיסטיקה שלך שנים.',
+    personalFor: 'tal',
+  },
+  {
+    id: 'p2-netanel',
+    day: 2,
+    type: 'text',
+    title: 'משימה אישית: המונולוג',
+    description:
+      'כתוב את ההודעה הארוכה בחייך: חמישה משפטים לפחות, על היום הזה. השופטים מודעים לגודל ההקרבה, והניקוד בהתאם.',
+    personalFor: 'netanel',
+  },
+  {
+    id: 'p2-hillel',
+    day: 2,
+    type: 'text',
+    title: 'משימה אישית: 83 מילים',
+    description:
+      "ביקורת על היום - בדיוק 83 מילים. כן, כמו 83 האימוג'י ההם. השופטים יספרו. בערך.",
+    personalFor: 'hillel',
+  },
+  {
+    id: 'p2-ahiya',
+    day: 2,
+    type: 'text',
+    title: 'משימה אישית: כינוי חדש מרחוק',
+    description:
+      'המצא מרחוק כינוי חדש לבן משפחה, ברמה של נתא פתא ושירישקה. כתוב את הכינוי, למי, ולמה דווקא הוא. אם הוא נקלט עד סוף הטיול - המשורר מבטיח 11.',
+    personalFor: 'ahiya',
+  },
+
+  // Day 3: closing ceremonies, one per soul.
+  {
+    id: 'p3-abba',
+    day: 3,
+    type: 'text',
+    title: 'משימה אישית: רגש בלבד',
+    description:
+      'הודעת סיכום לטיול בלי אף פרט לוגיסטי: בלי שעות יציאה, בלי מזוודות, בלי דלק. רק מה הרגשת. מותר נקודות. חובה רגש.',
+    personalFor: 'abba',
+  },
+  {
+    id: 'p3-ima',
+    day: 3,
+    type: 'text',
+    title: 'משימה אישית: 💞 אחד בדיוק',
+    description:
+      'ברכת פרידה לטיול עם 💞 אחד בדיוק. לא אפס - את זה כבר עשית. לא שבעה. אחד. איפוק הוא אמנות, והפאנל מעריך אמנות.',
+    personalFor: 'ima',
+  },
+  {
+    id: 'p3-shir',
+    day: 3,
+    type: 'text',
+    title: 'משימה אישית: נובלת פרידה',
+    description:
+      'סכמי את הטיול בנובלה בת ארבעה משפטים בדיוק, בהודעה אחת. קולולולוש אחד מותר. השופטים יספרו גם משפטים וגם הודעות.',
+    personalFor: 'shir',
+  },
+  {
+    id: 'p3-moshe',
+    day: 3,
+    type: 'text',
+    title: 'משימה אישית: ברכת הפרידה',
+    description:
+      'נכנסת למשפחה עם "ברוכים הנמצאים". הגיע הזמן לסגור מעגל: טבע ברכת פרידה מקורית אחת, שתיכנס ללקסיקון המשפחתי לדורות.',
+    personalFor: 'moshe',
+  },
+  {
+    id: 'p3-tal',
+    day: 3,
+    type: 'text',
+    title: 'משימה אישית: השגיאה המושלמת',
+    description:
+      'ביום הראשון דרשנו ממך אפס שגיאות. היום להפך: המצא שגיאת כתיב אחת מכוונת, חדשה, ברמה של "בסדר גמוק". השופטים מודדים גאונות, לא ספונטניות.',
+    personalFor: 'tal',
+  },
+  {
+    id: 'p3-netanel',
+    day: 3,
+    type: 'text',
+    title: 'משימה אישית: גיליון החזרה',
+    description:
+      'פרסם את שיבוץ הרכבים לנסיעה הביתה, בסגנון הגיליון המפורסם שלך. מי עם מי, מי מנווט, ומי אחראי שכולם קמים בזמן.',
+    personalFor: 'netanel',
+  },
+  {
+    id: 'p3-hillel',
+    day: 3,
+    type: 'text',
+    title: 'משימה אישית: לא "סביר"',
+    description:
+      'פסק הדין הסופי שלך על הטיול: מילה אחת, חדשה, שמעולם לא נתת כביקורת. "סביר" פסול. "רצח" תפוס. השופטים מצפים לקלאסיקה חדשה.',
+    personalFor: 'hillel',
+  },
+  {
+    id: 'p3-ahiya',
+    day: 3,
+    type: 'text',
+    title: 'משימה אישית: הנאום מרחוק',
+    description:
+      'כתוב את הנאום הקצר שהיית נושא בטקס הסיום, פסקה אחת. מישהו מהשטח יקריא אותו הערב ליד הפודיום. תבחר את המילים בהתאם.',
+    personalFor: 'ahiya',
+  },
 ];
 
 export const missionById = (id: string): Mission | undefined =>
   MISSIONS.find((m) => m.id === id);
 
-/** Missions visible to a given player on a given day: shared missions of that
- * day (and earlier days — late submissions allowed) + their personal mission. */
+/** Missions visible to a given player on a given day: missions of that day
+ * and earlier days (late submissions allowed), where personal missions are
+ * only ever shown to their owner. */
 export function missionsFor(playerId: PlayerId, day: 1 | 2 | 3): Mission[] {
   return MISSIONS.filter(
-    (m) =>
-      (!m.personalFor && m.day <= day) || m.personalFor === playerId,
+    (m) => m.day <= day && (!m.personalFor || m.personalFor === playerId),
   );
 }
