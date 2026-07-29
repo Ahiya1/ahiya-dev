@@ -12,7 +12,7 @@ import {
   type SupportedImageType,
 } from './images';
 
-const FALLBACK_COMMENT = 'השופט יצא להפסקת מים';
+export const FALLBACK_COMMENT = 'השופט יצא להפסקת מים';
 const JUDGE_IDS = JUDGES.map((j) => j.id);
 
 // The calling routes declare maxDuration = 60. Keep the worst case well under
@@ -171,6 +171,14 @@ export async function judgeSubmission(args: {
     } catch (err) {
       logFailure('second', err);
     }
+  }
+
+  // Zero real verdicts means the API is unreachable (e.g. an Anthropic
+  // outage) — not one flaky judge. Throwing keeps the submission PENDING:
+  // no fake score, no burned attempt, and the player gets a retry button.
+  // Canned verdicts remain only a top-up for a partially answered panel.
+  if (byJudge.size === 0) {
+    throw new Error('judging unavailable: no verdicts from any call');
   }
 
   const verdicts: JudgeVerdict[] = JUDGES.map(

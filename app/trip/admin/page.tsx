@@ -136,6 +136,60 @@ export default function TripAdminPage() {
     }
   };
 
+  // Re-run judging for every outage-era "water break" verdict, one at a
+  // time (each run can take ~30s server-side), until none remain.
+  const rejudgeFallbacks = async (): Promise<void> => {
+    if (!password) return;
+    setBusy("rejudge-all");
+    setMessage(null);
+    let done = 0;
+    try {
+      for (let i = 0; i < 60; i++) {
+        const res = await fetch("/trip/api/admin", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ password, action: "rejudgeFallbacks" }),
+        });
+        if (res.status === 401) {
+          sessionStorage.removeItem("trip_admin_password");
+          setPassword(null);
+          setMessage("סיסמה שגויה");
+          return;
+        }
+        const data = (await res.json()) as {
+          ok?: boolean;
+          remaining?: number;
+          stillDown?: boolean;
+        };
+        if (data.stillDown) {
+          setMessage(
+            `קלוד עדיין לא זמין - שופטו ${done}, נותרו ${data.remaining}. נסו שוב מאוחר יותר.`,
+          );
+          return;
+        }
+        if (!res.ok) {
+          setMessage("שגיאה בשיפוט מחדש, נסו שוב");
+          return;
+        }
+        if (data.ok && data.remaining === 0 && done === 0) {
+          setMessage("אין הגשות עם הפסקת מים 🎉");
+          return;
+        }
+        if ((data.remaining ?? 0) === 0) {
+          setMessage(`הושלם! ${done + 1} הגשות שופטו מחדש ✓`);
+          return;
+        }
+        done++;
+        setMessage(`שופטו מחדש ${done}, נותרו ${data.remaining}...`);
+      }
+    } catch {
+      setMessage(`שגיאת רשת - שופטו ${done} עד עכשיו, נסו שוב`);
+    } finally {
+      setBusy(null);
+      await refresh();
+    }
+  };
+
   const copyLink = async (link: PlayerLink): Promise<void> => {
     try {
       await navigator.clipboard.writeText(link.url);
@@ -289,6 +343,21 @@ export default function TripAdminPage() {
             {diag}
           </p>
         )}
+        <div className="mt-3 border-t border-[var(--color-rule)] pt-3">
+          <button
+            disabled={busy !== null}
+            onClick={rejudgeFallbacks}
+            className="w-full rounded-lg border border-[var(--color-rule)] bg-white py-2 text-sm font-bold text-[var(--color-ink)] disabled:opacity-50"
+          >
+            {busy === "rejudge-all"
+              ? "משפטים מחדש... (אל תסגרו)"
+              : "🔁 שיפוט מחדש לכל ההפסקות מים"}
+          </button>
+          <p className="mt-2 text-xs text-[var(--color-muted)]">
+            עובר אחת-אחת על כל הגשה שקיבלה &quot;השופט יצא להפסקת מים&quot;
+            ומריץ עליה את השופטים האמיתיים. להריץ אחרי שהבדיקה למעלה מראה ✅.
+          </p>
+        </div>
       </section>
 
       <section className="mt-4 rounded-2xl border border-[var(--color-rule)] bg-white/60 p-4">

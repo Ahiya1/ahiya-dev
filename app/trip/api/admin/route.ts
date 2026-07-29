@@ -12,7 +12,7 @@ import {
   type VerdictRecord,
   PREFIX,
 } from '../../lib/store';
-import { judgeSubmission } from '../../lib/judge';
+import { FALLBACK_COMMENT, judgeSubmission } from '../../lib/judge';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
@@ -112,6 +112,69 @@ export async function POST(req: Request) {
         if (typeof body.frozen !== 'boolean') return bad('חסר ערך frozen');
         const config = await writeConfig({ frozen: body.frozen });
         return NextResponse.json({ ok: true, config });
+      }
+      case 'rejudgeFallbacks': {
+        // One submission per call (each judging run can take ~30s and the
+        // route budget is 60s); the admin page loops until remaining is 0.
+        // Targets: submissions whose LATEST verdict is all water-break
+        // fallbacks — the outage-era fakes.
+        const [submissions, verdicts] = await Promise.all([
+          listJson<SubmissionRecord>(`${PREFIX}submissions/`),
+          listJson<VerdictRecord>(`${PREFIX}verdicts/`),
+        ]);
+        const latest = new Map<string, VerdictRecord>();
+        for (const v of verdicts) {
+          const prev = latest.get(v.submissionId);
+          if (!prev || v.judgedAt > prev.judgedAt) latest.set(v.submissionId, v);
+        }
+        const canned = submissions
+          .filter((s) => {
+            const v = latest.get(s.id);
+            return (
+              v &&
+              v.verdicts.length > 0 &&
+              v.verdicts.every((x) => x.comment === FALLBACK_COMMENT)
+            );
+          })
+          .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+        if (canned.length === 0) {
+          return NextResponse.json({ ok: true, remaining: 0 });
+        }
+        const target = canned[0];
+        const player = playerById(target.playerId);
+        const mission = missionById(target.missionId);
+        if (!player || !mission) {
+          return NextResponse.json({ ok: false, remaining: canned.length });
+        }
+        try {
+          const result = await judgeSubmission({
+            playerName: player.name,
+            missionTitle: mission.title,
+            missionDescription: mission.description,
+            text: target.text,
+            imageUrl: target.imageUrl,
+            startedAt,
+          });
+          const verdict: VerdictRecord = {
+            submissionId: target.id,
+            verdicts: result.verdicts,
+            avg: result.avg,
+            judgedAt: new Date().toISOString(),
+          };
+          await putJson(`${PREFIX}verdicts/${target.id}.json`, verdict);
+          return NextResponse.json({
+            ok: true,
+            remaining: canned.length - 1,
+            judged: target.id,
+          });
+        } catch {
+          // Still no connection — leave the canned verdict in place.
+          return NextResponse.json({
+            ok: false,
+            stillDown: true,
+            remaining: canned.length,
+          });
+        }
       }
       case 'rejudge': {
         const submissionId = String(body.submissionId ?? '');
