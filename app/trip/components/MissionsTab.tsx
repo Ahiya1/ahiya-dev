@@ -325,13 +325,13 @@ export default function MissionsTab({
         </p>
       )}
 
-      {/* key={currentDay} remounts the card when the day rolls over, so
-          yesterday's picks and result can never leak into today's quiz. */}
+      {/* key={triviaDay} remounts the card when the quiz rolls over (noon,
+          not midnight), so yesterday's picks can never leak into today's. */}
       <TriviaCard
-        key={state.currentDay}
+        key={state.triviaDay}
         playerId={playerId}
         token={token}
-        day={state.currentDay}
+        day={state.triviaDay}
         state={state}
         frozen={state.frozen}
         onRefresh={onRefresh}

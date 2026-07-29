@@ -9,7 +9,7 @@ import {
   PREFIX,
 } from '../../lib/store';
 import { verifyPlayer } from '../../lib/auth';
-import { currentDay } from '../../lib/day';
+import { currentTriviaDay } from '../../lib/day';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,8 +36,9 @@ export async function POST(req: Request) {
     if (!config.ceremonyDone) return bad('הטקס טרם נערך', 403);
     if (config.frozen) return bad('המשחק הוקפא', 403);
     // The client-supplied `day` is ignored on purpose: a stale phone (or a
-    // curious one) must not be able to play a different day's quiz.
-    const { day } = currentDay(config.dayOverride);
+    // curious one) must not be able to play a different day's quiz. The
+    // trivia day has a 12h grace window — yesterday's quiz until noon.
+    const day = currentTriviaDay(config.dayOverride);
 
     // One attempt per player per day — first one wins.
     const existing = await listJson<TriviaRecord>(`${PREFIX}trivia/`);

@@ -7,7 +7,7 @@ export const PREFIX =
   process.env.VERCEL_ENV === 'production' ? 'trip/' : 'trip-dev/';
 import type { MissionType } from '../content/missions';
 import type { JudgeVerdict } from '../content/judges';
-import { currentDay } from './day';
+import { currentDay, currentTriviaDay } from './day';
 import { extensionFor, type SupportedImageType } from './images';
 
 // ---------- Records stored as JSON blobs ----------
@@ -73,6 +73,8 @@ export interface GameState {
   trivia: TriviaRecord[];
   leaderboard: LeaderboardRow[];
   currentDay: 1 | 2 | 3;
+  /** Lags 12h behind currentDay: yesterday's quiz until noon, then today's. */
+  triviaDay: 1 | 2 | 3;
   isLive: boolean;
   frozen: boolean;
   ceremonyDone: boolean;
@@ -263,6 +265,7 @@ export async function getGameState(): Promise<GameState> {
     trivia,
     leaderboard,
     currentDay: day,
+    triviaDay: currentTriviaDay(config.dayOverride),
     isLive,
     frozen: config.frozen ?? false,
     ceremonyDone: config.ceremonyDone ?? false,
