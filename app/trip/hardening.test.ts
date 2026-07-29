@@ -14,7 +14,7 @@ vi.mock('@vercel/blob', () => ({
   list: async ({ prefix }: { prefix: string }) => ({
     blobs: [...store.keys()]
       .filter((k) => k.startsWith(prefix))
-      .map((k) => ({ url: k })),
+      .map((k) => ({ url: k, pathname: k.split('#')[0] })),
     hasMore: false,
     cursor: undefined,
   }),
@@ -52,6 +52,9 @@ const { playerToken } = await import('./lib/auth');
 const { POST: triviaPost } = await import('./api/trivia/route');
 const { POST: submitPost } = await import('./api/submit/route');
 const { POST: rejudgePost } = await import('./api/rejudge/route');
+const { GET: liveGet, POST: livePost } = await import(
+  './api/ceremony-live/route'
+);
 
 const token = playerToken('shir');
 
@@ -402,5 +405,52 @@ describe('photo safety', () => {
     const res = await submitPhoto('d1-family-photo', png);
     expect(res.status).toBe(200);
     expect((await res.json()).submission.imageUrl).toContain('.png');
+  });
+});
+
+// ------------------------------------------------------- ceremony live sync
+
+describe('ceremony live sync', () => {
+  beforeEach(reset);
+
+  const post = (body: Record<string, unknown>) =>
+    livePost(
+      new Request('http://test/trip/api/ceremony-live', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(body),
+      }),
+    );
+  const presenter = {
+    password: 'test-pass',
+    ceremony: 'opening',
+    active: true,
+    startedAt: '2026-07-29T18:00:00.000Z',
+  };
+
+  it('rejects a broadcast without the admin password', async () => {
+    const res = await post({ ...presenter, password: 'wrong', slide: 1, sub: 0, seq: 1 });
+    expect(res.status).toBe(401);
+  });
+
+  it('followers see the latest broadcast position', async () => {
+    await post({ ...presenter, slide: 3, sub: 0, seq: 1 });
+    await post({ ...presenter, slide: 4, sub: 2, seq: 2 });
+    const { live } = await (await liveGet()).json();
+    expect(live).toMatchObject({ ceremony: 'opening', active: true, slide: 4, sub: 2 });
+  });
+
+  it('a newer ceremony run wins over an older one', async () => {
+    await post({ ...presenter, slide: 9, sub: 0, seq: 99 });
+    await post({
+      ...presenter,
+      ceremony: 'podium',
+      startedAt: '2026-07-31T16:00:00.000Z',
+      slide: 1,
+      sub: 1,
+      seq: 1,
+    });
+    const { live } = await (await liveGet()).json();
+    expect(live).toMatchObject({ ceremony: 'podium', slide: 1 });
   });
 });

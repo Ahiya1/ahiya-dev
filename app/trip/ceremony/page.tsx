@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { PLAYERS, type PlayerId } from "../content/players";
 
@@ -70,6 +70,13 @@ export default function CeremonyPage() {
   const [busy, setBusy] = useState(false);
   const [releaseError, setReleaseError] = useState<string | null>(null);
 
+  // Watch mode (?watch=1): a family phone that got soaked into the ceremony.
+  // It follows the presenter's position read-only — no password, no taps.
+  const [watch, setWatch] = useState<boolean | null>(null);
+  const [liveSeen, setLiveSeen] = useState(false);
+  const seqRef = useRef(0);
+  const startedAtRef = useRef<string | null>(null);
+
   // Admin gate: the ceremony only opens with the admin password
   // (shared with /trip/admin via the same sessionStorage key).
   const [password, setPassword] = useState<string | null>(null);
@@ -83,6 +90,7 @@ export default function CeremonyPage() {
   const [isLive, setIsLive] = useState<boolean | null>(null);
 
   useEffect(() => {
+    setWatch(new URLSearchParams(window.location.search).get("watch") === "1");
     const saved = sessionStorage.getItem("trip_admin_password");
     if (saved) setPassword(saved);
     // Preview mode is only entered on an explicit, successful `isLive: false`.
@@ -100,6 +108,82 @@ export default function CeremonyPage() {
   }, []);
 
   const previewMode = isLive === false;
+  const presenting = watch === false && !previewMode && !!password;
+
+  // The presenter's phone is the remote control: every slide change is
+  // broadcast, and every phone sitting on the /trip lock screen gets pulled
+  // into the ceremony and follows along.
+  useEffect(() => {
+    if (!presenting || !password) return;
+    if (!startedAtRef.current) startedAtRef.current = new Date().toISOString();
+    fetch("/trip/api/ceremony-live", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        password,
+        ceremony: "opening",
+        active: true,
+        slide,
+        sub,
+        seq: ++seqRef.current,
+        startedAt: startedAtRef.current,
+      }),
+    }).catch(() => {
+      // best effort — followers simply hold the last position they saw
+    });
+  }, [presenting, password, slide, sub]);
+
+  // Followers: track the presenter's position.
+  useEffect(() => {
+    if (watch !== true) return;
+    let cancelled = false;
+    const tick = async () => {
+      try {
+        const res = await fetch("/trip/api/ceremony-live", {
+          cache: "no-store",
+        });
+        if (!res.ok) return;
+        const { live } = (await res.json()) as {
+          live: {
+            ceremony: string;
+            active: boolean;
+            slide: number;
+            sub: number;
+          } | null;
+        };
+        if (cancelled || !live?.active || live.ceremony !== "opening") return;
+        setLiveSeen(true);
+        const s = Math.min(Math.max(0, live.slide), SUBSTEPS.length - 1);
+        setSlide(s);
+        setSub(Math.min(Math.max(0, live.sub), SUBSTEPS[s] - 1));
+      } catch {
+        // next tick retries
+      }
+    };
+    tick();
+    const interval = setInterval(tick, 1500);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [watch]);
+
+  // Followers leave for the game the moment the presenter releases it.
+  useEffect(() => {
+    if (watch !== true) return;
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch("/trip/api/state", { cache: "no-store" });
+        if (res.ok) {
+          const s = (await res.json()) as { ceremonyDone?: boolean };
+          if (s.ceremonyDone === true) router.push("/trip");
+        }
+      } catch {
+        // next tick retries
+      }
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [watch, router]);
 
   const unlock = async (e: FormEvent) => {
     e.preventDefault();
@@ -129,6 +213,7 @@ export default function CeremonyPage() {
   };
 
   const advance = useCallback(() => {
+    if (watch !== false) return; // followers don't drive, they ride
     if (slide === COUNTDOWN_SLIDE || slide === FINALE_SLIDE) return;
     if (sub < SUBSTEPS[slide] - 1) {
       setSub(sub + 1);
@@ -136,7 +221,7 @@ export default function CeremonyPage() {
       setSlide(slide + 1);
       setSub(0);
     }
-  }, [slide, sub]);
+  }, [watch, slide, sub]);
 
   // Countdown slide advances itself: 3 → 2 → 1 → finale.
   useEffect(() => {
@@ -146,15 +231,18 @@ export default function CeremonyPage() {
       setCount((c) => {
         if (c <= 1) {
           clearInterval(timer);
-          setSlide(FINALE_SLIDE);
-          setSub(0);
+          // Followers hold on "1" until the presenter's finale arrives.
+          if (watch !== true) {
+            setSlide(FINALE_SLIDE);
+            setSub(0);
+          }
           return c;
         }
         return c - 1;
       });
     }, 800);
     return () => clearInterval(timer);
-  }, [slide]);
+  }, [slide, watch]);
 
   /** Confirm the release actually landed. The blob log and the state route's
    * short cache are both eventually consistent, so poll for a few seconds
@@ -220,9 +308,29 @@ export default function CeremonyPage() {
   };
 
   const key = `${slide}-${sub}`;
-  const showHint = slide !== COUNTDOWN_SLIDE && slide !== FINALE_SLIDE;
+  const showHint =
+    watch !== true && slide !== COUNTDOWN_SLIDE && slide !== FINALE_SLIDE;
 
-  if (!password && !previewMode) {
+  // Until we know whether this is a follower phone, render the dark stage.
+  if (watch === null) {
+    return <main dir="rtl" className="fixed inset-0 z-50 bg-[#0c0a09]" />;
+  }
+
+  if (watch && !liveSeen) {
+    return (
+      <main
+        dir="rtl"
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0c0a09] px-6 text-center text-amber-50"
+      >
+        <div className="animate-bounce text-7xl">🏆</div>
+        <p className="mt-6 animate-pulse text-xl text-amber-50/70">
+          מתחברים לטקס...
+        </p>
+      </main>
+    );
+  }
+
+  if (!watch && !password && !previewMode) {
     return (
       <main
         dir="rtl"
@@ -408,7 +516,11 @@ export default function CeremonyPage() {
             <h1 className="text-5xl font-black leading-tight text-amber-300">
               שהמשחקים יחלו! 🎉
             </h1>
-            {previewMode ? (
+            {watch ? (
+              <p className="mt-12 animate-pulse text-xl font-bold text-amber-200/80">
+                עוד רגע המשחק נפתח אצלכם...
+              </p>
+            ) : previewMode ? (
               <p className="mt-12 max-w-xs text-lg font-bold text-amber-200/80">
                 🔒 זו תצוגה מקדימה. הכפתור האמיתי מחכה ליום רביעי, כשכולם
                 בחדר.

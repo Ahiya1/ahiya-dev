@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { playerById, type PlayerId } from "./content/players";
 import type { GameState } from "./lib/store";
 import MissionsTab from "./components/MissionsTab";
@@ -41,6 +42,7 @@ function storedIdentity(): Identity | null {
 }
 
 export default function TripPage() {
+  const router = useRouter();
   const [identity, setIdentity] = useState<Identity | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [state, setState] = useState<GameState | null>(null);
@@ -162,6 +164,60 @@ export default function TripPage() {
   useEffect(() => {
     refreshRef.current = refresh;
   }, [refresh]);
+
+  // When the presenter starts a ceremony, every phone on this page gets
+  // soaked straight into it. The lock screen checks eagerly (the opening
+  // ceremony is what it is waiting for); once the game is open we only
+  // listen for Friday's podium, so a lazy poll is enough.
+  const stateRef = useRef<GameState | null>(null);
+  useEffect(() => {
+    stateRef.current = state;
+  }, [state]);
+
+  const ceremonyPhase = !state
+    ? "idle"
+    : !state.ceremonyDone
+      ? "lock"
+      : "game";
+
+  useEffect(() => {
+    if (ceremonyPhase === "idle") return;
+    const check = async () => {
+      if (document.visibilityState !== "visible") return;
+      const s = stateRef.current;
+      if (!s?.isLive) return; // pre-trip previews never soak anyone
+      try {
+        const res = await fetch("/trip/api/ceremony-live", {
+          cache: "no-store",
+        });
+        if (!res.ok) return;
+        const { live } = (await res.json()) as {
+          live: {
+            ceremony: string;
+            active: boolean;
+            startedAt: string;
+            updatedAt: string;
+          } | null;
+        };
+        if (!live?.active) return;
+        // An abandoned run (presenter closed the tab) goes quiet; after 15
+        // minutes without a broadcast we stop pulling people into it.
+        if (Date.now() - Date.parse(live.updatedAt) > 15 * 60 * 1000) return;
+        if (live.ceremony === "opening" && !s.ceremonyDone) {
+          router.push("/trip/ceremony?watch=1");
+        } else if (live.ceremony === "podium" && s.ceremonyDone) {
+          if (!sessionStorage.getItem(`trip_watched_podium_${live.startedAt}`)) {
+            router.push("/trip/podium?watch=1");
+          }
+        }
+      } catch {
+        // next tick retries
+      }
+    };
+    check();
+    const interval = setInterval(check, ceremonyPhase === "lock" ? 3000 : 12000);
+    return () => clearInterval(interval);
+  }, [ceremonyPhase, router]);
 
   useEffect(() => {
     refresh();

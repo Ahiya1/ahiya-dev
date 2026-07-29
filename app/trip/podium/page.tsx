@@ -1,6 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
+import { useRouter } from "next/navigation";
 import { playerById, type PlayerId } from "../content/players";
 import { missionById } from "../content/missions";
 import type { GameState, SubmissionWithVerdict } from "../lib/store";
@@ -135,6 +143,7 @@ function computeAwards(state: GameState): Award[] {
 }
 
 export default function PodiumPage() {
+  const router = useRouter();
   const [state, setState] = useState<GameState | null>(null);
   const [stateError, setStateError] = useState(false);
   const [step, setStep] = useState(0);
@@ -151,7 +160,16 @@ export default function PodiumPage() {
   const [gateError, setGateError] = useState<string | null>(null);
   const [gateChecked, setGateChecked] = useState(false);
 
+  // Watch mode (?watch=1): a family phone that got soaked into the podium.
+  // It follows the presenter's position read-only — no password, no taps.
+  const [watch, setWatch] = useState<boolean | null>(null);
+  const [liveSeen, setLiveSeen] = useState(false);
+  const seqRef = useRef(0);
+  const startedAtRef = useRef<string | null>(null);
+  const liveStartedAtRef = useRef<string | null>(null);
+
   useEffect(() => {
+    setWatch(new URLSearchParams(window.location.search).get("watch") === "1");
     const saved = sessionStorage.getItem("trip_admin_password");
     if (saved) setPassword(saved);
     setGateChecked(true);
@@ -196,6 +214,7 @@ export default function PodiumPage() {
   }, [state]);
 
   const slide = slides[step] ?? null;
+  const presenting = watch === false && !!password;
   const numberLines = useMemo(() => {
     if (!state) return [];
     const judgedCount = state.submissions.filter((s) => s.verdict).length;
@@ -209,7 +228,72 @@ export default function PodiumPage() {
   // The numbers slide reveals its lines one tap at a time, like the opening.
   const [numbersShown, setNumbersShown] = useState(1);
 
+  // The presenter's phone is the remote control: every step change is
+  // broadcast so all the phones in the room (and beyond) follow along.
+  useEffect(() => {
+    if (!presenting || !password) return;
+    if (!startedAtRef.current) startedAtRef.current = new Date().toISOString();
+    fetch("/trip/api/ceremony-live", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        password,
+        ceremony: "podium",
+        active: true,
+        slide: step,
+        sub: numbersShown,
+        seq: ++seqRef.current,
+        startedAt: startedAtRef.current,
+      }),
+    }).catch(() => {
+      // best effort — followers simply hold the last position they saw
+    });
+  }, [presenting, password, step, numbersShown]);
+
+  // Followers: track the presenter's position.
+  useEffect(() => {
+    if (watch !== true) return;
+    let cancelled = false;
+    const tick = async () => {
+      try {
+        const res = await fetch("/trip/api/ceremony-live", {
+          cache: "no-store",
+        });
+        if (!res.ok) return;
+        const { live } = (await res.json()) as {
+          live: {
+            ceremony: string;
+            active: boolean;
+            slide: number;
+            sub: number;
+            startedAt: string;
+          } | null;
+        };
+        if (cancelled || !live?.active || live.ceremony !== "podium") return;
+        liveStartedAtRef.current = live.startedAt;
+        setLiveSeen(true);
+        setStep((s) => {
+          const wanted = Math.max(0, live.slide);
+          // The slides array needs game state to exist; until then hold at 0.
+          return slides.length > 0
+            ? Math.min(wanted, slides.length - 1)
+            : s;
+        });
+        setNumbersShown(Math.min(Math.max(1, live.sub), numberLines.length || 1));
+      } catch {
+        // next tick retries
+      }
+    };
+    tick();
+    const interval = setInterval(tick, 1500);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [watch, slides.length, numberLines.length]);
+
   const advance = useCallback(() => {
+    if (watch !== false) return; // followers don't drive, they ride
     if (!slide) return;
     if (slide.kind === "countdown" || slide.kind === "finale") return;
     if (slide.kind === "numbers" && numbersShown < numberLines.length) {
@@ -217,7 +301,7 @@ export default function PodiumPage() {
       return;
     }
     setStep((s) => Math.min(s + 1, slides.length - 1));
-  }, [slide, numbersShown, numberLines.length, slides.length]);
+  }, [watch, slide, numbersShown, numberLines.length, slides.length]);
 
   // Countdown slide advances itself: 3 → 2 → 1 → champion.
   useEffect(() => {
@@ -227,14 +311,15 @@ export default function PodiumPage() {
       setCount((c) => {
         if (c <= 1) {
           clearInterval(timer);
-          setStep((s) => s + 1);
+          // Followers hold on "1" until the presenter's champion arrives.
+          if (watch !== true) setStep((s) => s + 1);
           return c;
         }
         return c - 1;
       });
     }, 800);
     return () => clearInterval(timer);
-  }, [slide?.kind]);
+  }, [slide?.kind, watch]);
 
   const unlock = async (e: FormEvent) => {
     e.preventDefault();
@@ -277,6 +362,23 @@ export default function PodiumPage() {
       });
       if (res.ok) {
         setSealed(true);
+        // Tell the live channel the show is over, so /trip stops pulling
+        // phones into the ceremony.
+        if (startedAtRef.current) {
+          fetch("/trip/api/ceremony-live", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({
+              password,
+              ceremony: "podium",
+              active: false,
+              slide: step,
+              sub: numbersShown,
+              seq: ++seqRef.current,
+              startedAt: startedAtRef.current,
+            }),
+          }).catch(() => {});
+        }
       } else if (res.status === 401) {
         sessionStorage.removeItem("trip_admin_password");
         setPassword(null);
@@ -314,7 +416,26 @@ export default function PodiumPage() {
     );
   };
 
-  if (!password) {
+  // Until we know whether this is a follower phone, render the dark stage.
+  if (watch === null) {
+    return <main dir="rtl" className="fixed inset-0 z-50 bg-[#0c0a09]" />;
+  }
+
+  if (watch && !liveSeen) {
+    return (
+      <main
+        dir="rtl"
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0c0a09] px-6 text-center text-amber-50"
+      >
+        <div className="animate-bounce text-7xl">🏅</div>
+        <p className="mt-6 animate-pulse text-xl text-amber-50/70">
+          מתחברים לטקס...
+        </p>
+      </main>
+    );
+  }
+
+  if (!watch && !password) {
     return (
       <main
         dir="rtl"
@@ -386,7 +507,10 @@ export default function PodiumPage() {
   const showConfetti =
     slide?.kind === "champion" || slide?.kind === "finale";
   const showHint =
-    slide && slide.kind !== "countdown" && slide.kind !== "finale";
+    watch !== true &&
+    slide &&
+    slide.kind !== "countdown" &&
+    slide.kind !== "finale";
 
   return (
     <main
@@ -563,30 +687,50 @@ export default function PodiumPage() {
               שלושה ימים, שמונה בוטמנים, שלושה שופטים שלא הסכימו על כלום חוץ
               מדבר אחד: משפחה אחת.
             </p>
-            {sealError && (
-              <p className="mt-6 text-sm font-medium text-red-400">
-                {sealError}
-              </p>
+            {watch ? (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (liveStartedAtRef.current) {
+                    sessionStorage.setItem(
+                      `trip_watched_podium_${liveStartedAtRef.current}`,
+                      "1",
+                    );
+                  }
+                  router.push("/trip");
+                }}
+                className="mt-10 rounded-2xl bg-amber-400 px-10 py-5 text-2xl font-black text-[#0c0a09] shadow-[0_0_50px_rgba(251,191,36,0.45)] transition-transform active:scale-95"
+              >
+                חזרה למשחק ←
+              </button>
+            ) : (
+              <>
+                {sealError && (
+                  <p className="mt-6 text-sm font-medium text-red-400">
+                    {sealError}
+                  </p>
+                )}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    seal();
+                  }}
+                  disabled={sealBusy || sealed}
+                  className="mt-10 rounded-2xl bg-amber-400 px-10 py-5 text-2xl font-black text-[#0c0a09] shadow-[0_0_50px_rgba(251,191,36,0.45)] transition-transform active:scale-95 disabled:opacity-60"
+                >
+                  {sealed
+                    ? "התוצאות נחתמו 🧊"
+                    : sealBusy
+                      ? "חותמים..."
+                      : "לחתום את התוצאות"}
+                </button>
+                <p className="mt-4 text-sm text-amber-50/40">
+                  {sealed
+                    ? "הטבלה הזו נכנסת להיסטוריה המשפחתית."
+                    : "נועל את המשחק - אף נקודה לא תזוז יותר."}
+                </p>
+              </>
             )}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                seal();
-              }}
-              disabled={sealBusy || sealed}
-              className="mt-10 rounded-2xl bg-amber-400 px-10 py-5 text-2xl font-black text-[#0c0a09] shadow-[0_0_50px_rgba(251,191,36,0.45)] transition-transform active:scale-95 disabled:opacity-60"
-            >
-              {sealed
-                ? "התוצאות נחתמו 🧊"
-                : sealBusy
-                  ? "חותמים..."
-                  : "לחתום את התוצאות"}
-            </button>
-            <p className="mt-4 text-sm text-amber-50/40">
-              {sealed
-                ? "הטבלה הזו נכנסת להיסטוריה המשפחתית."
-                : "נועל את המשחק - אף נקודה לא תזוז יותר."}
-            </p>
           </div>
         )}
       </div>
