@@ -325,17 +325,32 @@ export default function MissionsTab({
         </p>
       )}
 
-      {/* key={triviaDay} remounts the card when the quiz rolls over (noon,
-          not midnight), so yesterday's picks can never leak into today's. */}
+      {/* key={day} remounts a card when its day changes, so one day's picks
+          can never leak into another's. Today's quiz opens at midnight;
+          yesterday's sticks around until noon for whoever missed it. */}
       <TriviaCard
-        key={state.triviaDay}
+        key={state.currentDay}
         playerId={playerId}
         token={token}
-        day={state.triviaDay}
+        day={state.currentDay}
         state={state}
         frozen={state.frozen}
         onRefresh={onRefresh}
       />
+      {state.triviaDay < state.currentDay &&
+        !state.trivia.some(
+          (t) => t.playerId === playerId && t.day === state.triviaDay,
+        ) && (
+          <TriviaCard
+            key={state.triviaDay}
+            playerId={playerId}
+            token={token}
+            day={state.triviaDay}
+            state={state}
+            frozen={state.frozen}
+            onRefresh={onRefresh}
+          />
+        )}
 
       {todays.map((m) => (
         <MissionCard

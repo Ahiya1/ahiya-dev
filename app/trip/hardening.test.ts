@@ -202,7 +202,7 @@ describe('trivia gating', () => {
     expect(res.status).toBe(403);
   });
 
-  it('ignores the client day and uses the server day', async () => {
+  it('rejects a day outside the open window', async () => {
     await writeConfig({ ceremonyDone: true, dayOverride: 2 });
     const res = await trivia({
       playerId: 'shir',
@@ -211,7 +211,7 @@ describe('trivia gating', () => {
       answers: answersFor(DAY1),
     });
     expect(res.status).toBe(400);
-    expect((await res.json()).error).toContain('לא תואמות');
+    expect((await res.json()).error).toContain('כבר לא פתוח');
   });
 
   it("accepts exactly the current day's quote ids", async () => {
